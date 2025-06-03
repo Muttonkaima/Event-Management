@@ -10,7 +10,7 @@ export const defaultBlocks: EmailBlock[] = [
       fontSize: 24,
       fontWeight: 'bold',
       textColor: '#000000',
-      backgroundColor: 'Light Blue',
+      backgroundColor: '#ffffff',
       padding: 16
     }
   },
@@ -86,7 +86,7 @@ export const blockTemplates = {
       fontSize: 24,
       fontWeight: 'bold',
       textColor: '#000000',
-      backgroundColor: 'Light Blue',
+      backgroundColor: '#ffffff',
       padding: 16
     }
   },

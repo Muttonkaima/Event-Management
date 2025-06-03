@@ -28,7 +28,7 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
         onClick={() => setIsOpen(true)}
       />
       {isOpen && (
-        <div className="absolute top-12 left-0 z-50 p-2 bg-white border rounded shadow">
+        <div className="absolute bottom-12 left-0 z-50 p-2 bg-white border rounded shadow">
           <HexColorPicker color={value} onChange={onChange} />
         </div>
       )}

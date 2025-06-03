@@ -7,6 +7,7 @@ import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiMenu, FiX } from '
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
   { name: 'Events', href: '/events', icon: <FiCalendar className="w-5 h-5" /> },
+  { name: 'Email Builder', href: '/email-builder', icon: <FiMenu className="w-5 h-5" /> },
   { name: 'Attendees', href: '/attendees', icon: <FiUsers className="w-5 h-5" /> },
   { name: 'Settings', href: '/settings', icon: <FiSettings className="w-5 h-5" /> },
 ];

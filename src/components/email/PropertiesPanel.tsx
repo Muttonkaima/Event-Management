@@ -180,20 +180,10 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
           {/* Background Color */}
           <div>
             <label className="block text-xs font-medium text-black mb-2">Background Color</label>
-            <Select
-              value={properties.backgroundColor || 'transparent'}
-              onValueChange={(value: string) => handlePropertyChange('backgroundColor', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="transparent">Transparent</SelectItem>
-                <SelectItem value="White">White</SelectItem>
-                <SelectItem value="Light Gray">Light Gray</SelectItem>
-                <SelectItem value="Light Blue">Light Blue</SelectItem>
-              </SelectContent>
-            </Select>
+            <ColorPicker
+                value={properties.backgroundColor || '#ffffff'}
+                onChange={(value: string) => handlePropertyChange('backgroundColor', value)}
+              />
           </div>
 
           {/* Padding */}

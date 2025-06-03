@@ -19,12 +19,7 @@ export function EmailPreview({
   onExportTemplate 
 }: EmailPreviewProps) {
   const getBackgroundColor = (bg: string) => {
-    switch (bg) {
-      case 'Light Blue': return 'rgb(219, 234, 254)';
-      case 'Light Gray': return 'rgb(243, 244, 246)';
-      case 'White': return 'rgb(255, 255, 255)';
-      default: return 'transparent';
-    }
+    return bg;
   };
 
   const renderBlock = (block: EmailBlock) => {
