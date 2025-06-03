@@ -28,7 +28,7 @@ export default function DashboardLayout({ children, title = 'Dashboard' }: Dashb
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <Head>
         <title>{`${title} | EventPro`}</title>
         <meta name="description" content="Event management dashboard" />

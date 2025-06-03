@@ -11,12 +11,12 @@ export default function Header({ toggleSidebarAction: toggleSidebar }: HeaderPro
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-sm">
+    <header className="sticky top-0 z-10 bg-white shadow-sm">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-4">
           <button 
             onClick={toggleSidebar}
-            className="p-2 rounded-md text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 lg:hidden"
+            className="p-2 rounded-md text-gray-600 hover:bg-gray-100 lg:hidden"
           >
             <FiMenu className="w-5 h-5" />
           </button>
@@ -28,13 +28,13 @@ export default function Header({ toggleSidebarAction: toggleSidebar }: HeaderPro
             <input
               type="text"
               placeholder="Search..."
-              className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              className="w-64 pl-10 pr-4 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
         
         <div className="flex items-center space-x-4">
-          <button className="p-2 text-gray-600 rounded-full hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 relative">
+          <button className="p-2 text-gray-600 rounded-full hover:bg-gray-100 relative">
             <FiBell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
@@ -47,21 +47,21 @@ export default function Header({ toggleSidebarAction: toggleSidebar }: HeaderPro
               <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
                 <FiUser className="w-4 h-4" />
               </div>
-              <span className="hidden md:inline text-sm font-medium text-gray-700 dark:text-gray-200">
+              <span className="hidden md:inline text-sm font-medium text-gray-700">
                 John Doe
               </span>
             </button>
             
             {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 dark:bg-gray-700">
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600">
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
+                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                   Your Profile
                 </a>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600">
+                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                   Settings
                 </a>
-                <div className="border-t border-gray-200 dark:border-gray-600 my-1"></div>
-                <a href="#" className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30">
+                <div className="border-t border-gray-200 my-1"></div>
+                <a href="#" className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                   Sign out
                 </a>
               </div>

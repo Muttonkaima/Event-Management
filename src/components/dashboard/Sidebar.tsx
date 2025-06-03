@@ -27,17 +27,17 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
       )}
       
       <aside 
-        className={`fixed top-0 left-0 w-64 h-full bg-white dark:bg-gray-800 shadow-lg transform ${
+        className={`fixed top-0 left-0 w-64 h-full bg-white shadow-lg transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 transition-transform duration-300 ease-in-out z-30`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-xl font-bold text-gray-800 dark:text-white">EventPro</h1>
+        <div className="flex items-center mt-3 justify-between p-4 border-b border-gray-200">
+          <h1 className="text-xl font-bold text-gray-800">EventPro</h1>
           <button 
             onClick={toggleSidebar}
-            className="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="lg:hidden p-2 rounded-md hover:bg-gray-10"
           >
-            <FiX className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            <FiX className="w-5 h-5 text-gray-600" />
           </button>
         </div>
         
@@ -49,8 +49,8 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
                   href={item.href}
                   className={`flex items-center p-3 rounded-lg transition-colors ${
                     pathname === item.href
-                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   <span className="mr-3">{item.icon}</span>
@@ -60,8 +60,8 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
             ))}
           </ul>
           
-          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button className="flex items-center w-full p-3 text-red-600 rounded-lg hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30">
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <button className="flex items-center w-full p-3 text-red-600 rounded-lg hover:bg-red-50">
               <FiLogOut className="w-5 h-5 mr-3" />
               <span>Logout</span>
             </button>

@@ -4,8 +4,8 @@ export default function DashboardPage() {
   return (
     <DashboardLayout title="Dashboard">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Welcome back! Here's what's happening with your events.</p>
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+        <p className="mt-1 text-sm text-gray-500">Welcome back! Here's what's happening with your events.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -15,11 +15,11 @@ export default function DashboardPage() {
           { title: 'Attendees', value: '1,254', change: '+8.2%', trend: 'up' },
           { title: 'Completion Rate', value: '92%', change: '+5%', trend: 'up' },
         ].map((stat, index) => (
-          <div key={index} className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.title}</p>
+          <div key={index} className="bg-white rounded-xl shadow p-6">
+            <p className="text-sm font-medium text-gray-500">{stat.title}</p>
             <div className="mt-2 flex items-baseline">
-              <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stat.value}</p>
-              <span className={`ml-2 text-sm font-medium ${stat.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+              <span className={`ml-2 text-sm font-medium ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
                 {stat.change}
               </span>
             </div>
@@ -28,33 +28,33 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Recent Events</h2>
+        <div className="lg:col-span-2 bg-white rounded-xl shadow p-6">
+          <h2 className="text-lg font-medium text-gray-900 mb-4">Recent Events</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <table className="min-w-full divide-y divide-gray-200">
               <thead>
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Event</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Attendees</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attendees</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {[
                   { name: 'Tech Conference 2023', date: 'Jun 15, 2023', attendees: '245', status: 'Upcoming' },
                   { name: 'Product Launch', date: 'May 28, 2023', attendees: '189', status: 'Completed' },
                   { name: 'Team Workshop', date: 'May 20, 2023', attendees: '32', status: 'Completed' },
                 ].map((event, index) => (
-                  <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{event.name}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{event.date}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{event.attendees}</td>
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{event.name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{event.date}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{event.attendees}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-right text-sm">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         event.status === 'Upcoming' 
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
-                          : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                          ? 'bg-blue-100 text-blue-800' 
+                          : 'bg-green-100 text-green-800'
                       }`}>
                         {event.status}
                       </span>
@@ -66,8 +66,8 @@ export default function DashboardPage() {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Upcoming Events</h2>
+        <div className="bg-white rounded-xl shadow p-6">
+          <h2 className="text-lg font-medium text-gray-900 mb-4">Upcoming Events</h2>
           <div className="space-y-4">
             {[
               { 
@@ -90,13 +90,13 @@ export default function DashboardPage() {
               },
             ].map((event, index) => (
               <div key={index} className="border-l-4 border-blue-500 pl-4 py-2">
-                <h3 className="text-sm font-medium text-gray-900 dark:text-white">{event.title}</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{event.date} • {event.time}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{event.location}</p>
+                <h3 className="text-sm font-medium text-gray-900">{event.title}</h3>
+                <p className="text-xs text-gray-500">{event.date} • {event.time}</p>
+                <p className="text-xs text-gray-500 mt-1">{event.location}</p>
               </div>
             ))}
           </div>
-          <button className="mt-4 w-full text-center text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+          <button className="mt-4 w-full text-center text-sm font-medium text-blue-600 hover:text-blue-500">
             View all events
           </button>
         </div>
