@@ -1,0 +1,362 @@
+[
+    {
+      "id": "evt-001",
+      "name": "Annual Tech Conference 2023",
+      "description": "Join us for the biggest tech conference of the year featuring keynotes from industry leaders and workshops on cutting-edge technologies.",
+      "date": {
+        "start": "2023-11-15T09:00:00Z",
+        "end": "2023-11-17T18:00:00Z"
+      },
+      "location": {
+        "name": "Tech Convention Center",
+        "address": "123 Innovation Blvd",
+        "city": "San Francisco",
+        "country": "USA"
+      },
+      "status": "upcoming",
+      "organizer": {
+        "name": "TechEvents Inc.",
+        "email": "contact@techevents.com",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 1200,
+      "category": "Technology",
+      "tags": [
+        "tech",
+        "innovation",
+        "conference",
+        "networking"
+      ],
+      "image": "https://picsum.photos/seed/techconf/800/400"
+    },
+    {
+      "id": "evt-002",
+      "name": "Design Systems Workshop",
+      "description": "A hands-on workshop focused on creating and maintaining effective design systems for product teams.",
+      "date": {
+        "start": "2023-10-05T10:00:00Z",
+        "end": "2023-10-05T16:00:00Z"
+      },
+      "location": {
+        "name": "Creative Hub",
+        "address": "456 Design Avenue",
+        "city": "New York",
+        "country": "USA"
+      },
+      "status": "completed",
+      "organizer": {
+        "name": "DesignPro Academy",
+        "email": "workshops@designpro.com",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 75,
+      "category": "Design",
+      "tags": [
+        "design",
+        "workshop",
+        "UI/UX",
+        "product design"
+      ],
+      "image": "https://picsum.photos/seed/designworkshop/800/400"
+    },
+    {
+      "id": "evt-003",
+      "name": "Startup Pitch Night",
+      "description": "An evening of innovative startup pitches with feedback from venture capitalists and industry experts.",
+      "date": {
+        "start": "2023-10-20T18:00:00Z",
+        "end": "2023-10-20T21:00:00Z"
+      },
+      "location": {
+        "name": "Venture Hub",
+        "address": "789 Startup Lane",
+        "city": "Austin",
+        "country": "USA"
+      },
+      "status": "ongoing",
+      "organizer": {
+        "name": "Founder Network",
+        "email": "events@foundernetwork.com",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 150,
+      "category": "Business",
+      "tags": [
+        "startup",
+        "pitch",
+        "venture capital",
+        "entrepreneurship"
+      ],
+      "image": "https://picsum.photos/seed/startuppitch/800/400"
+    },
+    {
+      "id": "evt-004",
+      "name": "AI and Machine Learning Summit",
+      "description": "Explore the latest advancements in artificial intelligence and machine learning with industry experts.",
+      "date": {
+        "start": "2023-12-10T09:00:00Z",
+        "end": "2023-12-12T17:00:00Z"
+      },
+      "location": {
+        "name": "Science Park Conference Center",
+        "address": "101 Innovation Drive",
+        "city": "Boston",
+        "country": "USA"
+      },
+      "status": "upcoming",
+      "organizer": {
+        "name": "AI Research Institute",
+        "email": "summit@airesearch.org",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 800,
+      "category": "Technology",
+      "tags": [
+        "AI",
+        "machine learning",
+        "data science",
+        "research"
+      ],
+      "image": "https://picsum.photos/seed/aisummit/800/400"
+    },
+    {
+      "id": "evt-005",
+      "name": "Digital Marketing Masterclass",
+      "description": "A comprehensive masterclass covering the latest digital marketing strategies and tools for 2023.",
+      "date": {
+        "start": "2023-09-15T10:00:00Z",
+        "end": "2023-09-16T16:00:00Z"
+      },
+      "location": {
+        "name": "Marketing Hub",
+        "address": "202 Social Media Street",
+        "city": "Chicago",
+        "country": "USA"
+      },
+      "status": "completed",
+      "organizer": {
+        "name": "Digital Marketing Pros",
+        "email": "learn@dmprofs.com",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 250,
+      "category": "Marketing",
+      "tags": [
+        "digital marketing",
+        "SEO",
+        "social media",
+        "content strategy"
+      ],
+      "image": "https://picsum.photos/seed/marketingclass/800/400"
+    },
+    {
+      "id": "evt-006",
+      "name": "Sustainable Architecture Expo",
+      "description": "Showcasing innovative sustainable architecture designs and eco-friendly building materials.",
+      "date": {
+        "start": "2023-11-25T09:00:00Z",
+        "end": "2023-11-27T18:00:00Z"
+      },
+      "location": {
+        "name": "Green Building Center",
+        "address": "303 Eco Avenue",
+        "city": "Portland",
+        "country": "USA"
+      },
+      "status": "upcoming",
+      "organizer": {
+        "name": "Sustainable Design Coalition",
+        "email": "expo@sustainabledesign.org",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 600,
+      "category": "Architecture",
+      "tags": [
+        "sustainability",
+        "architecture",
+        "eco-friendly",
+        "design"
+      ],
+      "image": "https://picsum.photos/seed/architecture/800/400"
+    },
+    {
+      "id": "evt-007",
+      "name": "Health & Wellness Festival",
+      "description": "A weekend festival dedicated to health, wellness, and holistic living with workshops and exhibitors.",
+      "date": {
+        "start": "2023-10-07T08:00:00Z",
+        "end": "2023-10-08T20:00:00Z"
+      },
+      "location": {
+        "name": "Wellness Park",
+        "address": "404 Healthy Living Way",
+        "city": "Los Angeles",
+        "country": "USA"
+      },
+      "status": "completed",
+      "organizer": {
+        "name": "Wellness Collective",
+        "email": "festival@wellnesscollective.com",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 1500,
+      "category": "Health",
+      "tags": [
+        "wellness",
+        "health",
+        "fitness",
+        "mindfulness"
+      ],
+      "image": "https://picsum.photos/seed/wellness/800/400"
+    },
+    {
+      "id": "evt-008",
+      "name": "Blockchain & Cryptocurrency Forum",
+      "description": "An educational forum on blockchain technology, cryptocurrency developments, and decentralized finance.",
+      "date": {
+        "start": "2023-12-05T09:00:00Z",
+        "end": "2023-12-06T17:00:00Z"
+      },
+      "location": {
+        "name": "Financial District Conference Center",
+        "address": "505 Crypto Street",
+        "city": "Miami",
+        "country": "USA"
+      },
+      "status": "upcoming",
+      "organizer": {
+        "name": "Blockchain Alliance",
+        "email": "forum@blockchainalliance.org",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 450,
+      "category": "Finance",
+      "tags": [
+        "blockchain",
+        "cryptocurrency",
+        "DeFi",
+        "finance"
+      ],
+      "image": "https://picsum.photos/seed/blockchain/800/400"
+    },
+    {
+      "id": "evt-009",
+      "name": "Photography Workshop Series",
+      "description": "A series of workshops covering various photography techniques from basics to advanced editing.",
+      "date": {
+        "start": "2023-10-14T10:00:00Z",
+        "end": "2023-10-15T16:00:00Z"
+      },
+      "location": {
+        "name": "Visual Arts Studio",
+        "address": "606 Camera Lane",
+        "city": "Seattle",
+        "country": "USA"
+      },
+      "status": "completed",
+      "organizer": {
+        "name": "Photography Guild",
+        "email": "workshops@photoguild.com",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 100,
+      "category": "Arts",
+      "tags": [
+        "photography",
+        "workshop",
+        "visual arts",
+        "editing"
+      ],
+      "image": "https://picsum.photos/seed/photoworkshop/800/400"
+    },
+    {
+      "id": "evt-010",
+      "name": "Food & Wine Festival",
+      "description": "A culinary celebration featuring local chefs, wineries, and food artisans with tastings and demonstrations.",
+      "date": {
+        "start": "2023-11-03T11:00:00Z",
+        "end": "2023-11-05T22:00:00Z"
+      },
+      "location": {
+        "name": "Culinary Park",
+        "address": "707 Gourmet Avenue",
+        "city": "Napa Valley",
+        "country": "USA"
+      },
+      "status": "ongoing",
+      "organizer": {
+        "name": "Culinary Arts Association",
+        "email": "festival@culinaryarts.org",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 2000,
+      "category": "Food & Beverage",
+      "tags": [
+        "food",
+        "wine",
+        "culinary",
+        "festival"
+      ],
+      "image": "https://picsum.photos/seed/foodfestival/800/400"
+    },
+    {
+      "id": "evt-011",
+      "name": "Music Industry Conference",
+      "description": "A conference for music industry professionals covering trends, technology, and business strategies.",
+      "date": {
+        "start": "2023-12-15T09:00:00Z",
+        "end": "2023-12-17T18:00:00Z"
+      },
+      "location": {
+        "name": "Harmony Hall",
+        "address": "808 Melody Street",
+        "city": "Nashville",
+        "country": "USA"
+      },
+      "status": "upcoming",
+      "organizer": {
+        "name": "Music Industry Alliance",
+        "email": "conference@musicalliance.com",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 750,
+      "category": "Entertainment",
+      "tags": [
+        "music",
+        "industry",
+        "business",
+        "technology"
+      ],
+      "image": "https://picsum.photos/seed/musicconf/800/400"
+    },
+    {
+      "id": "evt-012",
+      "name": "Education Innovation Summit",
+      "description": "A summit focused on innovative approaches to education, learning technologies, and teaching methodologies.",
+      "date": {
+        "start": "2023-11-08T08:30:00Z",
+        "end": "2023-11-10T16:30:00Z"
+      },
+      "location": {
+        "name": "Learning Center",
+        "address": "909 Education Boulevard",
+        "city": "Denver",
+        "country": "USA"
+      },
+      "status": "upcoming",
+      "organizer": {
+        "name": "Education Forward",
+        "email": "summit@educationforward.org",
+        "avatar": "https://github.com/polymet-ai.png"
+      },
+      "attendees": 550,
+      "category": "Education",
+      "tags": [
+        "education",
+        "innovation",
+        "learning",
+        "technology"
+      ],
+      "image": "https://picsum.photos/seed/eduinnovation/800/400"
+    }
+  ]
