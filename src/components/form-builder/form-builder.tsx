@@ -6,7 +6,7 @@ import FormCanvas from "./form-canvas";
 import PropertiesPanel from "./properties-panel";
 import FormPreview from "./form-preview";
 import { Button } from "@/components/ui/button";
-import { Eye, Save, Home } from "lucide-react";
+import { Eye, Save, Home, ArrowBigLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
@@ -58,19 +58,17 @@ export default function FormBuilder() {
         {/* Header */}
         <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center flex-shrink-0">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Registration Form Builder</h1>
-            <p className="text-sm text-gray-500 mt-1">Drag and drop fields to create your custom registration form</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
+          <Button
               variant="ghost"
               size="sm"
-              className="text-gray-600 hover:text-gray-800 cursor-pointer"
-              onClick={() => window.location.href = "/dashboard"}
+              className="text-gray-600 border-2 border-gray-200 hover:bg-gray-50 hover:text-gray-800 cursor-pointer"
+              onClick={() => window.location.href = "/form-builder"}
             >
-              <Home className="w-4 h-4 mr-2" />
-              Dashboard
+              Back to Forms
             </Button>
+          </div>
+          <div className="flex items-center gap-3">
+            
             <Button
               variant="ghost"
               size="sm"

@@ -24,23 +24,20 @@ export function EmailBuilderClient() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white flex justify-between border-b border-gray-200 px-6 py-3">
+      <header className="bg-white flex justify-between border-b border-gray-200 px-6 py-4">
       <div>
-            <h1 className="text-xl font-semibold text-gray-900">Email Template Builder</h1>
-            <p className="text-sm text-gray-500 mt-1">Drag and drop fields to create your custom registration form</p>
-        </div>
-        <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-end sm:space-y-0">
-          
-          <div className="flex items-center space-x-3">
           <Button
               variant="ghost"
               size="sm"
-              className="text-gray-600 hover:text-gray-800 cursor-pointer"
-              onClick={() => window.location.href = "/dashboard"}
+              className="text-gray-600 border-2 border-gray-200 hover:bg-gray-50 hover:text-gray-800 cursor-pointer"
+              onClick={() => window.location.href = "/email-builder"}
             >
-              <Home className="w-4 h-4 mr-2" />
-              Dashboard
+              Back to Email Templates
             </Button>
+          </div>
+        <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-end sm:space-y-0">
+          
+          <div className="flex items-center space-x-3">
             <Button 
               className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors"
             >

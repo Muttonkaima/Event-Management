@@ -17,15 +17,7 @@ export function EmailBlockSidebar({ onAddBlock }: EmailBlockSidebarProps) {
 
   return (
     <div className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
-      <div className="p-4 border-b border-gray-200">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search blocks..."
-            className="pl-9 h-9 text-sm"
-          />
-        </div>
-      </div>
+      
       
       <ScrollArea className="flex-1 p-3">
         <div className="space-y-2">
