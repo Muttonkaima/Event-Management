@@ -37,7 +37,7 @@ export function EmailPreview({
     return (
       <div
         key={block.id}
-        className={`email-block relative group cursor-pointer ${isSelected ? 'selected' : ''}`}
+        className={`email-block relative group cursor-pointer ${isSelected ? 'shadow-sm selected' : ''}`}
         onClick={() => onSelectBlock(block.id)}
       >
         <button
