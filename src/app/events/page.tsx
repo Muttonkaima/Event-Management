@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FiSearch, FiFilter, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
+import Link from 'next/link';
 import eventsData from '@/data/events.json';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
@@ -82,9 +83,12 @@ export default function EventsPage() {
           </div>
           <div className="flex items-center gap-4">
             
-            <button className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg cursor-pointer">
+            <Link 
+              href="/create-event"
+              className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg cursor-pointer hover:bg-gray-800 transition-colors"
+            >
               Create Event
-            </button>
+            </Link>
             <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
               <button 
                 onClick={() => setViewMode('grid')}
