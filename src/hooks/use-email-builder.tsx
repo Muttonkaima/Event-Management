@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { EmailBlock } from "@/shared/schema";
+import { EmailBlock } from "@/shared/emailSchema";
 import { defaultBlocks, blockTemplates } from "@/lib/email-blocks";
 
 export function useEmailBuilder() {

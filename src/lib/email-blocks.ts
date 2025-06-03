@@ -1,4 +1,4 @@
-import { EmailBlock } from "@/shared/schema";
+import { EmailBlock } from "@/shared/emailSchema";
 
 export const defaultBlocks: EmailBlock[] = [
   {
