@@ -94,19 +94,21 @@ export function EmailPreview({
         {block.type === 'button' && (
           <div
             style={{
-              ...commonStyles,
               textAlign: properties.textAlignment || 'center',
             }}
           >
             <button
               className="px-6 py-3 bg-blue-600 text-white rounded font-medium hover:bg-blue-700"
               style={{
-                fontSize: `${properties.fontSize || 16}px`,
+                fontSize: `${properties.fontSize || 20}px`,
                 fontWeight: properties.fontWeight || 'medium',
-                borderRadius: `${properties.borderRadius || 4}px`,
+                borderRadius: `${properties.borderRadius || 20}px`,
+                padding: `${properties.padding || 16}px`,
+                backgroundColor: properties.backgroundColor || '#000000',
+                color: properties.textColor || '#ffffff',
               }}
             >
-              {properties.buttonText || 'Button Text'}
+              {properties.buttonText || 'Button'}
             </button>
           </div>
         )}
@@ -148,12 +150,10 @@ export function EmailPreview({
         </div>
 
         <div className="text-center py-6 border-t border-gray-200">
-          <p className="text-sm text-gray-500 mb-4">
-            Drag blocks from the left sidebar to add them to your email
-          </p>
+         
           <button
             onClick={onExportTemplate}
-            className="flex items-center justify-center space-x-2 mx-auto px-4 py-2 border border-gray-200 rounded-md hover:bg-gray-50"
+            className="flex items-center text-gray-900 justify-center space-x-2 mx-auto px-4 py-2 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer"
           >
             <span className="text-sm font-medium">Export Template</span>
           </button>
