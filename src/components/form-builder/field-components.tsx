@@ -82,7 +82,7 @@ export default function FieldComponent({ field, isSelected, onSelect }: FieldCom
         return (
           <div className="flex items-center gap-3">
             <Checkbox disabled />
-            <span className="text-sm">{field.label}</span>
+            <span className="text-sm text-gray-700">{field.label}</span>
           </div>
         );
       

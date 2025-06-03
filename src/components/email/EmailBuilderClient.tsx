@@ -1,15 +1,25 @@
 "use client";
 
+import { useState } from 'react';
 import { EmailBlockSidebar } from "@/components/email/EmailBlockSidebar";
 import { EmailPreview } from "@/components/email/EmailPreview";
+import { EmailPreviewModal } from "@/components/email/EmailPreviewModal";
 import { PropertiesPanel } from "@/components/email/PropertiesPanel";
 import { useEmailBuilder } from "@/hooks/use-email-builder";
-import { Eye, Save, Palette, Code, Settings } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Eye, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Home } from "lucide-react";
 
 export function EmailBuilderClient() {
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [emailSubject, setEmailSubject] = useState('Your Email Subject');
+  const [previewText, setPreviewText] = useState('This is a preview of your email template');
+
+  // Debug logs
+  console.log('Preview modal state:', isPreviewOpen);
+  const handlePreviewClick = () => {
+    console.log('Preview button clicked');
+    setIsPreviewOpen(true);
+  };
   const {
     blocks,
     selectedBlockId,
@@ -24,8 +34,8 @@ export function EmailBuilderClient() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white flex justify-between border-b border-gray-200 px-6 py-4">
-      <div>
+      <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center flex-shrink-0">
+          <div>
           <Button
               variant="ghost"
               size="sm"
@@ -35,27 +45,27 @@ export function EmailBuilderClient() {
               Back to Email Templates
             </Button>
           </div>
-        <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-end sm:space-y-0">
-          
-          <div className="flex items-center space-x-3">
-            <Button 
-              className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors"
+          <div className="flex items-center gap-3">
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-gray-600 border-2 border-gray-200 hover:text-gray-800 hover:bg-gray-50 cursor-pointer"
+              onClick={handlePreviewClick}
             >
-              <Eye className="w-4 h-4" />
-              <span>Preview</span>
+              <Eye className="w-4 h-4 mr-2" />
+              Preview
             </Button>
-            <Button 
+            <Button
+              size="sm"
+              className="bg-gray-900 text-white hover:bg-gray-800 cursor-pointer"
               onClick={exportTemplate}
-              className="flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium cursor-pointer transition-colors"
             >
-              <Save className="w-4 h-4" />
-              <span>Save Template</span>
+              <Save className="w-4 h-4 mr-2" />
+              Save Template
             </Button>
           </div>
-        </div>
-        
-        
-      </header>
+        </header>
 
       {/* Main Content */}
       <div className="flex flex-col h-[calc(90vh)] md:flex-row">
@@ -78,6 +88,18 @@ export function EmailBuilderClient() {
           onDeleteBlock={deleteBlock}
         />
       </div>
+      
+      {/* Email Preview Modal */}
+      <EmailPreviewModal 
+        isOpen={isPreviewOpen}
+        onCloseAction={() => {
+          console.log('Closing preview modal');
+          setIsPreviewOpen(false);
+        }}
+        blocks={blocks}
+        subject={emailSubject}
+        previewText={previewText}
+      />
     </div>
   );
 }

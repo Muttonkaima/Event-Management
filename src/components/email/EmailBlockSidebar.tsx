@@ -28,18 +28,18 @@ export function EmailBlockSidebar({ onAddBlock }: EmailBlockSidebarProps) {
               return (
                 <div
                   key={block.type}
-                  className="group relative bg-white border border-gray-200 rounded-lg p-3 cursor-pointer hover:border-indigo-300 hover:bg-indigo-50 transition-colors drag-handle flex flex-col items-center justify-center aspect-square"
+                  className="group relative bg-white border border-gray-200 rounded-lg p-3 cursor-grab active:cursor-grabbing hover:bg-gray-100 transition-colors drag-handle flex flex-col items-center justify-center aspect-square"
                   onClick={() => onAddBlock(block.type)}
                   draggable
                   onDragStart={(e) => {
                     e.dataTransfer.setData('blockType', block.type);
                   }}
                 >
-                  <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center mb-2 text-black group-hover:bg-black group-hover:text-white transition-colors">
+                  <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mb-2 text-black group-hover:bg-gray-200 group-hover:text-gray-900 transition-colors">
                     <Icon className="w-5 h-5" />
                   </div>
                   <span className="text-xs font-medium text-gray-700 text-center">{block.label}</span>
-                  <div className="absolute inset-0 rounded-lg border-2 border-transparent group-hover:border-black transition-all pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-lg border-2 border-transparent transition-all pointer-events-none"></div>
                 </div>
               );
             })}

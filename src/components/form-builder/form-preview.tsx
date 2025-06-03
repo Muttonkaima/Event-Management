@@ -18,7 +18,7 @@ interface FormPreviewProps {
 export default function FormPreview({ isOpen, onClose, form, fields }: FormPreviewProps) {
   const renderField = (field: FormField) => {
     const baseClasses = "w-full";
-    
+
     switch (field.type) {
       case 'text-input':
         return (
@@ -28,7 +28,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             required={field.required}
           />
         );
-      
+
       case 'email':
         return (
           <Input
@@ -38,7 +38,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             required={field.required}
           />
         );
-      
+
       case 'number':
         return (
           <Input
@@ -48,7 +48,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             required={field.required}
           />
         );
-      
+
       case 'textarea':
         return (
           <Textarea
@@ -58,7 +58,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             required={field.required}
           />
         );
-      
+
       case 'dropdown':
         return (
           <Select required={field.required}>
@@ -74,15 +74,15 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             </SelectContent>
           </Select>
         );
-      
+
       case 'checkbox':
         return (
           <div className="flex items-center gap-3">
             <Checkbox required={field.required} />
-            <span className="text-sm">{field.label}</span>
+            <span className="text-sm text-gray-700">{field.label}</span>
           </div>
         );
-      
+
       case 'file':
         return (
           <Input
@@ -91,7 +91,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             required={field.required}
           />
         );
-      
+
       case 'date':
         return (
           <Input
@@ -101,7 +101,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             required={field.required}
           />
         );
-      
+
       case 'phone':
         return (
           <Input
@@ -111,7 +111,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             required={field.required}
           />
         );
-      
+
       default:
         return (
           <Input
@@ -125,75 +125,97 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] bg-white overflow-auto">
-        <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <div>
-            <DialogTitle className="text-xl font-semibold text-gray-900">Form Preview</DialogTitle>
-            <p className="text-sm text-gray-500 mt-1">This is how your form will appear to users</p>
+      <DialogContent className="max-w-3xl max-h-[95vh] overflow-y-auto p-0 bg-white">
+        <DialogHeader className="border-b border-gray-200 p-3 sticky top-0 bg-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle className="text-xl font-semibold text-gray-900">
+                Form Preview
+              </DialogTitle>
+              <p className="text-sm text-gray-500 mt-1">
+                This is how your form will appear to users
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="h-8 w-8 p-0"
+            >
+              <X className="h-5 w-5 text-gray-500" />
+              <span className="sr-only">Close</span>
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="h-8 w-8 p-0"
-          >
-            <X className="h-4 w-4 text-gray-500 cursor-pointer" />
-          </Button>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Form Header */}
-          <div className="text-center space-y-2 pb-6 border-b">
-            <h1 className="text-2xl font-bold text-gray-900">
-              {form.title || "Untitled Form"}
-            </h1>
-            {form.description && (
-              <p className="text-gray-600 max-w-lg mx-auto">
-                {form.description}
-              </p>
-            )}
-          </div>
-
-          {/* Form Fields */}
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-            {fields.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <p className="text-lg font-medium mb-2">No fields added yet</p>
-                <p className="text-sm">Add some fields to see the preview</p>
-              </div>
-            ) : (
-              fields.map((field) => (
-                <div key={field.id} className="space-y-2">
-                  {field.type !== 'checkbox' && (
-                    <label className="block text-sm font-medium text-gray-700">
-                      {field.label}
-                      {field.required && (
-                        <Badge variant="destructive" className="ml-2 text-xs px-1 py-0 bg-red-100 text-red-600">
-                          Required
-                        </Badge>
-                      )}
-                    </label>
-                  )}
-                  
-                  {renderField(field)}
-                  
-                  {field.helpText && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      {field.helpText}
-                    </p>
-                  )}
+        <div className="overflow-y-auto p-6">
+          {/* Email Container */}
+          <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-lg overflow-hidden">
+            {/* Email Header */}
+            <div className="bg-gray-50 p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
                 </div>
-              ))
-            )}
-
-            {fields.length > 0 && (
-              <div className="pt-6 border-t">
-                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-                  Submit Form
-                </Button>
+                <div className="text-sm text-gray-500">
+                  {form.title}
+                </div>
+                <div className="w-12"></div>
               </div>
-            )}
-          </form>
+            </div>
+
+
+
+            {/* Email Content */}
+            <div className="p-8">
+              <div className="mb-6 text-center">
+                <div className="text-3xl font-semibold text-gray-900">
+                  {form.title}
+                </div>
+                {/* Preview Text (hidden in most email clients but visible in inbox) */}
+                <div className="text-gray-500 text-md mb-6">
+                  {form.description}
+                </div>
+              </div>
+
+              {/* Email Body */}
+              <div className="prose max-w-none">
+                {fields.length > 0 ? (
+                  fields.map((field) => (
+                    <div key={field.id} className="mb-6 last:mb-0">
+                      <div className="mb-2 text-sm text-gray-900">
+                        {field.label}
+                      </div>
+                      {renderField(field)}
+                    </div>
+
+                  ))
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    <p className="text-lg font-medium mb-2">No content added yet</p>
+                    <p className="text-sm">Add some blocks to see the preview</p>
+                  </div>
+                )}
+              </div>
+              <div className="flex justify-end">
+              <Button
+                  variant="outline"
+                  size="sm"
+                  className="cursor-not-allowed"
+                  >Submit</Button>
+                  </div>
+              {/* Email Footer */}
+              <div className="mt-12 pt-6 border-t border-gray-100 text-center text-sm text-gray-500">
+                <p>© {new Date().getFullYear()} Your Company. All rights reserved.</p>
+                <p className="mt-1">
+                  <a href="#" className="text-blue-600 hover:underline">Unsubscribe</a> |
+                  <a href="#" className="text-blue-600 hover:underline ml-2">View in browser</a>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -93,7 +93,9 @@ export default function FormBuilder() {
         {/* Main Content */}
         <div className="flex-1 flex overflow-hidden">
           <FieldsSidebar />
-          <FormCanvas />
+          <div className="flex-1 overflow-y-auto">
+            <FormCanvas />
+          </div>
           <PropertiesPanel />
         </div>
       </div>
