@@ -33,7 +33,7 @@ export default function Header({ toggleSidebarAction: toggleSidebar }: HeaderPro
               onClick={() => setIsProfileOpen(!isProfileOpen)}
               className="flex items-center space-x-2 focus:outline-none"
             >
-              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+              <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white">
                 <FiUser className="w-4 h-4" />
               </div>
               <span className="hidden md:inline text-sm font-medium text-gray-700">

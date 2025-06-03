@@ -6,9 +6,9 @@ import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiMenu, FiX } from '
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
-  { name: 'Events', href: '/dashboard/events', icon: <FiCalendar className="w-5 h-5" /> },
-  { name: 'Attendees', href: '/dashboard/attendees', icon: <FiUsers className="w-5 h-5" /> },
-  { name: 'Settings', href: '/dashboard/settings', icon: <FiSettings className="w-5 h-5" /> },
+  { name: 'Events', href: '/events', icon: <FiCalendar className="w-5 h-5" /> },
+  { name: 'Attendees', href: '/attendees', icon: <FiUsers className="w-5 h-5" /> },
+  { name: 'Settings', href: '/settings', icon: <FiSettings className="w-5 h-5" /> },
 ];
 
 export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boolean; toggleSidebarAction: () => void }) {
@@ -49,7 +49,7 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
                   href={item.href}
                   className={`flex items-center p-3 rounded-lg transition-colors ${
                     pathname === item.href
-                      ? 'bg-blue-50 text-blue-600'
+                      ? 'bg-black/10 text-black'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >

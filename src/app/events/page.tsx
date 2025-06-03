@@ -81,6 +81,10 @@ export default function EventsPage() {
             <p className="text-sm text-gray-600">Find and join events that interest you</p>
           </div>
           <div className="flex items-center gap-4">
+            
+            <button className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg cursor-pointer">
+              Create Event
+            </button>
             <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
               <button 
                 onClick={() => setViewMode('grid')}
@@ -98,9 +102,55 @@ export default function EventsPage() {
                 <FiList className={`w-4 h-4 ${viewMode === 'list' ? 'text-gray-900' : 'text-gray-500'}`} />
               </button>
             </div>
-            <button className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg cursor-pointer">
-              Create Event
-            </button>
+          </div>
+        </div>
+
+        {/* Search and Filter Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="relative w-full sm:w-96">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiSearch className="h-4 w-4 text-gray-700" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-10 text-gray-700 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 text-sm"
+              placeholder="Search events..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="relative">
+              <select
+                className="appearance-none pl-3 pr-8 py-2 text-gray-700 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                <option value="All Categories">All Categories</option>
+                {categories.filter(cat => cat !== 'All Categories').map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <FiChevronDown className="h-4 w-4 text-gray-700" />
+              </div>
+            </div>
+            
+            <div className="relative">
+              <select
+                className="appearance-none pl-3 pr-8 py-2 text-gray-700 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+              >
+                {dates.map((date) => (
+                  <option key={date} value={date}>{date}</option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <FiChevronDown className="h-4 w-4 text-gray-700" />
+              </div>
+            </div>
           </div>
         </div>
 
