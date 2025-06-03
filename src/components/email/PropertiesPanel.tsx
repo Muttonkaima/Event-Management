@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { Trash2 } from "lucide-react";
+import { FaAlignLeft, FaAlignCenter, FaAlignRight, FaAlignJustify } from "react-icons/fa";
 
 interface PropertiesPanelProps {
   selectedBlock: EmailBlock | undefined;
@@ -15,9 +16,20 @@ interface PropertiesPanelProps {
 export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock }: PropertiesPanelProps) {
   if (!selectedBlock) {
     return (
-      <div className="w-80 bg-gray-50 border-l border-gray-200 p-4">
-        <h2 className="text-sm font-semibold text-black mb-4">Properties</h2>
-        <p className="text-sm text-gray-500">Select a block to edit its properties</p>
+      <div className="w-80 bg-white border-l border-gray-200 h-full overflow-y-auto">
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-5 py-3">
+          <h2 className="text-base font-semibold text-gray-900">Properties</h2>
+        </div>
+        <div className="p-6 text-center">
+          <div className="mx-auto w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-indigo-600">
+              <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+              <path d="M21 3v5h-5"/>
+            </svg>
+          </div>
+          <h3 className="text-sm font-medium text-gray-900 mb-1">No block selected</h3>
+          <p className="text-sm text-gray-500">Click on a block to edit its properties</p>
+        </div>
       </div>
     );
   }
@@ -40,53 +52,88 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
   };
 
   return (
-    <div className="w-80 bg-gray-50 border-l max-h-[calc(100vh-73px)] overflow-y-auto border-gray-200 p-4">
-      <h2 className="text-sm font-semibold text-black mb-4">Properties</h2>
-      
-      <div className="bg-white border border-gray-200 rounded-md p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-black">{getBlockTitle()}</h3>
+    <div className="w-80 bg-white border-l border-gray-200 h-full overflow-y-auto">
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-5 py-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-semibold text-gray-900">Properties</h2>
+            <p className="text-xs text-gray-500">Configure the selected block</p>
+          </div>
           <button
-            className="w-5 h-5 text-red-500 hover:bg-red-50 rounded flex items-center justify-center"
             onClick={() => onDeleteBlock(id)}
+            className="text-gray-400 hover:text-red-500 transition-colors"
+            title="Delete block"
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
+      </div>
+      
+      <div className="p-5 space-y-6">
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-gray-900">{getBlockTitle()}</h3>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </span>
+          </div>
+          
+        <div className="space-y-5">
 
         <div className="space-y-4">
           {/* Content Properties */}
           {type === 'header' && (
-            <div>
-              <label className="block text-xs font-medium text-black mb-2">Header Text</label>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">Header Text</label>
               <Input
                 value={properties.headerText || ''}
                 onChange={(e) => handlePropertyChange('headerText', e.target.value)}
                 className="text-sm"
+                placeholder="Enter header text..."
               />
             </div>
           )}
 
           {type === 'text' && (
-            <div>
-              <label className="block text-xs font-medium text-black mb-2">Text Content</label>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">Text Content</label>
               <Textarea
                 rows={4}
                 value={properties.textContent || ''}
                 onChange={(e) => handlePropertyChange('textContent', e.target.value)}
-                className="text-sm"
+                className="text-sm min-h-[100px]"
+                placeholder="Enter your text here..."
               />
             </div>
           )}
 
           {type === 'image' && (
-            <div>
-              <label className="block text-xs font-medium text-black mb-2">Image URL</label>
-              <Input
-                value={properties.imageUrl || ''}
-                onChange={(e) => handlePropertyChange('imageUrl', e.target.value)}
-                className="text-sm"
-              />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">Image URL</label>
+              <div className="flex space-x-2">
+                <Input
+                  value={properties.imageUrl || ''}
+                  onChange={(e) => handlePropertyChange('imageUrl', e.target.value)}
+                  className="text-sm flex-1"
+                  placeholder="https://example.com/image.jpg"
+                />
+                <button 
+                  className="px-3 py-2 text-xs font-medium border border-gray-300 rounded-md hover:bg-gray-50"
+                  onClick={() => {}}
+                >
+                  Upload
+                </button>
+              </div>
+              {properties.imageUrl && (
+                <div className="mt-2 p-2 border border-gray-200 rounded-md">
+                  <div className="text-xs text-gray-500 mb-1">Preview</div>
+                  <img 
+                    src={properties.imageUrl} 
+                    alt="Preview" 
+                    className="max-w-full h-auto rounded border border-gray-200"
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -101,39 +148,61 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
             </div>
           )}
 
-          {/* Styling Label */}
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-2">Styling</label>
-          </div>
+          {/* Styling Section */}
+          <div className="border-t border-gray-200 pt-4">
+            <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Styling</h4>
 
           {/* Text Alignment */}
           {(type === 'header' || type === 'text' || type === 'button') && (
-            <div>
-              <label className="block text-xs font-medium text-black mb-2">Text Alignment</label>
-              <Select
-                value={properties.textAlignment || 'left'}
-                onValueChange={(value: string) => handlePropertyChange('textAlignment', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="left">Left</SelectItem>
-                  <SelectItem value="center">Center</SelectItem>
-                  <SelectItem value="right">Right</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">Text Alignment</label>
+              <div className="flex border border-gray-200 rounded-md p-0.5 bg-gray-50">
+                {[
+                  { value: 'left', icon: <FaAlignLeft />, label: 'Left' },
+                  { value: 'center', icon: <FaAlignCenter />, label: 'Center' },
+                  { value: 'right', icon: <FaAlignRight />, label: 'Right' },
+                  { value: 'justify', icon: <FaAlignJustify />, label: 'Justify' }
+                ].map((align) => (
+                  <button
+                    key={align.value}
+                    type="button"
+                    className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                      (properties.textAlignment || 'left') === align.value
+                        ? 'bg-white shadow-sm border border-gray-300 text-gray-900'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    }`}
+                    onClick={() => handlePropertyChange('textAlignment', align.value)}
+                    title={align.label}
+                  >
+                    <span 
+                      className={`inline-block text-lg leading-none ${
+                        align.value === 'left' ? 'text-left' : 
+                        align.value === 'center' ? 'text-center' : 
+                        align.value === 'right' ? 'text-right' : 'text-justify'
+                      }`}
+                      style={{ width: '1em', margin: '0 auto' }}
+                    >
+                      {align.icon}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
           {/* Font Size */}
           {(type === 'header' || type === 'text' || type === 'button') && (
-            <div>
-              <label className="block text-xs font-medium text-black mb-2">Font Size</label>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">Font Size</label>
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                  {properties.fontSize || (type === 'header' ? 24 : 16)}px
+                </span>
+              </div>
               <div className="flex items-center space-x-3">
                 <div className="flex-1">
                   <Slider
-                    value={[properties.fontSize || 16]}
+                    value={[properties.fontSize || (type === 'header' ? 24 : 16)]}
                     onValueChange={([value]: number[]) => handlePropertyChange('fontSize', value)}
                     min={type === 'header' ? 12 : 12}
                     max={type === 'header' ? 48 : 24}
@@ -141,7 +210,6 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
                     className="w-full"
                   />
                 </div>
-                <span className="text-sm font-medium text-black w-12">{properties.fontSize || 16}px</span>
               </div>
             </div>
           )}
@@ -271,7 +339,10 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
             </>
           )}
         </div>
-      </div>
+        </div>
+       </div>
+       </div>
+       </div>
     </div>
   );
 }

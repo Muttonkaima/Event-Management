@@ -58,10 +58,10 @@ export const defaultBlocks: EmailBlock[] = [
       textAlignment: 'center',
       fontSize: 16,
       fontWeight: 'medium',
-      textColor: '#2563eb',
-      backgroundColor: 'transparent',
+      textColor: '#ffffff',
+      backgroundColor: 'blue',
       padding: 16,
-      borderRadius: 4
+      borderRadius: 10
     }
   },
   {
@@ -118,8 +118,8 @@ export const blockTemplates = {
       textAlignment: 'center',
       fontSize: 16,
       fontWeight: 'medium',
-      textColor: '#2563eb',
-      backgroundColor: 'transparent',
+      textColor: '#ffffff',
+      backgroundColor: 'blue',
       padding: 16,
       borderRadius: 4
     }

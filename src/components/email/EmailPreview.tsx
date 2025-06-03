@@ -1,5 +1,8 @@
 import { EmailBlock } from "@/shared/schema";
-import { Trash2 } from "lucide-react";
+import { Trash2, Plus, Move } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface EmailPreviewProps {
   blocks: EmailBlock[];
@@ -127,12 +130,47 @@ export function EmailPreview({
     );
   };
 
-  return (
-    <div className="flex-1 bg-white  max-h-[calc(90vh)] overflow-y-auto p-6">
+  const renderEmptyState = () => (
+    <div className="flex flex-col items-center justify-center p-12 text-center">
+      <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
+        <Plus className="w-8 h-8 text-indigo-500" />
+      </div>
+      <h3 className="text-lg font-medium text-gray-900 mb-1">Start building your email</h3>
+      <p className="text-sm text-gray-500 max-w-md mb-4">
+        Drag and drop blocks from the left panel or click the + button to add content
+      </p>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        className="mt-2"
+        onClick={() => onAddBlock('text')}
+      >
+        Add your first block
+      </Button>
+    </div>
+  );
 
-      <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
-        <div
-          className="p-4 space-y-4"
+  return (
+    <div className="flex-1 bg-gray-50 overflow-y-auto p-4 md:p-8">
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Email header */}
+        <div className="border-b border-gray-200 p-4 bg-white">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded-full bg-red-400"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+              <div className="w-3 h-3 rounded-full bg-green-400"></div>
+            </div>
+            <div className="text-xs text-gray-500">
+              Preview
+            </div>
+            <div className="w-20"></div>
+          </div>
+        </div>
+
+        {/* Email content */}
+        <div 
+          className="min-h-[600px] bg-white relative"
           onDrop={(e) => {
             e.preventDefault();
             const blockType = e.dataTransfer.getData('blockType') as 'header' | 'text' | 'image' | 'button' | 'divider';
@@ -142,11 +180,59 @@ export function EmailPreview({
           }}
           onDragOver={(e) => {
             e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
           }}
         >
-          {blocks.map(renderBlock)}
-          
-         
+          {blocks.length === 0 ? (
+            <div className="absolute inset-0 flex items-center justify-center">
+              {renderEmptyState()}
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {blocks.map((block, index) => (
+                <div key={block.id} className="relative group">
+                  <div className="absolute left-0 top-1/2 -translate-x-4 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col space-y-1">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button 
+                            className="w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-50"
+                            onClick={() => onAddBlock('text')}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>Add block above</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button 
+                            className="w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-50"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDeleteBlock(block.id);
+                            }}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>Delete block</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <div className="px-8 py-4">
+                    {renderBlock(block)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="text-center py-6 border-t border-gray-200">
