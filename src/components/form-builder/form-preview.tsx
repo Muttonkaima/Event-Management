@@ -1,4 +1,4 @@
-import { FormField, Form } from "@/shared/formSchema";
+import { FormField, Form } from '@/shared/formSchema';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -125,10 +125,10 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] bg-white overflow-auto">
         <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
-            <DialogTitle className="text-xl font-semibold">Form Preview</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-gray-900">Form Preview</DialogTitle>
             <p className="text-sm text-gray-500 mt-1">This is how your form will appear to users</p>
           </div>
           <Button
@@ -137,7 +137,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             onClick={onClose}
             className="h-8 w-8 p-0"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4 text-gray-500 cursor-pointer" />
           </Button>
         </DialogHeader>
 
@@ -168,7 +168,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
                     <label className="block text-sm font-medium text-gray-700">
                       {field.label}
                       {field.required && (
-                        <Badge variant="destructive" className="ml-2 text-xs px-1 py-0">
+                        <Badge variant="destructive" className="ml-2 text-xs px-1 py-0 bg-red-100 text-red-600">
                           Required
                         </Badge>
                       )}

@@ -35,7 +35,7 @@ export default function PropertiesPanel() {
   }
 
   return (
-    <div className="w-80 bg-white border-l border-gray-200 flex-shrink-0">
+    <div className="w-80 bg-white border-l border-gray-200 max-h-[calc(100vh-64px)] overflow-y-auto flex-shrink-0">
       <div className="p-4">
         <h3 className="text-sm font-semibold text-gray-900 mb-6">Field Properties</h3>
         
@@ -88,7 +88,7 @@ export default function PropertiesPanel() {
             <div>
               <Label className="text-sm font-medium text-gray-700 mb-3 block">Options</Label>
               <div className="space-y-2">
-                {selectedField.options?.map((option, index) => (
+                {selectedField.options?.map((option: string, index: number) => (
                   <div key={index} className="flex items-center gap-2">
                     <Input
                       value={option}

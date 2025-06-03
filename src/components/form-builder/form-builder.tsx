@@ -65,8 +65,8 @@ export default function FormBuilder() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-600 hover:text-gray-800"
-              onClick={() => window.location.href = "/"}
+              className="text-gray-600 hover:text-gray-800 cursor-pointer"
+              onClick={() => window.location.href = "/dashboard"}
             >
               <Home className="w-4 h-4 mr-2" />
               Dashboard
@@ -74,7 +74,7 @@ export default function FormBuilder() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-600 hover:text-gray-800"
+              className="text-gray-600 border-2 border-gray-200 hover:text-gray-800 hover:bg-gray-50 cursor-pointer"
               onClick={handlePreview}
             >
               <Eye className="w-4 h-4 mr-2" />
@@ -82,7 +82,7 @@ export default function FormBuilder() {
             </Button>
             <Button
               size="sm"
-              className="bg-gray-900 text-white hover:bg-gray-800"
+              className="bg-gray-900 text-white hover:bg-gray-800 cursor-pointer"
               onClick={handleSave}
               disabled={isSaving}
             >
