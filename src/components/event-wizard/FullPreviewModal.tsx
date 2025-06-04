@@ -104,8 +104,8 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
         {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white sticky top-0 z-10">
           <h3 className="text-lg font-semibold text-gray-900">Event Preview</h3>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="w-4 h-4" />
+          <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-900 cursor-pointer">
+            <X className="w-4 h-4 text-gray-900" />
           </Button>
         </div>
 
@@ -278,7 +278,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
             </div>
 
             {/* Registration Form */}
-            {branding.visibility.showRegistration && (
+            {/* {branding.visibility.showRegistration && (
               <div className="mt-12 bg-white text-gray-900 rounded-xl p-8">
                 <h3 className="text-xl font-semibold mb-6">Register for Event</h3>
                 <div className="space-y-6">
@@ -296,12 +296,12 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                       </div>
                     ))}
                   </div>
-                  <button className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-medium transition-colors">
+                  <button className="w-full bg-primary hover:bg-primary/90 text-black py-3 rounded-lg font-medium transition-colors">
                     Complete Registration
                   </button>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </DialogContent>

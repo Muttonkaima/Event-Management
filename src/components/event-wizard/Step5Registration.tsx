@@ -67,7 +67,7 @@ export function Step5Registration() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Registration Period</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="registrationOpen">Registration Opens *</Label>
+              <Label htmlFor="registrationOpen" className="text-sm font-medium text-gray-700">Registration Opens *</Label>
               <Input
                 type="datetime-local"
                 id="registrationOpen"
@@ -80,7 +80,7 @@ export function Step5Registration() {
               )}
             </div>
             <div>
-              <Label htmlFor="registrationClose">Registration Closes *</Label>
+              <Label htmlFor="registrationClose" className="text-sm font-medium text-gray-700">Registration Closes *</Label>
               <Input
                 type="datetime-local"
                 id="registrationClose"
@@ -124,18 +124,19 @@ export function Step5Registration() {
         {/* Payment Options */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Options</h3>
+       
           <RadioGroup
             value={registration.paymentType}
             onValueChange={(value: 'free' | 'paid') => handleInputChange('paymentType', value)}
-            className="space-y-3"
+            className="space-x-3 flex"
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="free" id="free" />
-              <Label htmlFor="free">Free</Label>
+              <RadioGroupItem value="free" id="free" className="cursor-pointer text-gray-700" />
+              <Label htmlFor="free" className="text-sm font-medium text-gray-700">Free</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="paid" id="paid" />
-              <Label htmlFor="paid">Paid</Label>
+              <RadioGroupItem value="paid" id="paid" className="cursor-pointer text-gray-700" />
+              <Label htmlFor="paid" className="text-sm font-medium text-gray-700">Paid</Label>
             </div>
           </RadioGroup>
 
@@ -143,7 +144,7 @@ export function Step5Registration() {
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="ticketPrice">Ticket Price</Label>
+                  <Label htmlFor="ticketPrice" className="text-sm font-medium text-gray-700">Ticket Price</Label>
                   <Input
                     type="number"
                     id="ticketPrice"
@@ -154,7 +155,7 @@ export function Step5Registration() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="currency">Currency</Label>
+                  <Label htmlFor="currency" className="text-sm font-medium text-gray-700">Currency</Label>
                   <Select value={registration.currency} onValueChange={(value) => handleInputChange('currency', value)}>
                     <SelectTrigger>
                       <SelectValue />
@@ -196,10 +197,10 @@ export function Step5Registration() {
       </div>
 
       <div className="mt-8 flex justify-between">
-        <Button variant="outline" onClick={handlePrevious}>
+      <Button variant="outline" onClick={handlePrevious} className='border border-gray-200 cursor-pointer bg-transparent hover:bg-gray-50 text-gray-900'>
           <ArrowLeft className="mr-2 w-4 h-4" /> Previous Step
         </Button>
-        <Button onClick={handleComplete} className="bg-gray-900 text-white hover:bg-gray-800">
+        <Button onClick={handleComplete} className="bg-gray-900 text-white cursor-pointer">
           <Check className="mr-2 w-4 h-4" /> Complete Setup
         </Button>
       </div>

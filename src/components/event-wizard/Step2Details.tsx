@@ -75,7 +75,7 @@ export function Step2Details() {
 
       <div className="space-y-6">
         <div>
-          <Label htmlFor="eventName">Event Name *</Label>
+          <Label htmlFor="eventName" className="text-gray-900">Event Name</Label>
           <Input
             id="eventName"
             placeholder="Enter event name"
@@ -89,7 +89,7 @@ export function Step2Details() {
         </div>
 
         <div>
-          <Label htmlFor="eventDescription">Description</Label>
+          <Label htmlFor="eventDescription" className="text-gray-900">Description</Label>
           <Textarea
             id="eventDescription"
             placeholder="Describe your event"
@@ -101,7 +101,7 @@ export function Step2Details() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <Label htmlFor="startDate">Start Date & Time *</Label>
+            <Label htmlFor="startDate" className="text-gray-900">Start Date & Time *</Label>
             <div className="flex gap-2">
               <Input
                 type="date"
@@ -123,7 +123,7 @@ export function Step2Details() {
           </div>
           
           <div>
-            <Label htmlFor="endDate">End Date & Time *</Label>
+            <Label htmlFor="endDate" className="text-gray-900">End Date & Time *</Label>
             <div className="flex gap-2">
               <Input
                 type="date"
@@ -146,7 +146,7 @@ export function Step2Details() {
         </div>
 
         <div>
-          <Label htmlFor="timezone">Timezone *</Label>
+          <Label htmlFor="timezone" className="text-gray-900">Timezone *</Label>
           <Select value={event.timezone} onValueChange={(value) => handleInputChange('timezone', value)}>
             <SelectTrigger className={errors.timezone ? 'border-red-500' : ''}>
               <SelectValue placeholder="Select timezone" />
@@ -165,7 +165,7 @@ export function Step2Details() {
         </div>
 
         <div>
-          <Label htmlFor="eventType">Event Type *</Label>
+          <Label htmlFor="eventType" className="text-gray-900">Event Type *</Label>
           <Select value={event.eventType} onValueChange={(value) => handleInputChange('eventType', value)}>
             <SelectTrigger>
               <SelectValue />
@@ -181,7 +181,7 @@ export function Step2Details() {
         {(event.eventType === 'in-person' || event.eventType === 'hybrid') && (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="address">Address *</Label>
+              <Label htmlFor="address" className="text-gray-900">Address *</Label>
               <Input
                 id="address"
                 placeholder="Enter address"
@@ -196,7 +196,7 @@ export function Step2Details() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="city">City *</Label>
+                <Label htmlFor="city" className="text-gray-900">City *</Label>
                 <Input
                   id="city"
                   placeholder="City"
@@ -209,7 +209,7 @@ export function Step2Details() {
                 )}
               </div>
               <div>
-                <Label htmlFor="state">State/Province</Label>
+                <Label htmlFor="state" className="text-gray-900">State/Province</Label>
                 <Input
                   id="state"
                   placeholder="State/Province"
@@ -221,7 +221,7 @@ export function Step2Details() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="country">Country</Label>
+                <Label htmlFor="country" className="text-gray-900">Country</Label>
                 <Input
                   id="country"
                   placeholder="Country"
@@ -230,7 +230,7 @@ export function Step2Details() {
                 />
               </div>
               <div>
-                <Label htmlFor="zipCode">Zip/Postal Code</Label>
+                <Label htmlFor="zipCode" className="text-gray-900">Zip/Postal Code</Label>
                 <Input
                   id="zipCode"
                   placeholder="Zip/Postal Code"
@@ -244,7 +244,7 @@ export function Step2Details() {
 
         {(event.eventType === 'virtual' || event.eventType === 'hybrid') && (
           <div>
-            <Label htmlFor="meetingLink">Meeting Link *</Label>
+            <Label htmlFor="meetingLink" className="text-gray-900">Meeting Link *</Label>
             <Input
               id="meetingLink"
               placeholder="https://zoom.us/j/1234567890 or https://teams.microsoft.com/..."
@@ -260,10 +260,10 @@ export function Step2Details() {
       </div>
 
       <div className="mt-8 flex justify-between">
-        <Button variant="outline" onClick={handlePrevious}>
+        <Button variant="outline" onClick={handlePrevious} className='border border-gray-200 cursor-pointer bg-transparent hover:bg-gray-50 text-gray-900'>
           <ArrowLeft className="mr-2 w-4 h-4" /> Previous Step
         </Button>
-        <Button onClick={handleNext} className="bg-gray-900 text-white hover:bg-gray-800">
+        <Button onClick={handleNext} className="bg-gray-900 text-white cursor-pointer">
           Next Step <ArrowRight className="ml-2 w-4 h-4" />
         </Button>
       </div>

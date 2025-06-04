@@ -104,7 +104,7 @@ export function LivePreview() {
               variant="outline"
               size="sm"
               onClick={() => setShowFullPreview(true)}
-              className="text-primary hover:text-primary/80"
+              className="text-gray-900 bg-transparent hover:bg-gray-50 border border-gray-200  cursor-pointer"
             >
               <Eye className="mr-2 w-4 h-4" />
               Preview Full Event

@@ -55,7 +55,7 @@ export function Step1Template() {
             key={tmpl.id}
             className={`template-card bg-white rounded-xl border-2 p-6 cursor-pointer transition-all duration-200 ${
               template === tmpl.id
-                ? 'border-primary bg-blue-50'
+                ? 'border-black'
                 : 'border-gray-200 hover:border-primary hover:shadow-md'
             }`}
             onClick={() => actions.setTemplate(tmpl.id)}
@@ -65,7 +65,7 @@ export function Step1Template() {
                 <div className="w-6 h-6 bg-white rounded opacity-80" />
               </div>
               {template === tmpl.id && (
-                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
                   <Check className="w-4 h-4 text-white" />
                 </div>
               )}
@@ -84,16 +84,21 @@ export function Step1Template() {
                 </span>
               ))}
             </div>
-            
-            <div className="text-xs text-gray-500">
-              {template === tmpl.id ? 'Currently selected' : 'Click to select'}
+            {template === tmpl.id ?
+            <div className="text-sm text-gray-900">
+               Currently selected
             </div>
+            : 
+            <div className="text-sm text-gray-500">
+               Click to select
+            </div>
+            }
           </div>
         ))}
       </div>
 
       <div className="mt-8 flex justify-end">
-        <Button onClick={handleNext} className="bg-gray-900 text-white hover:bg-gray-800">
+        <Button onClick={handleNext} className="bg-gray-900 text-white hover:bg-gray-800 cursor-pointer">
           Next Step <ArrowRight className="ml-2 w-4 h-4" />
         </Button>
       </div>

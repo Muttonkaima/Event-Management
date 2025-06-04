@@ -109,9 +109,9 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
+          <DialogTitle className="flex items-center justify-between text-gray-900">
             {editingIndex !== null ? 'Edit Session' : 'Add Session'}
             <Button variant="ghost" size="sm" onClick={onClose}>
               <X className="w-4 h-4" />
@@ -121,7 +121,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="sessionTitle">Session Title *</Label>
+            <Label htmlFor="sessionTitle" className="text-gray-900">Session Title *</Label>
             <Input
               id="sessionTitle"
               placeholder="Enter session title"
@@ -135,7 +135,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
           </div>
 
           <div>
-            <Label htmlFor="speakerName">Speaker Name *</Label>
+            <Label htmlFor="speakerName" className="text-gray-900">Speaker Name *</Label>
             <Input
               id="speakerName"
               placeholder="Enter speaker name"
@@ -150,7 +150,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="startTime">Start Time *</Label>
+              <Label htmlFor="startTime" className="text-gray-900">Start Time *</Label>
               <Input
                 type="time"
                 id="startTime"
@@ -163,7 +163,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
               )}
             </div>
             <div>
-              <Label htmlFor="duration">Duration (min) *</Label>
+              <Label htmlFor="duration" className="text-gray-900">Duration (min) *</Label>
               <Input
                 type="number"
                 id="duration"
@@ -180,7 +180,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
           </div>
 
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-gray-900">Description</Label>
             <Textarea
               id="description"
               placeholder="Describe this session"
@@ -191,7 +191,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
           </div>
 
           <div>
-            <Label className="text-sm font-medium text-gray-700 mb-2 block">Session Tags</Label>
+            <Label className="text-sm font-medium text-gray-900 mb-2 block">Session Tags</Label>
             <div className="grid grid-cols-2 gap-2">
               {sessionTags.map((tag) => (
                 <div key={tag.value} className="flex items-center space-x-2">
@@ -202,7 +202,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
                   />
                   <div className="flex items-center space-x-2">
                     <div className={`w-3 h-3 rounded-full ${tag.color}`} />
-                    <Label htmlFor={tag.value} className="text-sm cursor-pointer">
+                    <Label htmlFor={tag.value} className="text-sm cursor-pointer text-gray-700">
                       {tag.label}
                     </Label>
                   </div>
@@ -213,10 +213,10 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
         </div>
 
         <div className="flex justify-end space-x-3 pt-4">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} className='text-gray-900 bg-transparent border-gray-200 hover:bg-gray-50 cursor-pointer'>
             Cancel
           </Button>
-          <Button onClick={handleSave} className="bg-gray-900 text-white hover:bg-gray-800">
+          <Button onClick={handleSave} className="bg-gray-900 text-white hover:bg-gray-800 cursor-pointer">
             <Save className="mr-2 w-4 h-4" />
             Save Session
           </Button>

@@ -126,7 +126,7 @@ export function Step3Branding() {
         <div>
           <Label className="text-sm font-medium text-gray-700 mb-2 block">Event Logo</Label>
           <div
-            className="file-upload-area"
+            className="file-upload-area border border-gray-200 rounded-lg p-4 cursor-pointer"
             onClick={() => document.getElementById('logo-upload')?.click()}
           >
             {logoPreview ? (
@@ -156,7 +156,7 @@ export function Step3Branding() {
         <div>
           <Label className="text-sm font-medium text-gray-700 mb-2 block">Event Banner</Label>
           <div
-            className="file-upload-area"
+            className="file-upload-area border border-gray-200 rounded-lg p-4 cursor-pointer"
             onClick={() => document.getElementById('banner-upload')?.click()}
           >
             {bannerPreview ? (
@@ -190,7 +190,7 @@ export function Step3Branding() {
               <div
                 key={theme.id}
                 className={`color-theme-option cursor-pointer p-4 border-2 rounded-lg transition-all ${
-                  branding.colorTheme === theme.id ? 'border-primary' : 'border-gray-200 hover:border-primary'
+                  branding.colorTheme === theme.id ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
                 }`}
                 onClick={() => actions.updateBranding({ colorTheme: theme.id })}
               >
@@ -199,7 +199,7 @@ export function Step3Branding() {
                     <div key={index} className={`w-4 h-4 rounded-full ${color}`} />
                   ))}
                 </div>
-                <p className="text-sm font-medium">{theme.name}</p>
+                <p className="text-sm font-medium text-gray-900">{theme.name}</p>
               </div>
             ))}
           </div>
@@ -213,7 +213,7 @@ export function Step3Branding() {
               <div
                 key={font.id}
                 className={`font-option cursor-pointer p-4 border-2 rounded-lg transition-all ${
-                  branding.fontStyle === font.id ? 'border-primary' : 'border-gray-200 hover:border-primary'
+                  branding.fontStyle === font.id ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
                 }`}
                 onClick={() => actions.updateBranding({ fontStyle: font.id })}
               >
@@ -222,7 +222,7 @@ export function Step3Branding() {
                     <h4 className={`font-medium text-gray-900 ${font.className}`}>{font.name}</h4>
                     <p className="text-sm text-gray-600">{font.description}</p>
                   </div>
-                  <span className={`text-2xl ${font.className}`}>Aa</span>
+                  <span className={`text-2xl text-gray-300 ${font.className}`}>Aa</span>
                 </div>
               </div>
             ))}
@@ -251,10 +251,10 @@ export function Step3Branding() {
       </div>
 
       <div className="mt-8 flex justify-between">
-        <Button variant="outline" onClick={handlePrevious}>
+      <Button variant="outline" onClick={handlePrevious} className='border border-gray-200 cursor-pointer bg-transparent hover:bg-gray-50 text-gray-900'>
           <ArrowLeft className="mr-2 w-4 h-4" /> Previous Step
         </Button>
-        <Button onClick={handleNext} className="bg-gray-900 text-white hover:bg-gray-800">
+        <Button onClick={handleNext} className="bg-gray-900 text-white cursor-pointer">
           Next Step <ArrowRight className="ml-2 w-4 h-4" />
         </Button>
       </div>

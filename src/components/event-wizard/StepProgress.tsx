@@ -22,10 +22,10 @@ export function StepProgress() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-medium text-sm transition-all duration-200 ${
                   step.number < currentStep
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-black text-white'
                     : step.number === currentStep
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-300 text-gray-600'
+                    ? 'bg-gray-300 border border-gray-900 text-gray-900'
+                    : 'bg-gray-100 text-gray-600'
                 }`}
               >
                 {step.number < currentStep ? (
@@ -38,8 +38,8 @@ export function StepProgress() {
                 className={`text-sm font-medium transition-colors duration-200 ${
                   step.number <= currentStep
                     ? step.number < currentStep
-                      ? 'text-green-600'
-                      : 'text-gray-900'
+                      ? 'text-gray-900'
+                      : 'text-gray-400'
                     : 'text-gray-500'
                 }`}
               >
@@ -49,7 +49,7 @@ export function StepProgress() {
             {index < steps.length - 1 && (
               <div
                 className={`w-20 h-0.5 mx-4 transition-colors duration-200 ${
-                  step.number < currentStep ? 'bg-green-500' : 'bg-gray-300'
+                  step.number < currentStep ? 'bg-gray-900' : 'bg-gray-300'
                 }`}
               />
             )}

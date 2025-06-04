@@ -48,7 +48,7 @@ export function Step4Schedule() {
             <Clock className="mx-auto h-16 w-16 text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-600 mb-2">No Sessions Yet</h3>
             <p className="text-gray-500 mb-6">Add sessions to create your event schedule.</p>
-            <Button onClick={handleAddSession} className="bg-gray-900 text-white hover:bg-gray-800">
+            <Button onClick={handleAddSession} className="bg-gray-900 text-white cursor-pointer">
               <Plus className="mr-2 w-4 h-4" /> Add Your First Session
             </Button>
           </div>
@@ -56,13 +56,13 @@ export function Step4Schedule() {
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm text-gray-600">{sessions.length} session{sessions.length !== 1 ? 's' : ''} added</span>
-              <Button onClick={handleAddSession} className="bg-gray-900 text-white hover:bg-gray-800">
+              <Button onClick={handleAddSession} className="bg-gray-900 text-white cursor-pointer">
                 <Plus className="mr-2 w-4 h-4" /> Add Session
               </Button>
             </div>
 
             {sessions.map((session: SessionData, index: number) => (
-              <div key={index} className="session-card">
+              <div key={index} className="session-card border border-gray-200 p-2 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-900">{session.title}</h4>
@@ -81,7 +81,7 @@ export function Step4Schedule() {
                         {session.tags.map((tag, tagIndex) => (
                           <span
                             key={tagIndex}
-                            className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
+                            className="px-2 py-1 bg-black/10 text-black text-xs rounded-full "
                           >
                             {tag}
                           </span>
@@ -115,10 +115,10 @@ export function Step4Schedule() {
       </div>
 
       <div className="mt-8 flex justify-between">
-        <Button variant="outline" onClick={handlePrevious}>
+      <Button variant="outline" onClick={handlePrevious} className='border border-gray-200 cursor-pointer bg-transparent hover:bg-gray-50 text-gray-900'>
           <ArrowLeft className="mr-2 w-4 h-4" /> Previous Step
         </Button>
-        <Button onClick={handleNext} className="bg-gray-900 text-white hover:bg-gray-800">
+        <Button onClick={handleNext} className="bg-gray-900 text-white cursor-pointer">
           Next Step <ArrowRight className="ml-2 w-4 h-4" />
         </Button>
       </div>
