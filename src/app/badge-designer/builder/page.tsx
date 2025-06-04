@@ -21,7 +21,7 @@ export default function BadgeDesigner() {
       y: 20,
       width: 200,
       height: 40,
-      content: 'John Doe',
+      content: 'Mithun Gowda H',
       style: {
         fontSize: 18,
         fontWeight: 'bold',
@@ -66,6 +66,8 @@ export default function BadgeDesigner() {
   ]);
   
   const [backgroundColor, setBackgroundColor] = useState('#FFFFFF');
+  const [width, setWidth] = useState(500);
+  const [height, setHeight] = useState(300);
   const [selectedElementId, setSelectedElementId] = useState<string | null>('element-1');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
@@ -108,10 +110,15 @@ export default function BadgeDesigner() {
     setSelectedElementId(element.id);
   };
 
-  const handleElementUpdate = (elementId: string, updates: Partial<BadgeElement>) => {
-    setElements(prev => prev.map(el => 
-      el.id === elementId ? { ...el, ...updates } : el
-    ));
+  const handleElementUpdate = (elementId: string, updates: Partial<BadgeElement & { width: number; height: number }>) => {
+    if (elementId === 'badge-canvas') {
+      if (updates.width !== undefined) setWidth(updates.width);
+      if (updates.height !== undefined) setHeight(updates.height);
+    } else {
+      setElements(elements.map(el => 
+        el.id === elementId ? { ...el, ...updates } : el
+      ));
+    }
   };
 
   const handleElementDelete = (elementId: string) => {
@@ -163,21 +170,23 @@ export default function BadgeDesigner() {
           </div>
         </header>
 
-        <div className="flex h-[calc(100vh-81px)] overflow-hidden">
+        <div className="flex max-h-[calc(90vh)]">
           <ElementsSidebar />
-          
           <BadgeCanvas
             elements={elements}
             backgroundColor={backgroundColor}
+            width={width}
+            height={height}
             selectedElementId={selectedElementId}
             onElementAdd={handleElementAdd}
             onElementSelect={setSelectedElementId}
             onElementUpdate={handleElementUpdate}
           />
-          
           <PropertiesPanel
             selectedElement={selectedElement}
             backgroundColor={backgroundColor}
+            width={width}
+            height={height}
             onElementUpdate={handleElementUpdate}
             onElementDelete={handleElementDelete}
             onBackgroundColorChange={setBackgroundColor}

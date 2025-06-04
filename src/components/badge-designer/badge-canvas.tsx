@@ -5,9 +5,11 @@ interface BadgeCanvasProps {
   elements: BadgeElement[];
   backgroundColor: string;
   selectedElementId: string | null;
+  width: number;
+  height: number;
   onElementAdd: (element: BadgeElement) => void;
   onElementSelect: (elementId: string | null) => void;
-  onElementUpdate: (elementId: string, updates: Partial<BadgeElement>) => void;
+  onElementUpdate: (elementId: string, updates: Partial<BadgeElement & { width: number; height: number }>) => void;
 }
 
 interface DroppedItem {
@@ -120,6 +122,8 @@ export function BadgeCanvas({
   elements,
   backgroundColor,
   selectedElementId,
+  width = 400,
+  height = 500,
   onElementAdd,
   onElementSelect,
   onElementUpdate,
@@ -141,8 +145,8 @@ export function BadgeCanvas({
             const newElement: BadgeElement = {
               id: `element-${Date.now()}`,
               type: item.elementType,
-              x: Math.max(0, Math.min(x - (defaults.width || 100) / 2, 350 - (defaults.width || 100))),
-              y: Math.max(0, Math.min(y - (defaults.height || 30) / 2, 220 - (defaults.height || 30))),
+              x: Math.max(0, Math.min(x - (defaults.width || 100) / 2, width - (defaults.width || 100))),
+              y: Math.max(0, Math.min(y - (defaults.height || 30) / 2, height - (defaults.height || 30))),
               width: defaults.width || 100,
               height: defaults.height || 30,
               content: defaults.content || '',
@@ -155,8 +159,8 @@ export function BadgeCanvas({
           else if ('elementId' in item) {
             const element = elements.find(el => el.id === item.elementId);
             if (element) {
-              const newX = Math.max(0, Math.min(x - element.width / 2, 350 - element.width));
-              const newY = Math.max(0, Math.min(y - element.height / 2, 220 - element.height));
+              const newX = Math.max(0, Math.min(x - element.width / 2, width - element.width));
+              const newY = Math.max(0, Math.min(y - element.height / 2, height - element.height));
               
               onElementUpdate(item.elementId, { x: newX, y: newY });
             }
@@ -185,8 +189,8 @@ export function BadgeCanvas({
                 isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
               }`}
               style={{
-                width: '350px',
-                height: '220px',
+                width: `${width}px`,
+                height: `${height}px`,
                 backgroundColor: backgroundColor,
               }}
               onClick={() => onElementSelect(null)}

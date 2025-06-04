@@ -12,7 +12,9 @@ import { ColorPicker } from "@/components/ui/color-picker";
 interface PropertiesPanelProps {
   selectedElement: BadgeElement | null;
   backgroundColor: string;
-  onElementUpdate: (elementId: string, updates: Partial<BadgeElement>) => void;
+  width: number;
+  height: number;
+  onElementUpdate: (elementId: string, updates: Partial<BadgeElement & { width: number; height: number }>) => void;
   onElementDelete: (elementId: string) => void;
   onBackgroundColorChange: (color: string) => void;
   onTemplateSelect: (template: BadgeTemplate) => void;
@@ -21,6 +23,8 @@ interface PropertiesPanelProps {
 export function PropertiesPanel({
   selectedElement,
   backgroundColor,
+  width,
+  height,
   onElementUpdate,
   onElementDelete,
   onBackgroundColorChange,
@@ -366,10 +370,30 @@ export function PropertiesPanel({
             <div>
               <h3 className="text-sm font-medium text-gray-900 mb-4">Badge Size</h3>
               <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">3.5" x 2.2" (Credit Card)</span>
-                  <span className="text-sm text-gray-500">350px x 220px</span>
-                </div>
+                {[
+                  { label: 'Square (400x400)', width: 400, height: 400 },
+                  { label: 'Portrait (400x500)', width: 400, height: 500 },
+                  { label: 'Tall (320x480)', width: 320, height: 480 },
+                  { label: 'Wide (500x300)', width: 500, height: 300 },
+                ].map((size) => (
+                  <div 
+                    key={size.label}
+                    className={`flex justify-between items-center p-3 rounded-md cursor-pointer border ${
+                      (width === size.width && height === size.height) 
+                        ? 'border-gray-200 bg-gray-100' 
+                        : 'border-gray-200 hover:bg-gray-50'
+                    }`}
+                    onClick={() => {
+                      onElementUpdate('badge-canvas', { 
+                        width: size.width, 
+                        height: size.height 
+                      });
+                    }}
+                  >
+                    <span className="text-sm font-medium text-gray-900">{size.label}</span>
+                    <span className="text-sm text-gray-500">{size.width} × {size.height}px</span>
+                  </div>
+                ))}
               </div>
             </div>
 
