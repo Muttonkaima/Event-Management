@@ -58,7 +58,7 @@ export default function FieldsSidebar() {
   return (
     <div className="w-64 bg-white border-r border-gray-200 flex-shrink-0">
       <div className="p-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">Form Fields</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Form Fields</h3>
         <div className="space-y-2">
           {fieldTypes.map((fieldType) => (
             <DraggableField key={fieldType.type} fieldType={fieldType} />

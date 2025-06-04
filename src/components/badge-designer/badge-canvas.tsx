@@ -84,16 +84,20 @@ function BadgeElementComponent({
 
     if (element.type === 'qr-code') {
       return (
-        <div className="w-full h-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xl font-mono">
-          QR
-        </div>
+        <img
+          src="/images/qrcode.png"
+          alt="QR Code"
+          className="w-full h-full object-contain"
+        />
       );
     }
+    
 
     return (
-      <div className="w-full h-full flex items-center">
-        {element.content || 'Text'}
-      </div>
+      <div className="w-fit h-full flex items-center">
+      {element.content || 'Text'}
+    </div>
+    
     );
   };
 

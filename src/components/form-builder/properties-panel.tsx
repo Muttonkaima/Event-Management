@@ -23,7 +23,7 @@ export default function PropertiesPanel() {
     return (
       <div className="w-80 bg-white border-l border-gray-200 flex-shrink-0">
         <div className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-6">Field Properties</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Properties</h3>
           <div className="text-center py-12 text-gray-500">
             <MousePointer className="w-8 h-8 mx-auto mb-4 text-gray-300" />
             <p className="text-sm font-medium mb-1">No field selected</p>
@@ -37,7 +37,7 @@ export default function PropertiesPanel() {
   return (
     <div className="w-80 bg-white border-l border-gray-200 max-h-[calc(100vh-64px)] overflow-y-auto flex-shrink-0">
       <div className="p-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-6">Field Properties</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Properties</h3>
         
         <div className="space-y-6">
           {/* Field Label */}

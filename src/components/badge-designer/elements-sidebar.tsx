@@ -29,14 +29,14 @@ function DraggableElement({ type, icon, label }: DraggableElementProps) {
   return (
     <div
       ref={drag}
-      className={`flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-move hover:bg-gray-100 transition-colors ${
+      className={`flex items-center p-3 bg-gray-50 rounded-lg border border-gray-50 cursor-grab active:cursor-grabbing hover:bg-gray-100 transition-colors ${
         isDragging ? 'opacity-50 transform rotate-1' : ''
       }`}
     >
-      <div className="w-5 h-5 text-gray-600 mr-3">
+      <div className="w-5 h-5 text-gray-500 mr-3">
         {icon}
       </div>
-      <span className="text-sm font-medium text-gray-900">{label}</span>
+      <span className="text-sm font-medium text-gray-700">{label}</span>
     </div>
   );
 }
@@ -54,8 +54,8 @@ export function ElementsSidebar() {
   ];
 
   return (
-    <aside className="w-60 bg-white border-r border-gray-200 flex-shrink-0">
-      <div className="p-6">
+    <aside className="w-64 bg-white border-r border-gray-200 flex-shrink-0">
+      <div className="p-4">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Badge Elements</h2>
         <div className="space-y-3">
           {elements.map((element) => (
