@@ -25,6 +25,36 @@ const getThemeGradient = (colorTheme: string) => {
   }
 };
 
+const getSidebarGradient = (colorTheme: string) => {
+  switch (colorTheme) {
+    case 'professional':
+      return 'bg-indigo-400';
+    case 'ocean':
+      return 'bg-blue-400';
+    case 'sunset':
+      return 'bg-red-400';
+    case 'forest':
+      return 'bg-emerald-400';
+    default:
+      return 'bg-indigo-300';
+  }
+};
+
+const getButtonGradient = (colorTheme: string) => {
+  switch (colorTheme) {
+    case 'professional':
+      return 'bg-gray-600';
+    case 'ocean':
+      return 'bg-teal-600';
+    case 'sunset':
+      return 'bg-yellow-500';
+    case 'forest':
+      return 'bg-lime-500';
+    default:
+      return 'bg-indigo-300';
+  }
+};
+
 const getFontStyle = (fontStyle: string) => {
   switch (fontStyle) {
     case 'modern':
@@ -94,6 +124,8 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
   const { template, event, branding, sessions, registration } = state;
 
   const themeGradient = getThemeGradient(branding.colorTheme);
+  const sidebarGradient = getSidebarGradient(branding.colorTheme);
+  const buttonGradient = getButtonGradient(branding.colorTheme);
   const fontClass = getFontStyle(branding.fontStyle);
   const dateTimeText = formatDateTime(event.startDate, event.endDate, event.startTime, event.endTime);
   const locationText = getLocationText(event);
@@ -112,7 +144,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
         {/* Full Event Preview Content */}
         <div className={`bg-gray-900 text-white ${fontClass}`}>
           {/* Hero Banner */}
-          <div className="h-64 relative overflow-hidden">
+          <div className="h-64 relative overflow-hidden ">
             {branding.bannerUrl ? (
               <div
                 className="absolute inset-0"
@@ -156,7 +188,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="border-b border-gray-700">
+          <div className="border-b border-gray-700 ">
             <div className="px-6">
               <nav className="flex space-x-8">
                 <button className="py-3 px-1 border-b-2 border-primary text-primary font-medium text-sm">
@@ -176,14 +208,14 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
           </div>
 
           {/* Content Area */}
-          <div className="p-6">
+          <div className={`p-6 bg-gradient-to-r ${themeGradient}`}>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Content */}
               <div className="lg:col-span-2">
                 {branding.visibility.showDescription && (
                   <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4">About</h2>
-                    <p className="text-gray-300 leading-relaxed">
+                    <h2 className="text-xl font-semibold mb-4 text-white">About</h2>
+                    <p className="text-white leading-relaxed">
                       {event.description || 'Your event description will appear here. This is where you can provide detailed information about what attendees can expect, the agenda, speakers, and any other relevant details about your event.'}
                     </p>
                   </div>
@@ -191,34 +223,34 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
 
                 {branding.visibility.showLocation && (
                   <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-3 text-primary">Location</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-white">Location</h3>
                     <div className="flex items-start">
-                      <MapPin className="w-5 h-5 text-primary mr-3 mt-1" />
-                      <span className="text-gray-300">{locationText}</span>
+                      <MapPin className="w-5 h-5 text-white mr-3 mt-1" />
+                      <span className="text-white">{locationText}</span>
                     </div>
                   </div>
                 )}
 
                 {branding.visibility.showSchedule && (
                   <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-3 text-primary">Schedule</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-white">Schedule</h3>
                     <div className="space-y-3">
                       {sessions.length > 0 ? (
                         sessions.map((session: any, index: any) => (
-                          <div key={index} className="p-3 bg-gray-800 rounded-lg">
+                          <div key={index} className="p-3 bg-transparent shadow-lg rounded-lg">
                             <div className="flex items-start justify-between">
                               <div>
                                 <h4 className="font-medium text-white">{session.title}</h4>
-                                <p className="text-gray-400 mt-1">{session.speaker}</p>
+                                <p className="text-white mt-1">{session.speaker}</p>
                                 {session.description && (
-                                  <p className="text-gray-400 text-sm mt-2">{session.description}</p>
+                                  <p className="text-white text-sm mt-2">{session.description}</p>
                                 )}
                                 {session.tags.length > 0 && (
                                   <div className="flex flex-wrap gap-1 mt-2">
                                     {session.tags.map((tag: any, tagIndex: any) => (
                                       <span
                                         key={tagIndex}
-                                        className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full"
+                                        className="px-2 py-1 bg-white/20 text-white text-xs rounded-full"
                                       >
                                         {tag}
                                       </span>
@@ -226,7 +258,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                                   </div>
                                 )}
                               </div>
-                              <div className="text-right text-sm text-gray-400">
+                              <div className="text-right text-sm text-white">
                                 <div>{session.startTime}</div>
                                 <div>{session.duration} min</div>
                               </div>
@@ -234,7 +266,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                           </div>
                         ))
                       ) : (
-                        <p className="text-gray-400">Event schedule will appear here when sessions are added.</p>
+                        <p className="text-gray-300">Event schedule will appear here when sessions are added.</p>
                       )}
                     </div>
                   </div>
@@ -242,34 +274,34 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
               </div>
 
               {/* Sidebar */}
-              <div className="lg:col-span-1">
-                <div className="bg-gray-800 rounded-lg p-6 sticky top-24">
+              <div className={`lg:col-span-1 rounded-lg ${sidebarGradient} h-fit sticky top-24`}>
+                <div className="rounded-lg p-6 sticky top-24">
                   <div className="space-y-4 mb-6 text-sm">
-                    <div className="flex items-center text-gray-300">
-                      <Calendar className="w-5 h-5 text-primary mr-3" />
+                    <div className="flex items-center text-white">
+                      <Calendar className="w-10 h-10 text-white mr-3" />
                       <span>{dateTimeText}</span>
                     </div>
                     
-                    <div className="flex items-center text-gray-300">
-                      <MapPin className="w-5 h-5 text-primary mr-3" />
+                    <div className="flex items-center text-white">
+                      <MapPin className="w-14 h-14 text-white mr-3" />
                       <span>{locationText}</span>
                     </div>
 
-                    <div className="flex items-center text-gray-300">
-                      <Users className="w-5 h-5 text-primary mr-3" />
+                    <div className="flex items-center text-white">
+                      <Users className="w-5 h-5 text-white mr-3" />
                       <span>
                         {registration.maxAttendees ? `Max ${registration.maxAttendees} attendees` : 'Unlimited attendees'}
                       </span>
                     </div>
 
-                    <div className="flex items-center text-gray-300">
-                      <Tag className="w-5 h-5 text-primary mr-3" />
+                    <div className="flex items-center text-white">
+                      <Tag className="w-5 h-5 text-white mr-3" />
                       <span>{registration.paymentType === 'free' ? 'Free event' : `$${registration.ticketPrice || 0} ${registration.currency}`}</span>
                     </div>
                   </div>
 
                   {branding.visibility.showRegistration && (
-                    <button className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors mb-6">
+                    <button className={`w-full bg-gradient-to-r ${themeGradient} cursor-pointer text-white font-medium py-3 px-4 rounded-lg transition-colors mb-6`}>
                       Register Now
                     </button>
                   )}

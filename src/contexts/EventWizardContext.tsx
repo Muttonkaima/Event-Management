@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, ReactNode } from 'react';
-import { EventWizardData, EventTemplate, EventType, ColorTheme, FontStyle, SessionData } from '@shared/schema';
+import { EventWizardData, EventTemplate, EventType, ColorTheme, FontStyle, SessionData } from '@/shared/eventSchema';
 
 // Initial state
 const initialState: EventWizardData = {

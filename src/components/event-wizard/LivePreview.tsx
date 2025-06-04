@@ -19,6 +19,21 @@ const getThemeGradient = (colorTheme: string) => {
   }
 };
 
+const getSidebarGradient = (colorTheme: string) => {
+  switch (colorTheme) {
+    case 'professional':
+      return 'bg-indigo-400';
+    case 'ocean':
+      return 'bg-blue-400';
+    case 'sunset':
+      return 'bg-red-400';
+    case 'forest':
+      return 'bg-emerald-400';
+    default:
+      return 'bg-indigo-300';
+  }
+};
+
 const getFontStyle = (fontStyle: string) => {
   switch (fontStyle) {
     case 'modern':
@@ -89,6 +104,7 @@ export function LivePreview() {
   const [showFullPreview, setShowFullPreview] = useState(false);
 
   const themeGradient = getThemeGradient(branding.colorTheme);
+  const sidebarGradient = getSidebarGradient(branding.colorTheme);
   const fontClass = getFontStyle(branding.fontStyle);
   const dateTimeText = formatDateTime(event.startDate, event.endDate, event.startTime, event.endTime);
   const locationText = getLocationText(event);
@@ -115,7 +131,7 @@ export function LivePreview() {
         {/* Preview Content */}
         <div className="relative">
           {/* Event Preview Card */}
-          <div className={`p-6 bg-gradient-to-br from-gray-800 to-gray-900 text-white relative overflow-hidden ${fontClass}`}>
+          <div className={`p-6 text-white relative overflow-hidden ${fontClass}`}>
             {/* Banner */}
             {branding.bannerUrl ? (
               <div
@@ -127,7 +143,7 @@ export function LivePreview() {
                 }}
               />
             ) : (
-              <div className={`absolute inset-0 opacity-20 bg-gradient-to-r ${themeGradient}`} />
+              <div className={`absolute inset-0 bg-gradient-to-r ${themeGradient}`} />
             )}
             
             <div className="relative z-10">
@@ -201,7 +217,7 @@ export function LivePreview() {
               )}
 
               {branding.visibility.showRegistration && (
-                <button className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-lg font-medium transition-colors">
+                <button className={`w-full ${sidebarGradient} text-white py-3 rounded-lg font-medium transition-colors`}>
                   Register Now
                 </button>
               )}
