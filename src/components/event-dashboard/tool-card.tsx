@@ -64,7 +64,7 @@ export default function ToolCard({
     <Card className="hover:shadow-md transition-shadow bg-white">
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
-          <div className="p-3 bg-gray-200 rounded-lg">
+          <div className="p-3 bg-gray-100 rounded-lg">
             {getIcon(icon)}
           </div>
           <Button variant="ghost" size="icon">

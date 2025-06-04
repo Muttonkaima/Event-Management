@@ -162,11 +162,14 @@ export default function EventsPage() {
         <div className={viewMode === 'grid' 
           ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
           : 'space-y-4'}>
-          
           {filteredEvents.map((event: Event) => (
             viewMode === 'grid' ? (
               // Grid View Card
-              <div key={event.id} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+              <Link 
+                key={event.id} 
+                href={`/event-overview/${event.id}`}
+                className="block bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300"
+              >
                 <div className="relative h-48">
                   <img 
                     src={event.image} 
@@ -227,10 +230,14 @@ export default function EventsPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ) : (
               // List View Row
-              <div key={event.id} className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-300">
+              <Link 
+                key={event.id} 
+                href={`/event-overview/${event.id}`}
+                className="block bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-300"
+              >
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                   <div className="md:w-1/4">
                     <div className="relative h-32 rounded-lg overflow-hidden">
@@ -292,7 +299,7 @@ export default function EventsPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             )
           ))}
         </div>

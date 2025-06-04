@@ -7,11 +7,102 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AnalyticsCard from "@/components/event-dashboard/analytics-card";
 import ToolCard from "@/components/event-dashboard/tool-card";
-import { Menu, MapPin, MoreHorizontal } from "lucide-react";
+import { Menu, MapPin, MoreHorizontal, User, Clock, Users, Tag } from "lucide-react";
 import OverviewLayout from "@/components/event-dashboard/OverviewLayout";
+import { notFound } from 'next/navigation';
+import eventsData from '@/data/events.json';
 
-export default function Dashboard() {
+interface Event {
+  id: string;
+  name: string;
+  description: string;
+  date: {
+    start: string;
+    end: string;
+  };
+  location: {
+    name: string;
+    city: string;
+    address: string;
+    country: string;
+  };
+  status: string;
+  organizer: {
+    name: string;
+    email: string;
+    avatar: string;
+  };
+  attendees: number;
+  category: string;
+  tags: string[];
+  image: string;
+}
+
+export default function EventOverview({ params }: { params: { id: string } }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Find the event with the matching ID
+  const event = (eventsData as Event[]).find((e) => e.id === params.id);
+
+  // If no event is found, return a 404 page
+  if (!event) {
+    notFound();
+  }
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+  
+  // Format date range
+  const formatDateRange = (start: string, end: string) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    
+    // If same day, show single date with time range
+    if (startDate.toDateString() === endDate.toDateString()) {
+      return `${formatDate(start)} - ${endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+    }
+    
+    // Otherwise show date range
+    return `${formatDate(start)} - ${formatDate(end)}`;
+  };
+  
+  // Get status badge color
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'upcoming':
+        return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100';
+      case 'ongoing':
+        return 'bg-green-100 text-green-800 hover:bg-green-100';
+      case 'completed':
+        return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
+      default:
+        return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
+    }
+  };
+  
+  // Get status text
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'upcoming':
+        return 'Upcoming';
+      case 'ongoing':
+        return 'Live';
+      case 'completed':
+        return 'Completed';
+      default:
+        return status;
+    }
+  };
 
   const analyticsData = [
     {
@@ -123,28 +214,64 @@ export default function Dashboard() {
               <Card>
                 <div className="flex flex-col md:flex-row bg-white">
                   <img
-                    src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=200"
-                    alt="Conference setup"
+                    src={event.image}
+                    alt={event.name}
                     className="w-full md:w-48 h-40 md:h-auto object-cover rounded-l-lg"
                   />
                   <CardContent className="flex-1 p-4">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <div>
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                            Live
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <Badge className={getStatusBadgeVariant(event.status)}>
+                            {getStatusText(event.status)}
                           </Badge>
                           <span className="text-sm text-gray-500">
-                            Jun 3, 2025 — Jun 4, 2025 — In Person
+                            {formatDateRange(event.date.start, event.date.end)} • In Person
                           </span>
                         </div>
-                        <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-1">
-                          miuds 2025
+                        <h2 className="text-lg md:text-xl font-semibold text-gray-900">
+                          {event.name}
                         </h2>
                         <div className="flex items-center text-sm text-gray-500">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          <span>San Francisco Convention Center</span>
+                          <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+                          <span>{event.location.name}, {event.location.city}, {event.location.country}</span>
                         </div>
+                        
+                        {/* Additional Event Details */}
+                        <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
+                          <div className="flex items-center text-gray-600">
+                            <User className="h-4 w-4 mr-2 text-gray-400" />
+                            <span>Organizer: {event.organizer.name}</span>
+                          </div>
+                          <div className="flex items-center text-gray-600">
+                            <Users className="h-4 w-4 mr-2 text-gray-400" />
+                            <span>{event.attendees.toLocaleString()} attendees</span>
+                          </div>
+                          <div className="flex items-center text-gray-600">
+                            <Tag className="h-4 w-4 mr-2 text-gray-400" />
+                            <span>{event.category}</span>
+                          </div>
+                          <div className="flex items-center text-gray-600">
+                            <Clock className="h-4 w-4 mr-2 text-gray-400" />
+                            <span>{getStatusText(event.status)}</span>
+                          </div>
+                        </div>
+                        
+                        {/* Tags */}
+                        {event.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {event.tags.slice(0, 3).map((tag) => (
+                              <Badge key={tag} variant="outline" className="text-xs text-gray-400">
+                                {tag}
+                              </Badge>
+                            ))}
+                            {event.tags.length > 3 && (
+                              <Badge variant="outline" className="text-xs text-gray-400">
+                                +{event.tags.length - 3} more
+                              </Badge>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <Button variant="ghost" size="icon" className="mt-4 md:mt-0">
                         <MoreHorizontal className="h-4 w-4" />

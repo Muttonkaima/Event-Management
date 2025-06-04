@@ -55,7 +55,7 @@ export default function AnalyticsCard({
     <Card className="hover:shadow-md transition-shadow bg-white">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
-          <div className="p-2 bg-gray-200 rounded-lg">
+          <div className="p-2 bg-gray-100 rounded-lg">
             {getIcon(icon)}
           </div>
           <Badge className={`text-xs ${getChangeColor(changeType)} hover:${getChangeColor(changeType)}`}>
