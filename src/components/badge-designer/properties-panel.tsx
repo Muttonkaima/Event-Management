@@ -87,7 +87,7 @@ export function PropertiesPanel({
                 </div>
 
                 {/* Text Properties */}
-                {!isImageElement && (
+                {!isImageElement && !isQRElement && (
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="element-text" className="text-sm font-medium text-gray-900 mb-2">Text</Label>
@@ -152,10 +152,10 @@ export function PropertiesPanel({
                     <div>
                       <Label className="text-sm font-medium text-gray-900 mb-2">Text Color</Label>
                       <div className="flex items-center space-x-3 mt-2">
-                      <ColorPicker
-                    value={selectedElement.style?.color || '#000000'}
-                    onChange={(value: string) => updateElementStyle({ color: value })}
-                  />
+                        <ColorPicker
+                          value={selectedElement.style?.color || '#000000'}
+                          onChange={(value: string) => updateElementStyle({ color: value })}
+                        />
                       </div>
                     </div>
 
@@ -175,6 +175,52 @@ export function PropertiesPanel({
                           <SelectItem value="#000000">Black</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                  </div>
+                )}
+
+                {/* QR Code Properties */}
+                {isQRElement && (
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="qr-url" className="text-sm font-medium text-gray-900 mb-2">QR Code URL</Label>
+                      <Input
+                        id="qr-url"
+                        type="url"
+                        placeholder="https://example.com"
+                        value={selectedElement.content || ''}
+                        onChange={(e) => updateElementProperty({ content: e.target.value })}
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium text-gray-900 mb-2">QR Code Size</Label>
+                      <div className="flex items-center space-x-3 mt-2">
+                        <Slider
+                          value={[selectedElement.width || 100]}
+                          onValueChange={([value]) => onElementUpdate(selectedElement.id, { 
+                            width: value,
+                            height: value // Keep it square
+                          })}
+                          min={50}
+                          max={200}
+                          step={1}
+                          className="flex-1"
+                        />
+                        <span className="text-sm text-gray-600 w-12">
+                          {selectedElement.width || 100}px
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium text-gray-900 mb-2">QR Code Color</Label>
+                      <div className="flex items-center space-x-3 mt-2">
+                        <ColorPicker
+                          value={selectedElement.style?.color || '#000000'}
+                          onChange={(value: string) => updateElementStyle({ color: value })}
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
