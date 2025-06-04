@@ -1,0 +1,219 @@
+import { useEventWizard } from '@/contexts/EventWizardContext';
+import { Eye, Calendar, MapPin, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { FullPreviewModal } from './FullPreviewModal';
+
+const getThemeGradient = (colorTheme: string) => {
+  switch (colorTheme) {
+    case 'professional':
+      return 'from-indigo-500 to-purple-600';
+    case 'ocean':
+      return 'from-cyan-500 to-blue-600';
+    case 'sunset':
+      return 'from-orange-500 to-red-500';
+    case 'forest':
+      return 'from-green-600 to-emerald-600';
+    default:
+      return 'from-indigo-500 to-purple-600';
+  }
+};
+
+const getFontStyle = (fontStyle: string) => {
+  switch (fontStyle) {
+    case 'modern':
+      return 'font-sans';
+    case 'classic':
+      return 'font-serif';
+    case 'minimal':
+      return 'font-light tracking-wide';
+    case 'creative':
+      return 'font-mono';
+    case 'elegant':
+      return 'font-serif font-light';
+    default:
+      return 'font-sans';
+  }
+};
+
+const formatDateTime = (startDate: string, endDate: string, startTime: string, endTime: string) => {
+  if (!startDate || !endDate) {
+    return 'June 14, 2025 9:00 AM - June 19, 2025 5:00 PM';
+  }
+
+  const start = new Date(`${startDate}T${startTime || '09:00'}`);
+  const end = new Date(`${endDate}T${endTime || '17:00'}`);
+
+  const options: Intl.DateTimeFormatOptions = {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  };
+
+  return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`;
+};
+
+const getLocationText = (event: any) => {
+  if (event.eventType === 'virtual') {
+    return event.meetingLink || 'Virtual Event - Meeting link will be provided';
+  }
+  
+  if (event.eventType === 'hybrid') {
+    const parts = [];
+    if (event.address) parts.push(event.address);
+    if (event.city) parts.push(event.city);
+    if (event.state) parts.push(event.state);
+    if (event.country) parts.push(event.country);
+    const location = parts.join(', ') || 'Physical location';
+    const meeting = event.meetingLink || 'Meeting link will be provided';
+    return `${location} + Virtual: ${meeting}`;
+  }
+  
+  if (event.eventType === 'in-person' && (event.address || event.city)) {
+    const parts = [];
+    if (event.address) parts.push(event.address);
+    if (event.city) parts.push(event.city);
+    if (event.state) parts.push(event.state);
+    if (event.country) parts.push(event.country);
+    return parts.join(', ');
+  }
+  
+  return 'Event location will appear here';
+};
+
+export function LivePreview() {
+  const { state } = useEventWizard();
+  const { template, event, branding, sessions } = state;
+  const [showFullPreview, setShowFullPreview] = useState(false);
+
+  const themeGradient = getThemeGradient(branding.colorTheme);
+  const fontClass = getFontStyle(branding.fontStyle);
+  const dateTimeText = formatDateTime(event.startDate, event.endDate, event.startTime, event.endTime);
+  const locationText = getLocationText(event);
+
+  return (
+    <div className="sticky top-8">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {/* Preview Header */}
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900">Live Preview</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowFullPreview(true)}
+              className="text-primary hover:text-primary/80"
+            >
+              <Eye className="mr-2 w-4 h-4" />
+              Preview Full Event
+            </Button>
+          </div>
+        </div>
+
+        {/* Preview Content */}
+        <div className="relative">
+          {/* Event Preview Card */}
+          <div className={`p-6 bg-gradient-to-br from-gray-800 to-gray-900 text-white relative overflow-hidden ${fontClass}`}>
+            {/* Banner */}
+            {branding.bannerUrl ? (
+              <div
+                className="absolute inset-0 opacity-30"
+                style={{
+                  backgroundImage: `url('${branding.bannerUrl}')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              />
+            ) : (
+              <div className={`absolute inset-0 opacity-20 bg-gradient-to-r ${themeGradient}`} />
+            )}
+            
+            <div className="relative z-10">
+              {/* Logo */}
+              {branding.visibility.showLogo && branding.logoUrl && (
+                <div className="mb-4">
+                  <img 
+                    src={branding.logoUrl} 
+                    alt="Event Logo" 
+                    className="h-12 w-auto object-contain"
+                  />
+                </div>
+              )}
+              
+              <div className="mb-4">
+                <h2 className="text-xl font-bold mb-2">
+                  {event.name || 'Your Event Name'}
+                </h2>
+                <div className="flex items-center space-x-4 text-sm">
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-4 h-4 text-primary" />
+                    <span>{dateTimeText}</span>
+                  </div>
+                  <span className="bg-primary px-2 py-1 rounded text-xs font-medium">
+                    {event.eventType === 'in-person' ? 'In-person' : 
+                     event.eventType === 'virtual' ? 'Virtual' : 'Hybrid'}
+                  </span>
+                </div>
+              </div>
+
+              {branding.visibility.showDescription && (
+                <div className="mb-4">
+                  <p className="text-sm opacity-90">
+                    {event.description || 'Your event description will appear here. Add details about what attendees can expect.'}
+                  </p>
+                </div>
+              )}
+
+              {branding.visibility.showLocation && (
+                <div className="mb-4">
+                  <div className="flex items-start space-x-2">
+                    <MapPin className="w-4 h-4 text-primary mt-1" />
+                    <div>
+                      <p className="text-sm font-medium">Location</p>
+                      <p className="text-sm opacity-75">{locationText}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {branding.visibility.showSchedule && sessions.length > 0 && (
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Clock className="w-4 h-4 text-primary" />
+                    <p className="text-sm font-medium">Schedule</p>
+                  </div>
+                  <div className="space-y-2">
+                    {sessions.slice(0, 3).map((session: any, index: any) => (
+                      <div key={index} className="text-sm opacity-75">
+                        <div className="font-medium">{session.title}</div>
+                        <div>{session.speaker} • {session.startTime} ({session.duration}min)</div>
+                      </div>
+                    ))}
+                    {sessions.length > 3 && (
+                      <div className="text-sm opacity-75">
+                        +{sessions.length - 3} more sessions
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {branding.visibility.showRegistration && (
+                <button className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-lg font-medium transition-colors">
+                  Register Now
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <FullPreviewModal
+        open={showFullPreview}
+        onClose={() => setShowFullPreview(false)}
+      />
+    </div>
+  );
+}

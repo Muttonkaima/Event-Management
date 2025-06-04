@@ -74,7 +74,7 @@ export default function EventsPage() {
 
   return (
     <DashboardLayout title="Events">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-2">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
