@@ -199,6 +199,8 @@ export default function BadgeDesigner() {
           onClose={() => setIsPreviewOpen(false)}
           elements={elements}
           backgroundColor={backgroundColor}
+          width={width}
+          height={height}
           onExport={() => exportBadgeMutation.mutate()}
         />
       </div>

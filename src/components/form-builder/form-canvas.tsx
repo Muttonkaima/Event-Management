@@ -29,7 +29,7 @@ export default function FormCanvas() {
             <div className="w-3 h-3 rounded-full bg-green-400"></div>
           </div>
           <div className="text-xs text-gray-500">
-            Preview
+            Canvas
           </div>
           <div className="w-20"></div>
         </div>

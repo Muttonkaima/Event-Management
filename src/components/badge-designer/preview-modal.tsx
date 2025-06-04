@@ -8,10 +8,20 @@ interface PreviewModalProps {
   onClose: () => void;
   elements: BadgeElement[];
   backgroundColor: string;
+  width: number;
+  height: number;
   onExport: () => void;
 }
 
-export function PreviewModal({ isOpen, onClose, elements, backgroundColor, onExport }: PreviewModalProps) {
+export function PreviewModal({ 
+  isOpen, 
+  onClose, 
+  elements, 
+  backgroundColor, 
+  width = 500,
+  height = 300,
+  onExport 
+}: PreviewModalProps) {
   const renderElement = (element: BadgeElement) => {
     const style = element.style || {};
     
@@ -76,7 +86,7 @@ export function PreviewModal({ isOpen, onClose, elements, backgroundColor, onExp
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[calc(100vh-81px)] overflow-auto bg-white rounded-2xl">
-      <DialogHeader className="border-b border-gray-200 p-3 sticky top-0 bg-white">
+      <DialogHeader className="border-b border-gray-200 pt-0 pb-2 sticky top-0 bg-white z-50">
           <div className="flex items-center justify-between">
             <div>
               <DialogTitle className="text-xl font-semibold text-gray-900">
@@ -90,21 +100,21 @@ export function PreviewModal({ isOpen, onClose, elements, backgroundColor, onExp
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 cursor-pointer"
             >
-              <X className="h-5 w-5 text-gray-500" />
+              <X className="h-5 w-5 text-gray-500 cursor-pointer" />
               <span className="sr-only">Close</span>
             </Button>
           </div>
         </DialogHeader>
         
         <div className="flex justify-center py-6">
-          <div
-            className="relative border shadow-lg"
+          <div 
+            className="relative border-2 border-gray-200 shadow-lg"
             style={{
-              width: '350px',
-              height: '220px',
-              backgroundColor: backgroundColor,
+              width: `${width}px`,
+              height: `${height}px`,
+              backgroundColor,
             }}
           >
             {elements.map(renderElement)}
@@ -112,7 +122,7 @@ export function PreviewModal({ isOpen, onClose, elements, backgroundColor, onExp
         </div>
 
         <div className="flex justify-center space-x-4">
-          <Button onClick={onExport} className="flex items-center space-x-2 bg-black text-white">
+          <Button onClick={onExport} className="flex items-center space-x-2 bg-black text-white cursor-pointer">
             <Download className="w-4 h-4" />
             <span>Download Badge</span>
           </Button>

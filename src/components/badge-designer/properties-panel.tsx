@@ -56,7 +56,7 @@ export function PropertiesPanel({
   const isQRElement = selectedElement?.type === 'qr-code';
 
   return (
-    <aside className="w-80 bg-white border-l border-gray-200 flex-shrink-0 max-h-[calc(100vh)] overflow-auto">
+    <aside className="w-80 bg-white border-l border-gray-200 flex-shrink-0 min-h-[calc(90vh)] max-h-[calc(90vh)] overflow-auto">
       <div className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Properties</h2>
         

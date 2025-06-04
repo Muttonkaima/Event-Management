@@ -42,7 +42,7 @@ function BadgeElementComponent({
       isDragging: monitor.isDragging(),
     }),
   }));
-  
+
   const elementStyle: React.CSSProperties = {
     position: 'absolute',
     left: `${element.x}px`,
@@ -66,8 +66,8 @@ function BadgeElementComponent({
     if (element.type === 'attendee-photo' || element.type === 'event-logo') {
       if (style.imageUrl) {
         return (
-          <img 
-            src={style.imageUrl} 
+          <img
+            src={style.imageUrl}
             alt={element.type}
             className="w-full h-full object-cover"
             style={{ borderRadius: style.borderRadius ? `${style.borderRadius}px` : undefined }}
@@ -75,7 +75,7 @@ function BadgeElementComponent({
         );
       }
       return (
-        <div 
+        <div
           className="w-full h-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xs text-gray-500"
           style={{ borderRadius: style.borderRadius ? `${style.borderRadius}px` : undefined }}
         >
@@ -93,13 +93,13 @@ function BadgeElementComponent({
         />
       );
     }
-    
+
 
     return (
       <div className="w-fit h-full flex items-center">
-      {element.content || 'Text'}
-    </div>
-    
+        {element.content || 'Text'}
+      </div>
+
     );
   };
 
@@ -132,13 +132,13 @@ export function BadgeCanvas({
     accept: ['badge-element', 'canvas-element'],
     drop: (item: DroppedItem | MovedItem, monitor) => {
       const clientOffset = monitor.getClientOffset();
-      
+
       if (clientOffset) {
         const canvasRect = document.getElementById('badge-canvas')?.getBoundingClientRect();
         if (canvasRect) {
           const x = clientOffset.x - canvasRect.left;
           const y = clientOffset.y - canvasRect.top;
-          
+
           // Handle new element from sidebar
           if ('elementType' in item) {
             const defaults = elementDefaults[item.elementType];
@@ -152,7 +152,7 @@ export function BadgeCanvas({
               content: defaults.content || '',
               style: { ...defaults.style },
             };
-            
+
             onElementAdd(newElement);
           }
           // Handle moving existing element within canvas
@@ -161,7 +161,7 @@ export function BadgeCanvas({
             if (element) {
               const newX = Math.max(0, Math.min(x - element.width / 2, width - element.width));
               const newY = Math.max(0, Math.min(y - element.height / 2, height - element.height));
-              
+
               onElementUpdate(item.elementId, { x: newX, y: newY });
             }
           }
@@ -174,46 +174,55 @@ export function BadgeCanvas({
   }));
 
   return (
-    <main className="flex-1 bg-gray-50 overflow-auto">
-      <div className="p-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">Badge Preview</h2>
-          </div>
-          
-          <div className="flex justify-center">
-            <div
-              ref={drop}
-              id="badge-canvas"
-              className={`relative border-2 shadow-lg ${
-                isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
-              }`}
-              style={{
-                width: `${width}px`,
-                height: `${height}px`,
-                backgroundColor: backgroundColor,
-              }}
-              onClick={() => onElementSelect(null)}
-            >
-              {elements.map((element) => (
-                <BadgeElementComponent
-                  key={element.id}
-                  element={element}
-                  isSelected={selectedElementId === element.id}
-                  onSelect={() => onElementSelect(element.id)}
-                  onUpdate={(updates) => onElementUpdate(element.id, updates)}
-                />
-              ))}
-            </div>
-          </div>
 
-          <div className="text-center mt-6">
-            <p className="text-sm text-gray-500 mb-4">
-              Drag elements from the left sidebar to add them to your badge
-            </p>
+
+    <div className="flex-1 bg-gray-50 overflow-y-auto p-4 md:p-8">
+      <div className="w-fit p-2 mx-auto bg-transparent rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Email header */}
+        <div className="border-b border-gray-200 p-4 bg-white">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded-full bg-red-400"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+              <div className="w-3 h-3 rounded-full bg-green-400"></div>
+            </div>
+            <div className="text-xs text-gray-500">
+              Canvas
+            </div>
+            <div className="w-20"></div>
           </div>
         </div>
+
+        {/* Email content */}
+        <div className="flex justify-center mt-3">
+          <div
+            ref={drop}
+            id="badge-canvas"
+            className={`relative border-2 shadow-lg ${isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
+              }`}
+            style={{
+              width: `${width}px`,
+              height: `${height}px`,
+              backgroundColor: backgroundColor,
+            }}
+            onClick={() => onElementSelect(null)}
+          >
+            {elements.map((element) => (
+              <BadgeElementComponent
+                key={element.id}
+                element={element}
+                isSelected={selectedElementId === element.id}
+                onSelect={() => onElementSelect(element.id)}
+                onUpdate={(updates) => onElementUpdate(element.id, updates)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="text-center mt-2">
+         
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
