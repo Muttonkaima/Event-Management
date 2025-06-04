@@ -13,13 +13,13 @@ interface FullPreviewModalProps {
 const getThemeGradient = (colorTheme: string) => {
   switch (colorTheme) {
     case 'professional':
-      return 'from-indigo-500 to-purple-600';
+      return 'from-indigo-900 to-purple-300';
     case 'ocean':
-      return 'from-cyan-500 to-blue-600';
+      return 'from-cyan-900 to-blue-300';
     case 'sunset':
-      return 'from-orange-500 to-red-500';
+      return 'from-orange-900 to-red-300';
     case 'forest':
-      return 'from-green-600 to-emerald-600';
+      return 'from-green-900 to-emerald-300';
     default:
       return 'from-indigo-500 to-purple-600';
   }
@@ -28,13 +28,13 @@ const getThemeGradient = (colorTheme: string) => {
 const getSidebarGradient = (colorTheme: string) => {
   switch (colorTheme) {
     case 'professional':
-      return 'bg-indigo-400';
+      return 'bg-indigo-900';
     case 'ocean':
-      return 'bg-blue-400';
+      return 'bg-blue-900';
     case 'sunset':
-      return 'bg-red-400';
+      return 'bg-red-900';
     case 'forest':
-      return 'bg-emerald-400';
+      return 'bg-emerald-900';
     default:
       return 'bg-indigo-300';
   }
@@ -95,7 +95,7 @@ const getLocationText = (event: any) => {
   if (event.eventType === 'virtual') {
     return event.meetingLink || 'Virtual Event - Meeting link will be provided upon registration';
   }
-  
+
   if (event.eventType === 'hybrid') {
     const parts = [];
     if (event.address) parts.push(event.address);
@@ -106,7 +106,7 @@ const getLocationText = (event: any) => {
     const meeting = event.meetingLink || 'Meeting link will be provided';
     return `${location} + Virtual: ${meeting}`;
   }
-  
+
   if (event.eventType === 'in-person' && (event.address || event.city)) {
     const parts = [];
     if (event.address) parts.push(event.address);
@@ -115,7 +115,7 @@ const getLocationText = (event: any) => {
     if (event.country) parts.push(event.country);
     return parts.join(', ');
   }
-  
+
   return 'Event location will appear here';
 };
 
@@ -134,7 +134,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white sticky top-0 z-10">
+        <div className="flex items-center justify-between p-6 border-gray-200 bg-white sticky top-0 z-10">
           <h3 className="text-lg font-semibold text-gray-900">Event Preview</h3>
           <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-900 cursor-pointer">
             <X className="w-4 h-4 text-gray-900" />
@@ -144,42 +144,62 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
         {/* Full Event Preview Content */}
         <div className={`bg-gray-900 text-white ${fontClass}`}>
           {/* Hero Banner */}
-          <div className="h-64 relative overflow-hidden ">
-            {branding.bannerUrl ? (
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: `url('${branding.bannerUrl}')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
+          <div className="h-96 relative overflow-hidden">
+            <div className="absolute inset-0">
+              <img 
+                src={event.templateImage} 
+                alt={event.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner';
                 }}
               />
-            ) : (
-              <div className={`absolute inset-0 bg-gradient-to-r ${themeGradient}`} />
-            )}
-            <div className="absolute inset-0 bg-black bg-opacity-40" />
-            <div className="absolute bottom-6 left-6 right-6 z-10">
+              <div className="absolute top-4 left-4 border border-gray-200 p-0 rounded-md shadow-md">
+                  <img 
+                    src="/images/image5.avif"
+                    alt="Event Logo" 
+                    className="h-32 w-auto object-contain rounded"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      console.error('Failed to load logo:', target.src);
+                      target.onerror = null;
+                      target.style.border = '1px solid red'; // Visual indicator for debugging
+                      target.style.padding = '4px';
+                      target.style.backgroundColor = '#ffebee';
+                      // Keep the element visible for debugging
+                    }}
+                    onLoad={() => console.log('Logo loaded successfully')}
+                    style={{
+                      minWidth: '32px',
+                      minHeight: '32px'
+                    }}
+                  />
+                </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
               {/* Logo in hero section */}
               {branding.visibility.showLogo && branding.logoUrl && (
                 <div className="mb-4">
-                  <img 
-                    src={branding.logoUrl} 
-                    alt="Event Logo" 
+                  <img
+                    src={branding.logoUrl}
+                    alt="Event Logo"
                     className="h-16 w-auto object-contain"
                   />
                 </div>
               )}
               <div className="flex items-center space-x-2 mb-2">
                 <span className="px-3 py-1 bg-primary text-white text-sm rounded-full">
-                  {event.eventType === 'in-person' ? 'In-person' : 
-                   event.eventType === 'virtual' ? 'Virtual' : 'Hybrid'}
+                  {event.eventType === 'in-person' ? 'In-person' :
+                    event.eventType === 'virtual' ? 'Virtual' : 'Hybrid'}
                 </span>
               </div>
               <h1 className="text-4xl font-bold mb-4">
                 {event.name || 'Your Event Name'}
               </h1>
               <p className="text-xl text-white/90">
-                {event.startDate && event.endDate 
+                {event.startDate && event.endDate
                   ? `${new Date(event.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} - ${new Date(event.endDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
                   : 'June 14-19, 2025'
                 }
@@ -188,7 +208,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="border-b border-gray-700 ">
+          {/* <div className="border-b border-gray-700">
             <div className="px-6">
               <nav className="flex space-x-8">
                 <button className="py-3 px-1 border-b-2 border-primary text-primary font-medium text-sm">
@@ -205,7 +225,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                 </button>
               </nav>
             </div>
-          </div>
+          </div> */}
 
           {/* Content Area */}
           <div className={`p-6 bg-gradient-to-r ${themeGradient}`}>
@@ -281,7 +301,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                       <Calendar className="w-10 h-10 text-white mr-3" />
                       <span>{dateTimeText}</span>
                     </div>
-                    
+
                     <div className="flex items-center text-white">
                       <MapPin className="w-14 h-14 text-white mr-3" />
                       <span>{locationText}</span>

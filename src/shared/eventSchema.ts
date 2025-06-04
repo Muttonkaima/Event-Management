@@ -118,6 +118,7 @@ export interface SessionData {
 export interface EventWizardData {
   currentStep: number;
   template: EventTemplate;
+  templateImage: string;
   event: {
     name: string;
     description: string;
@@ -133,6 +134,7 @@ export interface EventWizardData {
     country: string;
     zipCode: string;
     meetingLink: string;
+    templateImage: string;
   };
   branding: {
     logoUrl?: string;

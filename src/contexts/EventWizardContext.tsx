@@ -5,6 +5,7 @@ import { EventWizardData, EventTemplate, EventType, ColorTheme, FontStyle, Sessi
 const initialState: EventWizardData = {
   currentStep: 1,
   template: 'professional',
+  templateImage: '/images/image1.jpg',
   event: {
     name: '',
     description: '',
@@ -19,7 +20,8 @@ const initialState: EventWizardData = {
     state: '',
     country: '',
     zipCode: '',
-    meetingLink: ''
+    meetingLink: '',
+    templateImage: '/images/image1.jpg'
   },
   branding: {
     colorTheme: 'professional',

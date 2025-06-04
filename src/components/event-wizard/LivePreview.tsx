@@ -3,17 +3,18 @@ import { Eye, Calendar, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { FullPreviewModal } from './FullPreviewModal';
+import Image from 'next/image';
 
 const getThemeGradient = (colorTheme: string) => {
   switch (colorTheme) {
     case 'professional':
-      return 'from-indigo-500 to-purple-600';
+      return 'from-indigo-900 to-purple-300';
     case 'ocean':
-      return 'from-cyan-500 to-blue-600';
+      return 'from-cyan-900 to-blue-300';
     case 'sunset':
-      return 'from-orange-500 to-red-500';
+      return 'from-orange-900 to-red-300';
     case 'forest':
-      return 'from-green-600 to-emerald-600';
+      return 'from-green-900 to-emerald-300';
     default:
       return 'from-indigo-500 to-purple-600';
   }
@@ -22,15 +23,15 @@ const getThemeGradient = (colorTheme: string) => {
 const getSidebarGradient = (colorTheme: string) => {
   switch (colorTheme) {
     case 'professional':
-      return 'bg-indigo-400';
+      return 'bg-indigo-900';
     case 'ocean':
-      return 'bg-blue-400';
+      return 'bg-blue-900';
     case 'sunset':
-      return 'bg-red-400';
+      return 'bg-red-900';
     case 'forest':
-      return 'bg-emerald-400';
+      return 'bg-emerald-900';
     default:
-      return 'bg-indigo-300';
+      return 'bg-indigo-900';
   }
 };
 
@@ -131,22 +132,45 @@ export function LivePreview() {
         {/* Preview Content */}
         <div className="relative">
           {/* Event Preview Card */}
-          <div className={`p-6 text-white relative overflow-hidden ${fontClass}`}>
-            {/* Banner */}
-            {branding.bannerUrl ? (
-              <div
-                className="absolute inset-0 opacity-30"
-                style={{
-                  backgroundImage: `url('${branding.bannerUrl}')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
+          <div className={`text-white overflow-hidden shadow-lg ${fontClass}`}>
+            {/* Banner Image */}
+            <div className="relative w-full h-48 overflow-hidden">
+              <img 
+                src={event.templateImage} 
+                alt={event.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner';
                 }}
               />
-            ) : (
-              <div className={`absolute inset-0 bg-gradient-to-r ${themeGradient}`} />
-            )}
+             
+                <div className="absolute top-4 left-4 border border-gray-200 p-0 rounded-md shadow-md z-20">
+                  <img 
+                    src="/images/image5.avif"
+                    alt="Event Logo" 
+                    className="h-12 w-auto object-contain rounded"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      console.error('Failed to load logo:', target.src);
+                      target.onerror = null;
+                      target.style.border = '1px solid red'; // Visual indicator for debugging
+                      target.style.padding = '4px';
+                      target.style.backgroundColor = '#ffebee';
+                      // Keep the element visible for debugging
+                    }}
+                    onLoad={() => console.log('Logo loaded successfully')}
+                    style={{
+                      minWidth: '32px',
+                      minHeight: '32px'
+                    }}
+                  />
+                </div>
+            </div>
             
-            <div className="relative z-10">
+            {/* Content */}
+            <div className={`p-6 bg-gradient-to-r ${themeGradient}`}>
               {/* Logo */}
               {branding.visibility.showLogo && branding.logoUrl && (
                 <div className="mb-4">
