@@ -13,7 +13,6 @@ import { FiSettings, FiLogOut, FiMenu, FiX, FiMail, FiAward, FiHome,
   FiMonitor, } from 'react-icons/fi';
 
 const navItems = [
-  { name: 'Home', href: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
   { name: 'Overview', href: '/event-overview', icon: <FiCalendar className="w-5 h-5" /> },
   { name: 'Attendees', href: '/attendees', icon: <FiUsers className="w-5 h-5" /> },
   { name: 'Sessions', href: '/sessions', icon: <FiVideo className="w-5 h-5" /> },
@@ -74,10 +73,12 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
           </ul>
           
           <div className="mt-6 pt-4 border-t border-gray-200">
-            <button className="flex items-center w-full p-3 text-red-600 rounded-lg hover:bg-red-50">
+            <Link href="/events">
+            <button className="flex items-center w-full p-3 text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer">
               <FiLogOut className="w-5 h-5 mr-3" />
-              <span>Logout</span>
+              <span>Back to Events</span>
             </button>
+            </Link>
           </div>
         </nav>
       </aside>
