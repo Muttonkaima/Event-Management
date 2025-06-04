@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiMenu, FiX, FiMail } from 'react-icons/fi';
+import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiMenu, FiX, FiMail, FiAward } from 'react-icons/fi';
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
   { name: 'Events', href: '/events', icon: <FiCalendar className="w-5 h-5" /> },
   { name: 'Email Builder', href: '/email-builder', icon: <FiMail className="w-5 h-5" /> },
   { name: 'Form Builder', href: '/form-builder', icon: <FiMenu className="w-5 h-5" /> },
+  { name: 'Badge Designer', href: '/badge-designer', icon: <FiAward className="w-5 h-5" /> },
   { name: 'Attendees', href: '/attendees', icon: <FiUsers className="w-5 h-5" /> },
   { name: 'Settings', href: '/settings', icon: <FiSettings className="w-5 h-5" /> },
 ];
