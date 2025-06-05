@@ -1,22 +1,21 @@
-import Link from "next/link";
+import Navigation from "@/components/home/navigation";
+import HeroSection from "@/components/home/hero-section";
+import FeaturesSection from "@/components/home/features-section";
+import TestimonialsSection from "@/components/home/testimonials-section";
+import PricingSection from "@/components/home/pricing-section";
+import CTASection from "@/components/home/cta-section";
+import Footer from "@/components/home/footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="text-center max-w-2xl mx-auto p-8 bg-white rounded-2xl shadow-xl">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-          Welcome to Event Organizer Platform
-        </h1>
-        <p className="text-xl text-gray-600 mb-8">
-          Manage your events with ease and efficiency
-        </p>
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
-        >
-          Start your journey
-        </Link>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <HeroSection />
+      <FeaturesSection />
+      <TestimonialsSection />
+      <PricingSection />
+      <CTASection />
+      <Footer />
     </div>
   );
 }

@@ -64,10 +64,12 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
           </ul>
           
           <div className="mt-6 pt-4 border-t border-gray-200">
-            <button className="flex items-center w-full p-3 text-red-600 rounded-lg hover:bg-red-50">
+            <Link href="/">
+            <button className="flex items-center w-full p-3 text-red-600 rounded-lg hover:bg-red-50 cursor-pointer">
               <FiLogOut className="w-5 h-5 mr-3" />
               <span>Logout</span>
             </button>
+            </Link>
           </div>
         </nav>
       </aside>
