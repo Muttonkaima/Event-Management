@@ -31,7 +31,7 @@ export default function Header({ toggleSidebarAction: toggleSidebar }: HeaderPro
           <div className="relative">
             <button 
               onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center space-x-2 focus:outline-none"
+              className="flex items-center space-x-2 focus:outline-none cursor-pointer"
             >
               <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white">
                 <FiUser className="w-4 h-4" />

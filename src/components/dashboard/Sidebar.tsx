@@ -35,7 +35,7 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
         } lg:translate-x-0 transition-transform duration-300 ease-in-out z-30`}
       >
         <div className="flex items-center mt-3 justify-between p-3.5 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-gray-800">EventPro</h1>
+          <h1 className="text-xl font-bold text-gray-800">EventFlow</h1>
           <button 
             onClick={toggleSidebar}
             className="lg:hidden p-2 rounded-md hover:bg-gray-10"

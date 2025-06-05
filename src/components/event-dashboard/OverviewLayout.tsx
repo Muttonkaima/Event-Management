@@ -30,7 +30,7 @@ export default function DashboardLayout({ children, title = 'Dashboard' }: Dashb
   return (
     <div className="min-h-screen bg-gray-50 max-h-[calc(100vh-64px)] overflow-y-auto">
       <Head>
-        <title>{`${title} | EventPro`}</title>
+        <title>{`${title} | EventFlow`}</title>
         <meta name="description" content="Event overview dashboard" />
       </Head>
 
