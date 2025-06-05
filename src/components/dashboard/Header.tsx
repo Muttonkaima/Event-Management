@@ -50,7 +50,7 @@ export default function Header({ toggleSidebarAction: toggleSidebar }: HeaderPro
                   Settings
                 </a>
                 <div className="border-t border-gray-200 my-1"></div>
-                <a href="#" className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                <a href="/" className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                   Sign out
                 </a>
               </div>
