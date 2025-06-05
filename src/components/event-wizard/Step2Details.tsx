@@ -14,18 +14,35 @@ export function Step2Details() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const now = new Date();
 
     if (!event.name.trim()) {
       newErrors.name = 'Event name is required';
     }
+
+    // Start date validation
     if (!event.startDate) {
-      newErrors.startDate = 'Start date is required';
+      newErrors.startDate = 'Start date and time are required';
+    } else {
+      const startDate = new Date(event.startDate);
+      if (startDate < new Date(now.getTime() - 60000)) { // Allow 1 minute buffer
+        newErrors.startDate = 'Start date and time cannot be in the past';
+      }
     }
+
+    // End date validation
     if (!event.endDate) {
-      newErrors.endDate = 'End date is required';
-    }
-    if (event.startDate && event.endDate && new Date(event.endDate) <= new Date(event.startDate)) {
-      newErrors.endDate = 'End date must be after start date';
+      newErrors.endDate = 'End date and time are required';
+    } else {
+      const endDate = new Date(event.endDate);
+      if (endDate < new Date(now.getTime() - 60000)) { // Allow 1 minute buffer
+        newErrors.endDate = 'End date and time cannot be in the past';
+      } else if (event.startDate) {
+        const startDate = new Date(event.startDate);
+        if (endDate <= startDate) {
+          newErrors.endDate = 'End date and time must be after start date and time';
+        }
+      }
     }
     if (!event.timezone) {
       newErrors.timezone = 'Timezone is required';
@@ -99,22 +116,26 @@ export function Step2Details() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <Label htmlFor="startDate" className="text-gray-900">Start Date & Time *</Label>
             <div className="flex gap-2">
               <Input
-                type="date"
+                type="datetime-local"
                 id="startDate"
                 value={event.startDate}
-                onChange={(e) => handleInputChange('startDate', e.target.value)}
+                onChange={(e) => {
+                  handleInputChange('startDate', e.target.value);
+                  // If end date is not set, set it to 1 hour after start
+                  if (!event.endDate && e.target.value) {
+                    const start = new Date(e.target.value);
+                    start.setHours(start.getHours() + 1);
+                    const endDate = start.toISOString().slice(0, 16); // Format for datetime-local
+                    handleInputChange('endDate', endDate);
+                  }
+                }}
+                min={new Date().toISOString().slice(0, 16)}
                 className={`flex-1 ${errors.startDate ? 'border-red-500' : ''}`}
-              />
-              <Input
-                type="time"
-                value={event.startTime}
-                onChange={(e) => handleInputChange('startTime', e.target.value)}
-                className="w-32"
               />
             </div>
             {errors.startDate && (
@@ -126,17 +147,12 @@ export function Step2Details() {
             <Label htmlFor="endDate" className="text-gray-900">End Date & Time *</Label>
             <div className="flex gap-2">
               <Input
-                type="date"
+                type="datetime-local"
                 id="endDate"
                 value={event.endDate}
                 onChange={(e) => handleInputChange('endDate', e.target.value)}
+                min={new Date().toISOString().slice(0, 16)}
                 className={`flex-1 ${errors.endDate ? 'border-red-500' : ''}`}
-              />
-              <Input
-                type="time"
-                value={event.endTime}
-                onChange={(e) => handleInputChange('endTime', e.target.value)}
-                className="w-32"
               />
             </div>
             {errors.endDate && (

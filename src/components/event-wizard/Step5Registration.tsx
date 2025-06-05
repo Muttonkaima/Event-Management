@@ -19,17 +19,37 @@ export function Step5Registration() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const now = new Date();
 
+    // Start date validation
     if (!registration.registrationOpen) {
-      newErrors.registrationOpen = 'Registration open date is required';
+      newErrors.registrationOpen = 'Start date and time are required';
+    } else {
+      const startDate = new Date(registration.registrationOpen);
+      if (startDate < new Date(now.getTime() - 60000)) { // Allow 1 minute buffer
+        newErrors.registrationOpen = 'Start date and time cannot be in the past';
+      }
     }
+
+    // End date validation
     if (!registration.registrationClose) {
-      newErrors.registrationClose = 'Registration close date is required';
+      newErrors.registrationClose = 'End date and time are required';
+    } else {
+      const endDate = new Date(registration.registrationClose);
+      if (endDate < new Date(now.getTime() - 60000)) { // Allow 1 minute buffer
+        newErrors.registrationClose = 'End date and time cannot be in the past';
+      } else if (registration.registrationOpen) {
+        const startDate = new Date(registration.registrationOpen);
+        if (endDate <= startDate) {
+          newErrors.registrationClose = 'End date and time must be after start date and time';
+        }
+      }
     }
+    
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  };  
 
   const handlePrevious = () => {
     actions.setStep(4);
@@ -69,32 +89,48 @@ export function Step5Registration() {
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Registration Period</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="registrationOpen" className="text-sm font-medium text-gray-700">Registration Opens *</Label>
+          <div>
+            <Label htmlFor="startDate" className="text-gray-900">Start Date & Time *</Label>
+            <div className="flex gap-2">
               <Input
                 type="datetime-local"
-                id="registrationOpen"
+                id="startDate"
                 value={registration.registrationOpen}
-                onChange={(e) => handleInputChange('registrationOpen', e.target.value)}
-                className={errors.registrationOpen ? 'border-red-500' : ''}
+                onChange={(e) => {
+                  handleInputChange('registrationOpen', e.target.value);
+                  // If end date is not set, set it to 1 hour after start
+                  if (!registration.registrationClose && e.target.value) {
+                    const start = new Date(e.target.value);
+                    start.setHours(start.getHours() + 1);
+                    const endDate = start.toISOString().slice(0, 16); // Format for datetime-local
+                    handleInputChange('registrationClose', endDate);
+                  }
+                }}
+                min={new Date().toISOString().slice(0, 16)}
+                className={`flex-1 ${errors.registrationOpen ? 'border-red-500' : ''}`}
               />
-              {errors.registrationOpen && (
-                <p className="text-red-500 text-sm mt-1">{errors.registrationOpen}</p>
-              )}
             </div>
-            <div>
-              <Label htmlFor="registrationClose" className="text-sm font-medium text-gray-700">Registration Closes *</Label>
+            {errors.registrationOpen && (
+              <p className="text-red-500 text-sm mt-1">{errors.registrationOpen}</p>
+            )}
+          </div>
+          
+          <div>
+            <Label htmlFor="endDate" className="text-gray-900">End Date & Time *</Label>
+            <div className="flex gap-2">
               <Input
                 type="datetime-local"
-                id="registrationClose"
+                id="endDate"
                 value={registration.registrationClose}
                 onChange={(e) => handleInputChange('registrationClose', e.target.value)}
-                className={errors.registrationClose ? 'border-red-500' : ''}
+                min={new Date().toISOString().slice(0, 16)}
+                className={`flex-1 ${errors.registrationClose ? 'border-red-500' : ''}`}
               />
-              {errors.registrationClose && (
-                <p className="text-red-500 text-sm mt-1">{errors.registrationClose}</p>
-              )}
             </div>
+            {errors.registrationClose && (
+              <p className="text-red-500 text-sm mt-1">{errors.registrationClose}</p>
+            )}
+          </div>
           </div>
         </div>
 
