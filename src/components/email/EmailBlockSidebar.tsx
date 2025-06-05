@@ -1,5 +1,4 @@
-import { Heading, Image, AlignLeft, MousePointer, Minus, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Heading, Image, AlignLeft, MousePointer, Minus } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface EmailBlockSidebarProps {

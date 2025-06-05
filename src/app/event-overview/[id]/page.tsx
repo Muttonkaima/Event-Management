@@ -24,10 +24,11 @@ type EventOverviewProps = {
   searchParams?: { [key: string]: string | string[] | undefined };
 };
 
-export default function EventOverview({ params }: EventOverviewProps) {
+export default async function EventOverview({ params }: EventOverviewProps) {
 
+  const awaitedParams = await params;
   // Find the event with the matching ID
-  const event = (eventsData as Event[]).find((e) => e.id === params.id);
+  const event = (eventsData as Event[]).find((e) => e.id === awaitedParams.id);
 
   // If no event is found, return a 404 page
   if (!event) {

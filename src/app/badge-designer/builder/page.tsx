@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { ElementsSidebar } from '@/components/badge-designer/elements-sidebar';
 import { BadgeCanvas } from '@/components/badge-designer/badge-canvas';
 import { PropertiesPanel } from '@/components/badge-designer/properties-panel';
@@ -9,7 +9,7 @@ import { PreviewModal } from '@/components/badge-designer/preview-modal';
 import { DnDProvider } from '@/lib/dnd-provider';
 import { BadgeElement, BadgeTemplate } from '@/lib/badge-types';
 import { Button } from '@/components/ui/button';
-import { Home, Eye, Save } from 'lucide-react';
+import { Eye, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function BadgeDesigner() {

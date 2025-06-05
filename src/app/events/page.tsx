@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { FiSearch, FiFilter, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
+import { FiSearch, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
 import Link from 'next/link';
 import eventsData from '@/data/events.json';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';

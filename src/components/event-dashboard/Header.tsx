@@ -1,6 +1,6 @@
 "use client";
 
-import { FiMenu, FiBell, FiSearch, FiUser } from 'react-icons/fi';
+import { FiMenu, FiBell, FiUser } from 'react-icons/fi';
 import { useState } from 'react';
 
 type HeaderProps = {

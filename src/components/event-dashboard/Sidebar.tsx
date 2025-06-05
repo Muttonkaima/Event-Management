@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiSettings, FiLogOut, FiMenu, FiX, FiMail, FiAward, FiHome,
+import { FiLogOut, FiX,
   FiCalendar,
   FiUsers,
   FiVideo,

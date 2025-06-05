@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiMenu, FiX, FiMail, FiAward, FiFileText } from 'react-icons/fi';
+import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiX, FiMail, FiAward, FiFileText } from 'react-icons/fi';
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: <FiHome className="w-5 h-5" /> },

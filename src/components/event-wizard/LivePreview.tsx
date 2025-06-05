@@ -3,7 +3,6 @@ import { Eye, Calendar, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { FullPreviewModal } from './FullPreviewModal';
-import Image from 'next/image';
 
 const getThemeGradient = (colorTheme: string) => {
   switch (colorTheme) {

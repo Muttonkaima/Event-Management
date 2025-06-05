@@ -1,6 +1,5 @@
 import { EmailBlock } from "@/shared/emailSchema";
-import { Trash2, Plus, Move } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
