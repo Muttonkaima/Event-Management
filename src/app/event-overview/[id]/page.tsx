@@ -147,7 +147,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
       title: "Registration Form Builder",
       description: "Create and customize your event registration form",
       link: "/form-builder",
-      status: "Published" as const,
+      status: "Completed" as const,
       statusColor: "blue" as const,
       actionText: "Edit",
       icon: "form-input"
@@ -156,7 +156,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
       title: "Email Builder",
       description: "Design emails for confirmations and reminders",
       link: "/email-builder",
-      status: "In Progress" as const,
+      status: "Completed" as const,
       statusColor: "yellow" as const,
       actionText: "Continue",
       icon: "mail"
@@ -173,8 +173,8 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     {
       title: "Lead Scanner",
       description: "Set up and configure lead scanning",
-      link: "/lead-scanner",
-      status: "Not Started" as const,
+      link: "#",
+      status: "In Progress" as const,
       statusColor: "gray" as const,
       actionText: "Start",
       icon: "scan"
@@ -182,8 +182,8 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     {
       title: "Live Display Setup",
       description: "Configure displays for your event venue",
-      link: "/live-display",
-      status: "Not Started" as const,
+      link: "#",
+      status: "In Progress" as const,
       statusColor: "gray" as const,
       actionText: "Start",
       icon: "monitor"
@@ -191,7 +191,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     {
       title: "Session Manager",
       description: "Manage sessions, speakers and schedules",
-      link: "/session-manager",
+      link: "#",
       status: "In Progress" as const,
       statusColor: "yellow" as const,
       actionText: "Continue",

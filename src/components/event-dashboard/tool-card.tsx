@@ -11,6 +11,7 @@ import {
   MoreHorizontal
 } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface ToolCardProps {
   title: string;
@@ -65,7 +66,10 @@ export default function ToolCard({
 
   return (
     <Link href={link}>
-      <Card className="hover:shadow-md transition-shadow bg-white">
+      <Card className={cn(
+        "transition-shadow bg-white hover:shadow-md",
+        status === "In Progress" && "opacity-50 cursor-not-allowed"
+      )}>
         <CardContent className="p-6">
           <div className="flex items-start justify-between mb-4">
             <div className="p-3 bg-gray-100 rounded-lg">
