@@ -5,12 +5,78 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Country, State, City } from 'country-state-city';
 
 export function Step2Details() {
   const { state, actions } = useEventWizard();
   const { event } = state;
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [states, setStates] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
+  const countries = Country.getAllCountries();
+
+  // Load states when country changes
+  useEffect(() => {
+    if (selectedCountry) {
+      const countryStates = State.getStatesOfCountry(selectedCountry);
+      setStates(countryStates);
+      setSelectedState('');
+      // Update event with selected country
+      const countryData = countries.find(c => c.isoCode === selectedCountry);
+      if (countryData) {
+        actions.updateEvent({ 
+          country: countryData.name,
+          state: '',
+          city: ''
+        });
+      }
+    }
+  }, [selectedCountry]);
+
+  // Load cities when state changes
+  useEffect(() => {
+    if (selectedCountry && selectedState) {
+      const stateCities = City.getCitiesOfState(selectedCountry, selectedState);
+      setCities(stateCities);
+      // Update event with selected state
+      const stateData = states.find(s => s.isoCode === selectedState);
+      if (stateData) {
+        actions.updateEvent({ 
+          state: stateData.name,
+          city: ''
+        });
+      }
+    }
+  }, [selectedState]);
+
+  // Initialize selected country and state from event data
+  useEffect(() => {
+    if (event.country) {
+      const country = countries.find(c => c.name === event.country);
+      if (country) {
+        setSelectedCountry(country.isoCode);
+        
+        // Set states for the country
+        const countryStates = State.getStatesOfCountry(country.isoCode);
+        setStates(countryStates);
+        
+        // If state is set in event, select it
+        if (event.state) {
+          const state = countryStates.find(s => s.name === event.state);
+          if (state) {
+            setSelectedState(state.isoCode);
+            
+            // Set cities for the state
+            const stateCities = City.getCitiesOfState(country.isoCode, state.isoCode);
+            setCities(stateCities);
+          }
+        }
+      }
+    }
+  }, []);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -43,6 +109,20 @@ export function Step2Details() {
           newErrors.endDate = 'End date and time must be after start date and time';
         }
       }
+    }
+
+    // Location validation
+    if (!event.address?.trim()) {
+      newErrors.address = 'Venue name or address is required';
+    }
+    if (!selectedCountry) {
+      newErrors.country = 'Country is required';
+    }
+    if (!selectedState) {
+      newErrors.state = 'State/Province is required';
+    }
+    if (!event.city?.trim()) {
+      newErrors.city = 'City is required';
     }
     if (!event.timezone) {
       newErrors.timezone = 'Timezone is required';
@@ -197,64 +277,94 @@ export function Step2Details() {
         {(event.eventType === 'in-person' || event.eventType === 'hybrid') && (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="address" className="text-gray-900">Address *</Label>
+              <Label className="text-gray-900">Address</Label>
               <Input
-                id="address"
-                placeholder="Enter address"
+                type="text"
                 value={event.address}
                 onChange={(e) => handleInputChange('address', e.target.value)}
-                className={errors.address ? 'border-red-500' : ''}
+                placeholder="Venue name or address"
+                className={`mt-2 ${errors.address ? 'border-red-500' : ''}`}
               />
               {errors.address && (
                 <p className="text-red-500 text-sm mt-1">{errors.address}</p>
               )}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <Label htmlFor="country" className="text-sm font-medium text-gray-700">Country *</Label>
+                  <Select
+                    value={selectedCountry}
+                    onValueChange={(value) => setSelectedCountry(value)}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60 overflow-y-auto">
+                      {countries.map((country) => (
+                        <SelectItem key={country.isoCode} value={country.isoCode}>
+                          {country.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="state" className="text-sm font-medium text-gray-700">State/Province *</Label>
+                  <Select
+                    value={selectedState}
+                    onValueChange={(value) => setSelectedState(value)}
+                    disabled={!selectedCountry}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60 overflow-y-auto">
+                      {states.map((state) => (
+                        <SelectItem key={state.isoCode} value={state.isoCode}>
+                          {state.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="city" className="text-sm font-medium text-gray-700">City *</Label>
+                  <Select
+                    value={event.city}
+                    onValueChange={(value) => handleInputChange('city', value)}
+                    disabled={!selectedState}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select city" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60 overflow-y-auto">
+                      {cities.map((city) => (
+                        <SelectItem key={city.name} value={city.name}>
+                          {city.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                <Label className="text-gray-900">Zip Code</Label>
+              <Input
+                type="text"
+                value={event.zipCode}
+                onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                placeholder="Zip Code"
+                className={`mt-2 ${errors.zipCode ? 'border-red-500' : ''}`}
+              />
+              {errors.zipCode && (
+                <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>
+              )}
+              </div>
+              </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="city" className="text-gray-900">City *</Label>
-                <Input
-                  id="city"
-                  placeholder="City"
-                  value={event.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
-                  className={errors.city ? 'border-red-500' : ''}
-                />
-                {errors.city && (
-                  <p className="text-red-500 text-sm mt-1">{errors.city}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="state" className="text-gray-900">State/Province</Label>
-                <Input
-                  id="state"
-                  placeholder="State/Province"
-                  value={event.state}
-                  onChange={(e) => handleInputChange('state', e.target.value)}
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="country" className="text-gray-900">Country</Label>
-                <Input
-                  id="country"
-                  placeholder="Country"
-                  value={event.country}
-                  onChange={(e) => handleInputChange('country', e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="zipCode" className="text-gray-900">Zip/Postal Code</Label>
-                <Input
-                  id="zipCode"
-                  placeholder="Zip/Postal Code"
-                  value={event.zipCode}
-                  onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                />
-              </div>
-            </div>
+      
           </div>
         )}
 
