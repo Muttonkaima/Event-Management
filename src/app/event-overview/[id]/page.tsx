@@ -9,18 +9,18 @@ import AnalyticsCard from "@/components/event-dashboard/analytics-card";
 import ToolCard from "@/components/event-dashboard/tool-card";
 import { Menu, MapPin, MoreHorizontal, User, Clock, Users, Tag, Link } from "lucide-react";
 import OverviewLayout from "@/components/event-dashboard/OverviewLayout";
-import { notFound } from 'next/navigation';
+import { notFound, useSearchParams } from 'next/navigation';
 import eventsData from '@/data/events.json';
 
 // Import the Event interface from metadata.ts
 import type { Event } from './metadata';
 
-interface PageProps {
+type EventOverviewProps = {
   params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
 
-export default function EventOverview({ params }: PageProps) {
+export default function EventOverview({ params }: EventOverviewProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Find the event with the matching ID
@@ -30,6 +30,9 @@ export default function EventOverview({ params }: PageProps) {
   if (!event) {
     notFound();
   }
+
+  // Access searchParams using the hook
+  const searchParams = useSearchParams();
 
   // Format date for display
   const formatDate = (dateString: string) => {
