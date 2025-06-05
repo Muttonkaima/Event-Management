@@ -62,6 +62,8 @@ export function EmailPreviewModal({
               src={properties.imageUrl || 'https://via.placeholder.com/600x300'}
               alt={properties.altText || 'Email content'}
               className="w-full h-auto rounded-lg"
+              width={properties.width || 500}
+              height={properties.height || 500}
               style={{
                 maxWidth: '100%',
                 borderRadius: `${properties.borderRadius || 8}px`,

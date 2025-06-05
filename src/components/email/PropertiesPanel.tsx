@@ -125,7 +125,7 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
                       placeholder="https://example.com/image.jpg"
                     />
                     <button
-                      className="px-3 text-xs font-medium border border-gray-300 rounded-md hover:bg-gray-50 transition-colors h-9 whitespace-nowrap"
+                      className="px-3 text-xs font-medium border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors h-9 whitespace-nowrap"
                       onClick={() => { }}
                     >
                       Upload
@@ -140,6 +140,8 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
                         src={properties.imageUrl}
                         alt="Preview"
                         className="w-full h-auto object-cover"
+                        width={properties.width || 500}
+                        height={properties.height || 500}
                       />
                     </div>
                   </div>

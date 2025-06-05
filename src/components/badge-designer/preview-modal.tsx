@@ -48,6 +48,8 @@ export function PreviewModal({
               src={style.imageUrl} 
               alt={element.type}
               className="w-full h-full object-cover"
+              width={element.width}
+              height={element.height}
               style={{ borderRadius: style.borderRadius ? `${style.borderRadius}px` : undefined }}
             />
           );

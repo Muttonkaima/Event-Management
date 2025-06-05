@@ -87,6 +87,8 @@ export function EmailPreview({
               src={properties.imageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4'}
               alt="Email content"
               className="w-full h-auto"
+              width={properties.width || 500}
+              height={properties.height || 500}
               style={{
                 borderRadius: `${properties.borderRadius || 4}px`,
               }}

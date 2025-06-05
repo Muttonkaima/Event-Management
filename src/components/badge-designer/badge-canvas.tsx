@@ -76,6 +76,8 @@ function BadgeElementComponent({
             src={style.imageUrl}
             alt={element.type}
             className="w-full h-full object-cover"
+            width={element.width}
+            height={element.height}
             style={{ borderRadius: style.borderRadius ? `${style.borderRadius}px` : undefined }}
           />
         );
@@ -96,6 +98,8 @@ function BadgeElementComponent({
           src="/images/qrcode.png"
           alt="QR Code"
           className="w-full h-full object-contain"
+          width={element.width}
+          height={element.height}
         />
       );
     }
