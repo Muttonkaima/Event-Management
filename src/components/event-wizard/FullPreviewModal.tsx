@@ -2,6 +2,7 @@ import { useEventWizard } from '@/contexts/EventWizardContext';
 import { X, Calendar, MapPin, Users, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import Image from 'next/image';
 
 interface FullPreviewModalProps {
   open: boolean;
@@ -145,7 +146,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
           <div className="h-96 relative overflow-hidden">
             <div className="absolute inset-0">
             {branding.visibility.showBanner && (
-              <img 
+              <Image 
                 src={branding.bannerUrl || event.templateImage || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
                 alt={event.name}
                 className="w-full h-full object-cover"
@@ -158,7 +159,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
             )}
               {branding.visibility.showLogo && branding.logoUrl && (
                 <div className="absolute top-4 left-4 border-2 border-gray-200 p-0 rounded-md shadow-md">
-                  <img 
+                  <Image 
                     src={branding.logoUrl || '/images/image5.avif'}
                     alt="Event Logo" 
                     className="h-22 w-auto object-contain rounded"

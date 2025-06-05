@@ -1,11 +1,12 @@
 import { useEventWizard } from '@/contexts/EventWizardContext';
 import { useFileUpload } from '@/hooks/useFileUpload';
-import { ArrowLeft, ArrowRight, CloudUpload, Image } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CloudUpload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ColorTheme, FontStyle } from '@/shared/eventSchema';
 import { useState } from 'react';
+import Image from 'next/image';
 
 const colorThemes = [
   {
@@ -131,7 +132,7 @@ export function Step3Branding() {
           >
             {logoPreview ? (
               <div>
-                <img src={logoPreview} alt="Logo preview" className="mx-auto max-h-24 rounded-lg" />
+                <Image src={logoPreview} alt="Logo preview" className="mx-auto max-h-24 rounded-lg" />
                 <p className="mt-2 text-sm text-gray-600">Click to change logo</p>
               </div>
             ) : (
@@ -161,12 +162,12 @@ export function Step3Branding() {
           >
             {bannerPreview ? (
               <div>
-                <img src={bannerPreview} alt="Banner preview" className="mx-auto max-h-32 rounded-lg w-full object-cover" />
+                <Image src={bannerPreview} alt="Banner preview" className="mx-auto max-h-32 rounded-lg w-full object-cover" />
                 <p className="mt-2 text-sm text-gray-600">Click to change banner</p>
               </div>
             ) : (
               <div>
-                <Image className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <CloudUpload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                 <p className="text-lg font-medium text-gray-600 mb-2">Click to upload a banner image</p>
                 <p className="text-sm text-gray-500">PNG, JPG up to 5MB (1200x400px recommended)</p>
               </div>

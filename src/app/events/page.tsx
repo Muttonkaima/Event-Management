@@ -5,7 +5,7 @@ import { FiSearch, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid,
 import Link from 'next/link';
 import eventsData from '@/data/events.json';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-
+import Image from 'next/image';
 type ViewMode = 'grid' | 'list';
 
 interface Event {
@@ -171,7 +171,7 @@ export default function EventsPage() {
                 className="block bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300"
               >
                 <div className="relative h-48">
-                  <img 
+                  <Image 
                     src={event.image} 
                     alt={event.name}
                     className="w-full h-full object-cover"
@@ -213,7 +213,7 @@ export default function EventsPage() {
                       <div className="flex-shrink-0">
                         <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                           {event.organizer.avatar ? (
-                            <img 
+                            <Image 
                               src={event.organizer.avatar} 
                               alt={event.organizer.name}
                               className="w-full h-full object-cover"
@@ -241,7 +241,7 @@ export default function EventsPage() {
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                   <div className="md:w-1/4">
                     <div className="relative h-32 rounded-lg overflow-hidden">
-                      <img 
+                      <Image 
                         src={event.image} 
                         alt={event.name}
                         className="w-full h-full object-cover"
@@ -281,7 +281,7 @@ export default function EventsPage() {
                         <div className="flex-shrink-0">
                           <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                             {event.organizer.avatar ? (
-                              <img 
+                              <Image 
                                 src={event.organizer.avatar} 
                                 alt={event.organizer.name}
                                 className="w-full h-full object-cover"

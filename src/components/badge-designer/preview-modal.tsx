@@ -2,6 +2,7 @@ import { BadgeElement } from '@/lib/badge-types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Download, X } from 'lucide-react';
+import Image from 'next/image';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -43,7 +44,7 @@ export function PreviewModal({
       if (element.type === 'attendee-photo' || element.type === 'event-logo') {
         if (style.imageUrl) {
           return (
-            <img 
+            <Image 
               src={style.imageUrl} 
               alt={element.type}
               className="w-full h-full object-cover"

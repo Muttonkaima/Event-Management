@@ -2,6 +2,7 @@ import { EmailBlock } from "@/shared/emailSchema";
 import { Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Image from "next/image";
 
 interface EmailPreviewProps {
   blocks: EmailBlock[];
@@ -82,7 +83,7 @@ export function EmailPreview({
 
         {block.type === 'image' && (
           <div style={commonStyles}>
-            <img
+            <Image
               src={properties.imageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4'}
               alt="Email content"
               className="w-full h-auto"

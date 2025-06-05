@@ -1,6 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
+import Image from "next/image";
 
 const testimonials = [
   {
@@ -49,7 +50,7 @@ export default function TestimonialsSection() {
                   "{testimonial.content}"
                 </p>
                 <div className="flex items-center">
-                  <img 
+                  <Image 
                     src={testimonial.avatar} 
                     alt={`${testimonial.author} - ${testimonial.role}`} 
                     className="w-12 h-12 rounded-full mr-4 object-cover" 

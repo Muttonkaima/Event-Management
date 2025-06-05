@@ -2,6 +2,7 @@ import { useEventWizard } from '@/contexts/EventWizardContext';
 import { EventTemplate } from '@/shared/eventSchema';
 import { ArrowRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 const templates = [
   {
@@ -81,7 +82,7 @@ export function Step1Template() {
                 </div>
               )}
               <div className="absolute inset-0 flex items-center justify-center text-white text-sm">
-                <img src={tmpl.image} alt={tmpl.name} className="w-full h-full object-cover" />
+                <Image src={tmpl.image} alt={tmpl.name} className="w-full h-full object-cover" />
               </div>
             </div>
             

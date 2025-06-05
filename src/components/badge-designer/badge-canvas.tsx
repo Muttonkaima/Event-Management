@@ -1,5 +1,6 @@
 import { useDrop, useDrag } from 'react-dnd';
 import { BadgeElement, BadgeElementType, elementDefaults } from '@/lib/badge-types';
+import Image from 'next/image';
 
 interface BadgeCanvasProps {
   elements: BadgeElement[];
@@ -66,7 +67,7 @@ function BadgeElementComponent({
     if (element.type === 'attendee-photo' || element.type === 'event-logo') {
       if (style.imageUrl) {
         return (
-          <img
+          <Image
             src={style.imageUrl}
             alt={element.type}
             className="w-full h-full object-cover"
@@ -86,7 +87,7 @@ function BadgeElementComponent({
 
     if (element.type === 'qr-code') {
       return (
-        <img
+        <Image
           src="/images/qrcode.png"
           alt="QR Code"
           className="w-full h-full object-contain"

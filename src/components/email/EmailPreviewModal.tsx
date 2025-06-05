@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { EmailBlock } from "@/shared/emailSchema";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from 'next/image';
 
 interface EmailPreviewModalProps {
   isOpen: boolean;
@@ -57,7 +58,7 @@ export function EmailPreviewModal({
       case 'image':
         return (
           <div className="my-4">
-            <img
+            <Image
               src={properties.imageUrl || 'https://via.placeholder.com/600x300'}
               alt={properties.altText || 'Email content'}
               className="w-full h-auto rounded-lg"

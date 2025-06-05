@@ -8,7 +8,7 @@ import { MapPin, MoreHorizontal, User, Clock, Users, Tag } from "lucide-react";
 import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
 import { notFound } from 'next/navigation';
 import eventsData from '@/data/events.json';
-
+import Image from 'next/image';
 // Import the Event interface from metadata.ts
 import type { Event } from './metadata';
 
@@ -205,7 +205,7 @@ export default async function EventOverview({ params }: EventOverviewProps) {
               {/* Event Info Card */}
               <Card>
                 <div className="flex flex-col md:flex-row bg-white">
-                  <img
+                  <Image
                     src={event.image}
                     alt={event.name}
                     className="w-full md:w-48 h-40 md:h-auto object-cover rounded-l-lg"

@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { Trash2 } from "lucide-react";
 import { FaAlignLeft, FaAlignCenter, FaAlignRight, FaAlignJustify } from "react-icons/fa";
+import Image from 'next/image';
 
 interface PropertiesPanelProps {
   selectedBlock: EmailBlock | undefined;
@@ -135,7 +136,7 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
                   <div className="mt-1 p-3 border border-gray-100 rounded-lg bg-gray-50">
                     <div className="text-xs font-medium text-gray-600 mb-2">Image Preview</div>
                     <div className="overflow-hidden rounded border border-gray-200">
-                      <img
+                      <Image
                         src={properties.imageUrl}
                         alt="Preview"
                         className="w-full h-auto object-cover"

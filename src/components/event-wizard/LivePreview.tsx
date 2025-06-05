@@ -3,6 +3,7 @@ import { Eye, Calendar, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { FullPreviewModal } from './FullPreviewModal';
+import Image from 'next/image';
 
 const getThemeGradient = (colorTheme: string) => {
   switch (colorTheme) {
@@ -135,7 +136,7 @@ export function LivePreview() {
             {/* Banner Image */}
             <div className="relative w-full h-48 overflow-hidden">
             {branding.visibility.showBanner && (
-              <img 
+              <Image 
                 src={branding.bannerUrl || event.templateImage || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
                 alt={event.name}
                 className="w-full h-full object-cover"
@@ -148,7 +149,7 @@ export function LivePreview() {
              )}
              {branding.visibility.showLogo && branding.logoUrl && (
                 <div className="absolute top-4 left-4 border-2 border-white p-0 rounded-md shadow-md z-20">
-                  <img 
+                  <Image 
                     src={branding.logoUrl}
                     alt="Event Logo" 
                     className="h-12 w-auto object-contain rounded"
