@@ -1,19 +1,23 @@
-"use client";
-
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AnalyticsCard from "@/components/event-dashboard/analytics-card";
 import ToolCard from "@/components/event-dashboard/tool-card";
-import { Menu, MapPin, MoreHorizontal, User, Clock, Users, Tag, Link } from "lucide-react";
-import OverviewLayout from "@/components/event-dashboard/OverviewLayout";
-import { notFound, useSearchParams } from 'next/navigation';
+import { MapPin, MoreHorizontal, User, Clock, Users, Tag } from "lucide-react";
+import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
+import { notFound } from 'next/navigation';
 import eventsData from '@/data/events.json';
 
 // Import the Event interface from metadata.ts
 import type { Event } from './metadata';
+
+// This function generates the static params at build time
+export async function generateStaticParams() {
+  return eventsData.map(event => ({
+    id: event.id,
+  }));
+}
 
 type EventOverviewProps = {
   params: { id: string };
@@ -21,7 +25,6 @@ type EventOverviewProps = {
 };
 
 export default function EventOverview({ params }: EventOverviewProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Find the event with the matching ID
   const event = (eventsData as Event[]).find((e) => e.id === params.id);
@@ -30,9 +33,6 @@ export default function EventOverview({ params }: EventOverviewProps) {
   if (!event) {
     notFound();
   }
-
-  // Access searchParams using the hook
-  const searchParams = useSearchParams();
 
   // Format date for display
   const formatDate = (dateString: string) => {
