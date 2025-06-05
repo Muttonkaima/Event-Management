@@ -12,33 +12,15 @@ import OverviewLayout from "@/components/event-dashboard/OverviewLayout";
 import { notFound } from 'next/navigation';
 import eventsData from '@/data/events.json';
 
-interface Event {
-  id: string;
-  name: string;
-  description: string;
-  date: {
-    start: string;
-    end: string;
-  };
-  location: {
-    name: string;
-    city: string;
-    address: string;
-    country: string;
-  };
-  status: string;
-  organizer: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-  attendees: number;
-  category: string;
-  tags: string[];
-  image: string;
+// Import the Event interface from metadata.ts
+import type { Event } from './metadata';
+
+interface PageProps {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default function EventOverview({ params }: { params: { id: string } }) {
+export default function EventOverview({ params }: PageProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Find the event with the matching ID
@@ -266,7 +248,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
                         {/* Tags */}
                         {event.tags.length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-3">
-                            {event.tags.slice(0, 3).map((tag) => (
+                            {event.tags.slice(0, 3).map((tag: string) => (
                               <Badge key={tag} variant="outline" className="text-xs text-gray-400">
                                 {tag}
                               </Badge>
