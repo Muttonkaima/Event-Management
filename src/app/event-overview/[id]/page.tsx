@@ -201,11 +201,11 @@ export default async function EventOverview({ params }: PageProps) {
             <TabsContent value="overview" className="space-y-6">
               {/* Event Info Card */}
               <Card>
-                <div className="flex flex-col md:flex-row bg-white rounded">
+                <div className="flex flex-col md:flex-row bg-white rounded-lg">
                   <Image
                     src={event.image}
                     alt={event.name}
-                    className="w-full md:w-48 h-40 md:h-auto object-cover rounded-l-lg"
+                    className="w-full md:w-48 h-40 md:h-auto object-cover rounded-lg md:rounded-l-lg md:rounded-r-none"
                     width={48}
                     height={48}
                   />
