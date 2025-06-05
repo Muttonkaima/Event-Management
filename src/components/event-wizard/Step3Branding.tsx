@@ -132,7 +132,7 @@ export function Step3Branding() {
           >
             {logoPreview ? (
               <div>
-                <Image src={logoPreview} alt="Logo preview" className="mx-auto max-h-24 rounded-lg" />
+                <Image src={logoPreview} alt="Logo preview" className="mx-auto max-h-24 rounded-lg" width={200} height={200} />
                 <p className="mt-2 text-sm text-gray-600">Click to change logo</p>
               </div>
             ) : (
@@ -162,7 +162,7 @@ export function Step3Branding() {
           >
             {bannerPreview ? (
               <div>
-                <Image src={bannerPreview} alt="Banner preview" className="mx-auto max-h-32 rounded-lg w-full object-cover" />
+                <Image src={bannerPreview} alt="Banner preview" className="mx-auto max-h-32 rounded-lg w-full object-cover" width={1200} height={400} />
                 <p className="mt-2 text-sm text-gray-600">Click to change banner</p>
               </div>
             ) : (

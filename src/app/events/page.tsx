@@ -175,6 +175,8 @@ export default function EventsPage() {
                     src={event.image} 
                     alt={event.name}
                     className="w-full h-full object-cover"
+                    width={48}
+                    height={48}
                   />
                   <div className="absolute top-3 right-3">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -217,6 +219,8 @@ export default function EventsPage() {
                               src={event.organizer.avatar} 
                               alt={event.organizer.name}
                               className="w-full h-full object-cover"
+                              width={48}
+                              height={48}
                             />
                           ) : (
                             <FiUser className="w-4 h-4 text-gray-500" />
@@ -245,6 +249,8 @@ export default function EventsPage() {
                         src={event.image} 
                         alt={event.name}
                         className="w-full h-full object-cover"
+                        width={48}
+                        height={48}
                       />
                       <div className="absolute top-2 right-2">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -285,6 +291,8 @@ export default function EventsPage() {
                                 src={event.organizer.avatar} 
                                 alt={event.organizer.name}
                                 className="w-full h-full object-cover"
+                                width={48}
+                                height={48}
                               />
                             ) : (
                               <FiUser className="w-4 h-4 text-gray-500" />

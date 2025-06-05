@@ -118,8 +118,6 @@ export function LivePreview() {
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">Live Preview</h3>
             <Button
-              variant="outline"
-              size="sm"
               onClick={() => setShowFullPreview(true)}
               className="text-gray-900 bg-transparent hover:bg-gray-50 border border-gray-200  cursor-pointer"
             >
@@ -140,6 +138,8 @@ export function LivePreview() {
                 src={branding.bannerUrl || event.templateImage || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
                 alt={event.name}
                 className="w-full h-full object-cover"
+                width={800}
+                height={400}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null;
@@ -153,6 +153,8 @@ export function LivePreview() {
                     src={branding.logoUrl}
                     alt="Event Logo" 
                     className="h-12 w-auto object-contain rounded"
+                    width={100}
+                    height={100}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       // If the uploaded logo fails to load, fall back to the default logo

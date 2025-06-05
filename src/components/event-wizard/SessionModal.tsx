@@ -1,3 +1,4 @@
+
 import { useEventWizard } from '@/contexts/EventWizardContext';
 import { X, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -113,7 +114,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between text-gray-900">
             {editingIndex !== null ? 'Edit Session' : 'Add Session'}
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button onClick={onClose}>
               <X className="w-4 h-4" />
             </Button>
           </DialogTitle>
@@ -213,7 +214,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
         </div>
 
         <div className="flex justify-end space-x-3 pt-4">
-          <Button variant="outline" onClick={onClose} className='text-gray-900 bg-transparent border-gray-200 hover:bg-gray-50 cursor-pointer'>
+          <Button onClick={onClose} className='text-gray-900 bg-transparent border-gray-200 hover:bg-gray-50 cursor-pointer'>
             Cancel
           </Button>
           <Button onClick={handleSave} className="bg-gray-900 text-white hover:bg-gray-800 cursor-pointer">

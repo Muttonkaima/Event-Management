@@ -52,7 +52,9 @@ export default function TestimonialsSection() {
                 <div className="flex items-center">
                   <Image 
                     src={testimonial.avatar} 
-                    alt={`${testimonial.author} - ${testimonial.role}`} 
+                    alt={`${testimonial.author} - ${testimonial.role}`}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded-full mr-4 object-cover" 
                   />
                   <div>

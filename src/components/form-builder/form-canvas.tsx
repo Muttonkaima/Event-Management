@@ -63,7 +63,7 @@ export default function FormCanvas() {
 
         {/* Drop Zone */}
         <div
-          ref={drop}
+          ref={drop as any}
           className={`min-h-96 border-2 border-dashed rounded-lg p-6 transition-colors ${isOver
             ? 'border-blue-300 bg-blue-50'
             : 'border-gray-200'

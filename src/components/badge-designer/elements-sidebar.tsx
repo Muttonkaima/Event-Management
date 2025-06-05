@@ -26,9 +26,14 @@ function DraggableElement({ type, icon, label }: DraggableElementProps) {
     }),
   }));
 
+  const setRef = (node: HTMLDivElement | null) => {
+    // Type assertion to handle the drag ref
+    (drag as (node: HTMLDivElement | null) => void)(node);
+  };
+
   return (
     <div
-      ref={drag}
+      ref={setRef}
       className={`flex items-center p-3 bg-gray-50 rounded-lg border border-gray-50 cursor-grab active:cursor-grabbing hover:bg-gray-100 transition-colors ${
         isDragging ? 'opacity-50 transform rotate-1' : ''
       }`}

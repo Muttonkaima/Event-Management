@@ -135,7 +135,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
         {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-gray-200 bg-white sticky top-0 z-20">
           <h3 className="text-lg font-semibold text-gray-900">Event Preview</h3>
-          <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-900 cursor-pointer">
+          <Button onClick={onClose} className="text-gray-900 cursor-pointer">
             <X className="w-4 h-4 text-gray-900" />
           </Button>
         </div>
@@ -150,6 +150,8 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                 src={branding.bannerUrl || event.templateImage || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
                 alt={event.name}
                 className="w-full h-full object-cover"
+                width={800}
+                height={400}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null;
@@ -163,6 +165,8 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                     src={branding.logoUrl || '/images/image5.avif'}
                     alt="Event Logo" 
                     className="h-22 w-auto object-contain rounded"
+                    width={100}
+                    height={100}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       console.error('Failed to load logo:', target.src);

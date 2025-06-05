@@ -44,6 +44,11 @@ function BadgeElementComponent({
     }),
   }));
 
+  const setRef = (node: HTMLDivElement | null) => {
+    // Type assertion to handle the drag ref
+    (drag as (node: HTMLDivElement | null) => void)(node);
+  };
+
   const elementStyle: React.CSSProperties = {
     position: 'absolute',
     left: `${element.x}px`,
@@ -106,7 +111,7 @@ function BadgeElementComponent({
 
   return (
     <div
-      ref={drag}
+      ref={setRef}
       style={elementStyle}
       onClick={(e) => {
         e.stopPropagation();
@@ -197,7 +202,7 @@ export function BadgeCanvas({
         {/* Email content */}
         <div className="flex justify-center mt-3">
           <div
-            ref={drop}
+            ref={drop as any}
             id="badge-canvas"
             className={`relative border-2 shadow-lg ${isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
               }`}

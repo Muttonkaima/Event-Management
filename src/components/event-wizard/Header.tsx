@@ -15,8 +15,6 @@ export default function Header({ toggleSidebarAction: toggleSidebar }: HeaderPro
     <header className="sticky top-0 z-10 bg-white shadow-sm">
       <div className="flex items-center justify-between p-4">
       <Button
-              variant="ghost"
-              size="sm"
               className="text-gray-600 border-2 mt-2 border-gray-200 hover:bg-gray-50 hover:text-gray-800 cursor-pointer"
               onClick={() => window.location.href = "/events"}
             >

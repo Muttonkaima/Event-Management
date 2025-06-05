@@ -82,7 +82,7 @@ export function Step1Template() {
                 </div>
               )}
               <div className="absolute inset-0 flex items-center justify-center text-white text-sm">
-                <Image src={tmpl.image} alt={tmpl.name} className="w-full h-full object-cover" />
+                <Image src={tmpl.image} alt={tmpl.name} className="w-full h-full object-cover" width={800} height={400} />
               </div>
             </div>
             

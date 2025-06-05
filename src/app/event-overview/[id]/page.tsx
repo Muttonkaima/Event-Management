@@ -9,28 +9,25 @@ import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
 import { notFound } from 'next/navigation';
 import eventsData from '@/data/events.json';
 import Image from 'next/image';
-// Import the Event interface from metadata.ts
 import type { Event } from './metadata';
 
-// This function generates the static params at build time
 export async function generateStaticParams() {
   return eventsData.map(event => ({
     id: event.id,
   }));
 }
 
-type EventOverviewProps = {
-  params: { id: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-};
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
-export default async function EventOverview({ params }: EventOverviewProps) {
-
-  const awaitedParams = await params;
+export default async function EventOverview({ params }: PageProps) {
+  // Await the params promise
+  const { id } = await params;
+  
   // Find the event with the matching ID
-  const event = (eventsData as Event[]).find((e) => e.id === awaitedParams.id);
+  const event = (eventsData as Event[]).find((e) => e.id === id);
 
-  // If no event is found, return a 404 page
   if (!event) {
     notFound();
   }
@@ -204,11 +201,13 @@ export default async function EventOverview({ params }: EventOverviewProps) {
             <TabsContent value="overview" className="space-y-6">
               {/* Event Info Card */}
               <Card>
-                <div className="flex flex-col md:flex-row bg-white">
+                <div className="flex flex-col md:flex-row bg-white rounded">
                   <Image
                     src={event.image}
                     alt={event.name}
                     className="w-full md:w-48 h-40 md:h-auto object-cover rounded-l-lg"
+                    width={48}
+                    height={48}
                   />
                   <CardContent className="flex-1 p-4">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">

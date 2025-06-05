@@ -41,9 +41,14 @@ function DraggableField({ fieldType }: DraggableFieldProps) {
     }),
   }));
 
+  const setRef = (node: HTMLDivElement | null) => {
+    // Type assertion to handle the drag ref
+    (drag as (node: HTMLDivElement | null) => void)(node);
+  };
+
   return (
     <div
-      ref={drag}
+      ref={setRef}
       className={`flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-grab active:cursor-grabbing transition-colors border border-transparent hover:border-gray-200 ${
         isDragging ? 'opacity-50' : ''
       }`}
