@@ -8,8 +8,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function Step5Registration() {
+  const router = useRouter();
   const { state, actions } = useEventWizard();
   const { registration } = state;
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -37,6 +39,7 @@ export function Step5Registration() {
     if (validateForm()) {
       // Here you would typically save the event data
       alert('🎉 Event setup completed successfully! Your event is now ready to publish.');
+      router.push('/events');
     }
   };
 

@@ -1,32 +1,35 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  FormInput, 
-  Mail, 
-  Badge as BadgeIcon, 
-  Scan, 
-  Monitor, 
+import {
+  FormInput,
+  Mail,
+  Badge as BadgeIcon,
+  Scan,
+  Monitor,
   Calendar,
-  MoreHorizontal 
+  MoreHorizontal
 } from "lucide-react";
+import Link from "next/link";
 
 interface ToolCardProps {
   title: string;
   description: string;
+  link: string;
   status: "Published" | "In Progress" | "Completed" | "Not Started";
   statusColor: "blue" | "yellow" | "green" | "gray";
   actionText: string;
   icon: string;
 }
 
-export default function ToolCard({ 
-  title, 
-  description, 
-  status, 
-  statusColor, 
-  actionText, 
-  icon 
+export default function ToolCard({
+  title,
+  description,
+  link,
+  status,
+  statusColor,
+  actionText,
+  icon
 }: ToolCardProps) {
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -61,27 +64,29 @@ export default function ToolCard({
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow bg-white">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="p-3 bg-gray-100 rounded-lg">
-            {getIcon(icon)}
+    <Link href={link}>
+      <Card className="hover:shadow-md transition-shadow bg-white">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="p-3 bg-gray-100 rounded-lg">
+              {getIcon(icon)}
+            </div>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="h-6 w-6" />
+            </Button>
           </div>
-          <Button variant="ghost" size="icon">
-            <MoreHorizontal className="h-6 w-6" />
-          </Button>
-        </div>
-        <h4 className="font-semibold text-gray-900 mb-2">{title}</h4>
-        <p className="text-sm text-gray-500 mb-4">{description}</p>
-        <div className="flex items-center justify-between">
-          <Badge className={`${getStatusColor(statusColor)} text-xs`}>
-            {status}
-          </Badge>
-          <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
-            {actionText}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          <h4 className="font-semibold text-gray-900 mb-2">{title}</h4>
+          <p className="text-sm text-gray-500 mb-4">{description}</p>
+          <div className="flex items-center justify-between">
+            <Badge className={`${getStatusColor(statusColor)} text-xs`}>
+              {status}
+            </Badge>
+            <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
+              {actionText}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

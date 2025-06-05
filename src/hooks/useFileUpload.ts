@@ -15,18 +15,30 @@ export function useFileUpload(): UseFileUploadResult {
     setError(null);
 
     try {
-      // Create FormData for file upload
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        throw new Error('File size exceeds 5MB limit');
+      }
+
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error('Only image files are allowed (JPEG, PNG, GIF, WebP, AVIF)');
+      }
+
       const formData = new FormData();
       formData.append('file', file);
 
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
-        credentials: 'include'
+        // credentials: 'include' // Only needed if you're using authentication
       });
 
       if (!response.ok) {
-        throw new Error(`Upload failed: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Upload failed: ${response.statusText}`);
       }
 
       const result = await response.json();

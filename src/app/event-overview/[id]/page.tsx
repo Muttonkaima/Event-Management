@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AnalyticsCard from "@/components/event-dashboard/analytics-card";
 import ToolCard from "@/components/event-dashboard/tool-card";
-import { Menu, MapPin, MoreHorizontal, User, Clock, Users, Tag } from "lucide-react";
+import { Menu, MapPin, MoreHorizontal, User, Clock, Users, Tag, Link } from "lucide-react";
 import OverviewLayout from "@/components/event-dashboard/OverviewLayout";
 import { notFound } from 'next/navigation';
 import eventsData from '@/data/events.json';
@@ -40,7 +40,7 @@ interface Event {
 
 export default function EventOverview({ params }: { params: { id: string } }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+
   // Find the event with the matching ID
   const event = (eventsData as Event[]).find((e) => e.id === params.id);
 
@@ -51,9 +51,9 @@ export default function EventOverview({ params }: { params: { id: string } }) {
 
   // Format date for display
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'short', 
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
@@ -61,21 +61,21 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     };
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
-  
+
   // Format date range
   const formatDateRange = (start: string, end: string) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
-    
+
     // If same day, show single date with time range
     if (startDate.toDateString() === endDate.toDateString()) {
       return `${formatDate(start)} - ${endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
     }
-    
+
     // Otherwise show date range
     return `${formatDate(start)} - ${formatDate(end)}`;
   };
-  
+
   // Get status badge color
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
@@ -89,7 +89,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
         return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
     }
   };
-  
+
   // Get status text
   const getStatusText = (status: string) => {
     switch (status) {
@@ -146,6 +146,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     {
       title: "Registration Form Builder",
       description: "Create and customize your event registration form",
+      link: "/form-builder",
       status: "Published" as const,
       statusColor: "blue" as const,
       actionText: "Edit",
@@ -154,6 +155,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     {
       title: "Email Builder",
       description: "Design emails for confirmations and reminders",
+      link: "/email-builder",
       status: "In Progress" as const,
       statusColor: "yellow" as const,
       actionText: "Continue",
@@ -162,6 +164,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     {
       title: "Badge Designer",
       description: "Create custom badges for your attendees",
+      link: "/badge-designer",
       status: "Completed" as const,
       statusColor: "green" as const,
       actionText: "Continue",
@@ -170,6 +173,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     {
       title: "Lead Scanner",
       description: "Set up and configure lead scanning",
+      link: "/lead-scanner",
       status: "Not Started" as const,
       statusColor: "gray" as const,
       actionText: "Start",
@@ -178,6 +182,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     {
       title: "Live Display Setup",
       description: "Configure displays for your event venue",
+      link: "/live-display",
       status: "Not Started" as const,
       statusColor: "gray" as const,
       actionText: "Start",
@@ -186,6 +191,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
     {
       title: "Session Manager",
       description: "Manage sessions, speakers and schedules",
+      link: "/session-manager",
       status: "In Progress" as const,
       statusColor: "yellow" as const,
       actionText: "Continue",
@@ -236,7 +242,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
                           <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
                           <span>{event.location.name}, {event.location.city}, {event.location.country}</span>
                         </div>
-                        
+
                         {/* Additional Event Details */}
                         <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
                           <div className="flex items-center text-gray-600">
@@ -256,7 +262,7 @@ export default function EventOverview({ params }: { params: { id: string } }) {
                             <span>{getStatusText(event.status)}</span>
                           </div>
                         </div>
-                        
+
                         {/* Tags */}
                         {event.tags.length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-3">

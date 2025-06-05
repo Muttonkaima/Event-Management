@@ -134,7 +134,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-6 border-gray-200 bg-white sticky top-0 z-10">
+        <div className="flex items-center justify-between p-6 border-gray-200 bg-white sticky top-0 z-20">
           <h3 className="text-lg font-semibold text-gray-900">Event Preview</h3>
           <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-900 cursor-pointer">
             <X className="w-4 h-4 text-gray-900" />
@@ -146,8 +146,9 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
           {/* Hero Banner */}
           <div className="h-96 relative overflow-hidden">
             <div className="absolute inset-0">
+            {branding.visibility.showBanner && (
               <img 
-                src={event.templateImage} 
+                src={branding.bannerUrl || event.templateImage || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
                 alt={event.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -156,11 +157,13 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                   target.src = 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner';
                 }}
               />
-              <div className="absolute top-4 left-4 border border-gray-200 p-0 rounded-md shadow-md">
+            )}
+              {branding.visibility.showLogo && branding.logoUrl && (
+                <div className="absolute top-4 left-4 border-2 border-gray-200 p-0 rounded-md shadow-md">
                   <img 
-                    src="/images/image5.avif"
+                    src={branding.logoUrl || '/images/image5.avif'}
                     alt="Event Logo" 
-                    className="h-32 w-auto object-contain rounded"
+                    className="h-22 w-auto object-contain rounded"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       console.error('Failed to load logo:', target.src);
@@ -177,18 +180,9 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                     }}
                   />
                 </div>
+              )}
             </div>
             <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
-              {/* Logo in hero section */}
-              {branding.visibility.showLogo && branding.logoUrl && (
-                <div className="mb-4">
-                  <img
-                    src={branding.logoUrl}
-                    alt="Event Logo"
-                    className="h-16 w-auto object-contain"
-                  />
-                </div>
-              )}
               <div className="flex items-center space-x-2 mb-2">
                 <span className="px-3 py-1 bg-primary text-white text-sm rounded-full">
                   {event.eventType === 'in-person' ? 'In-person' :
@@ -257,7 +251,9 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                     <div className="space-y-3">
                       {sessions.length > 0 ? (
                         sessions.map((session: any, index: any) => (
-                          <div key={index} className="p-3 bg-transparent shadow-lg rounded-lg">
+                          <div key={index} className="p-3 bg-transparent rounded-lg" style={{
+                            boxShadow: '0 4px 10px rgba(255, 255, 255, 0.3)'
+                          }}>
                             <div className="flex items-start justify-between">
                               <div>
                                 <h4 className="font-medium text-white">{session.title}</h4>

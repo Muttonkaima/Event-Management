@@ -135,8 +135,9 @@ export function LivePreview() {
           <div className={`text-white overflow-hidden shadow-lg ${fontClass}`}>
             {/* Banner Image */}
             <div className="relative w-full h-48 overflow-hidden">
+            {branding.visibility.showBanner && (
               <img 
-                src={event.templateImage} 
+                src={branding.bannerUrl || event.templateImage || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
                 alt={event.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -145,42 +146,43 @@ export function LivePreview() {
                   target.src = 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner';
                 }}
               />
-             
-                <div className="absolute top-4 left-4 border border-gray-200 p-0 rounded-md shadow-md z-20">
+             )}
+             {branding.visibility.showLogo && branding.logoUrl && (
+                <div className="absolute top-4 left-4 border-2 border-white p-0 rounded-md shadow-md z-20">
                   <img 
-                    src="/images/image5.avif"
+                    src={branding.logoUrl}
                     alt="Event Logo" 
                     className="h-12 w-auto object-contain rounded"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      console.error('Failed to load logo:', target.src);
-                      target.onerror = null;
-                      target.style.border = '1px solid red'; // Visual indicator for debugging
-                      target.style.padding = '4px';
-                      target.style.backgroundColor = '#ffebee';
-                      // Keep the element visible for debugging
+                      // If the uploaded logo fails to load, fall back to the default logo
+                      if (target.src !== '/images/image5.avif') {
+                        target.src = '/images/image5.avif';
+                      } else {
+                        console.error('Failed to load logo:', target.src);
+                        target.style.border = '1px solid red';
+                        target.style.padding = '4px';
+                        target.style.backgroundColor = '#ffebee';
+                      }
                     }}
-                    onLoad={() => console.log('Logo loaded successfully')}
                     style={{
                       minWidth: '32px',
-                      minHeight: '32px'
+                      minHeight: '32px',
+                      maxWidth: '100%',
+                      maxHeight: '48px',
+                      objectFit: 'contain'
                     }}
                   />
                 </div>
+                )}
             </div>
             
             {/* Content */}
             <div className={`p-6 bg-gradient-to-r ${themeGradient}`}>
               {/* Logo */}
-              {branding.visibility.showLogo && branding.logoUrl && (
-                <div className="mb-4">
-                  <img 
-                    src={branding.logoUrl} 
-                    alt="Event Logo" 
-                    className="h-12 w-auto object-contain"
-                  />
-                </div>
-              )}
+              
+               
+              
               
               <div className="mb-4">
                 <h2 className="text-xl font-bold mb-2">
