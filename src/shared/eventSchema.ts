@@ -41,9 +41,6 @@ export const events = pgTable("events", {
   registrationOpen: timestamp("registration_open"),
   registrationClose: timestamp("registration_close"),
   maxAttendees: integer("max_attendees"),
-  paymentType: text("payment_type").default("free"), // 'free', 'paid'
-  ticketPrice: integer("ticket_price"),
-  currency: text("currency").default("USD"),
   
   // Email content
   confirmationEmail: text("confirmation_email"),
@@ -168,11 +165,5 @@ export interface EventWizardData {
     tickets: Ticket[];
     confirmationEmail: string;
     termsConditions: string;
-    fields: Array<{
-      fieldName: string;
-      fieldType: string;
-      required: boolean;
-      options?: string[];
-    }>;
   };
 }

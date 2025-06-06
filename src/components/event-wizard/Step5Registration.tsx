@@ -75,11 +75,74 @@ export function Step5Registration() {
     actions.setStep(4);
   };
 
+  const downloadJSON = (data: any, filename: string) => {
+    // Convert the data to a JSON string with proper formatting
+    const jsonString = JSON.stringify(data, null, 2);
+    
+    // Create a Blob with the JSON data
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    
+    // Create a download link
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename || 'event-export.json';
+    
+    // Trigger the download
+    document.body.appendChild(a);
+    a.click();
+    
+    // Clean up
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const handleComplete = () => {
     if (validateForm()) {
       // Save tickets to registration
       actions.updateRegistration({ tickets });
-      alert('🎉 Event setup completed successfully! Your event is now ready to publish.');
+      
+      // Create a new registration object without the unwanted fields
+      const { tickets: _, ...restRegistration } = state.registration;
+      // Create a new object with only the fields we want to keep
+      const registrationData: Record<string, any> = { ...restRegistration };
+      // Remove any unwanted fields
+      ['paymentType', 'currency', 'fields'].forEach(field => {
+        if (field in registrationData) {
+          delete registrationData[field];
+        }
+      });
+      
+      // Add tickets with proper formatting
+      const updatedRegistration = {
+        ...registrationData,
+        tickets: tickets.map(ticket => ({
+          id: ticket.id,
+          name: ticket.name,
+          type: ticket.type,
+          ...(ticket.type === 'paid' && {
+            price: ticket.price || 0,
+            currency: ticket.currency || 'USD'
+          })
+        }))
+      };
+      
+      // Create the complete event data without the unwanted fields
+      const eventData = {
+        ...state,
+        registration: updatedRegistration
+      };
+      
+      // Generate a filename with event name and current date
+      const eventName = state.event.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const dateStr = new Date().toISOString().split('T')[0];
+      const filename = `event_${eventName}_${dateStr}.json`;
+      
+      // Download the JSON file
+      downloadJSON(eventData, filename);
+      
+      // Show success message and redirect
+      alert('🎉 Event setup completed successfully! Your event data has been downloaded.');
       router.push('/events');
     }
   };
