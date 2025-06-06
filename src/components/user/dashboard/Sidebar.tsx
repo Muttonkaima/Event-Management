@@ -2,15 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiX, FiMail, FiAward, FiFileText } from 'react-icons/fi';
+import { FiHome, FiCalendar, FiLogOut, FiX, FiBell, FiHelpCircle } from 'react-icons/fi';
 
 const navItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
-  { name: 'Events', href: '/events', icon: <FiCalendar className="w-5 h-5" /> },
-  { name: 'Email Builder', href: '/email-builder', icon: <FiMail className="w-5 h-5" /> },
-  { name: 'Form Builder', href: '/form-builder', icon: <FiFileText className="w-5 h-5" /> },
-  { name: 'Badge Designer', href: '/badge-designer', icon: <FiAward className="w-5 h-5" /> },
-  { name: 'Settings', href: '/settings', icon: <FiSettings className="w-5 h-5" /> },
+  { name: 'Dashboard', href: '/user/dashboard', icon: <FiHome className="w-5 h-5" /> },
+  { name: 'My Events', href: '/user/my-events', icon: <FiCalendar className="w-5 h-5" /> },
+  { name: 'Notifications', href: '/user/notifications', icon: <FiBell className="w-5 h-5" /> },
+  { name: 'Support', href: '/user/support', icon: <FiHelpCircle className="w-5 h-5" /> }
 ];
 
 export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boolean; toggleSidebarAction: () => void }) {
@@ -63,7 +61,7 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
           </ul>
           
           <div className="mt-6 pt-4 border-t border-gray-200">
-            <Link href="/">
+            <Link href="/user/login">
             <button className="flex items-center w-full p-3 text-red-600 rounded-lg hover:bg-red-50 cursor-pointer">
               <FiLogOut className="w-5 h-5 mr-3" />
               <span>Logout</span>

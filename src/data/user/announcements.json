@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ann-001",
+    "eventId": "evt-001",
+    "category": "General",
+    "title": "Welcome to Annual Tech Conference 2023",
+    "content": "We are thrilled to welcome all attendees! Don’t forget to check in at the main desk before 9:30 AM on Day 1.",
+    "createdAt": "2023-11-10T10:00:00Z",
+    "isPinned": true,
+    "visibleTo": "all"
+  },
+  {
+    "id": "ann-002",
+    "eventId": "evt-001",
+    "category": "Update",
+    "title": "Workshop Room Changes",
+    "content": "Due to high demand, the AI Workshop has been moved to Hall B. Please check the updated agenda.",
+    "createdAt": "2023-11-15T07:00:00Z",
+    "isPinned": false,
+    "visibleTo": "attendees"
+  },
+  {
+    "id": "ann-003",
+    "eventId": "evt-002",
+    "category": "Reminder",
+    "title": "Workshop Starts at 10 AM",
+    "content": "Please arrive at least 15 minutes early to complete the check-in process. Laptops are required.",
+    "createdAt": "2023-10-04T15:00:00Z",
+    "isPinned": false,
+    "visibleTo": "attendees"
+  },
+  {
+    "id": "ann-004",
+    "eventId": "evt-003",
+    "category": "Alert",
+    "title": "Startup Pitch Night Begins Soon",
+    "content": "The event will begin promptly at 6:00 PM. Please take your seats and silence your devices.",
+    "createdAt": "2023-10-20T17:00:00Z",
+    "isPinned": true,
+    "visibleTo": "all"
+  },
+  {
+    "id": "ann-005",
+    "eventId": "evt-003",
+    "category": "General",
+    "title": "Networking Session After Pitches",
+    "content": "Join us for a casual networking hour after the pitches conclude. Refreshments will be served.",
+    "createdAt": "2023-10-20T20:30:00Z",
+    "isPinned": false,
+    "visibleTo": "attendees"
+  }
+]

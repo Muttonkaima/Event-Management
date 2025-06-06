@@ -1,0 +1,152 @@
+[
+  {
+    "id": "evt-001",
+    "name": "Annual Tech Conference 2023",
+    "description": "Join us for the biggest tech conference of the year featuring keynotes from industry leaders and workshops on cutting-edge technologies.",
+    "date": {
+      "start": "2025-06-15T09:00:00Z",
+      "end": "2025-06-17T18:00:00Z"
+    },
+    "location": {
+      "name": "Tech Convention Center",
+      "address": "123 Innovation Blvd",
+      "city": "San Francisco",
+      "country": "USA"
+    },
+    "status": "upcoming",
+    "organizer": {
+      "name": "TechEvents Inc.",
+      "email": "contact@techevents.com",
+      "avatar": "https://github.com/polymet-ai.png"
+    },
+    "attendees": 1200,
+    "category": "Technology",
+    "tags": ["tech", "innovation", "conference", "networking"],
+    "image": "https://picsum.photos/seed/techconf/800/400"
+  },
+  {
+    "id": "evt-002",
+    "name": "Design Systems Workshop",
+    "description": "A hands-on workshop focused on creating and maintaining effective design systems for product teams.",
+    "date": {
+      "start": "2025-04-20T10:00:00Z",
+      "end": "2025-04-20T16:00:00Z"
+    },
+    "location": {
+      "name": "Creative Hub",
+      "address": "456 Design Avenue",
+      "city": "New York",
+      "country": "USA"
+    },
+    "status": "completed",
+    "organizer": {
+      "name": "DesignPro Academy",
+      "email": "workshops@designpro.com",
+      "avatar": "https://github.com/polymet-ai.png"
+    },
+    "attendees": 75,
+    "category": "Design",
+    "tags": ["design", "workshop", "UI/UX", "product design"],
+    "image": "https://picsum.photos/seed/designworkshop/800/400"
+  },
+  {
+    "id": "evt-003",
+    "name": "Startup Pitch Night",
+    "description": "An evening of innovative startup pitches with feedback from venture capitalists and industry experts.",
+    "date": {
+      "start": "2025-06-05T18:00:00Z",
+      "end": "2025-06-06T21:00:00Z"
+    },
+    "location": {
+      "name": "Venture Hub",
+      "address": "789 Startup Lane",
+      "city": "Austin",
+      "country": "USA"
+    },
+    "status": "ongoing",
+    "organizer": {
+      "name": "Founder Network",
+      "email": "events@foundernetwork.com",
+      "avatar": "https://github.com/polymet-ai.png"
+    },
+    "attendees": 150,
+    "category": "Business",
+    "tags": ["startup", "pitch", "venture capital", "entrepreneurship"],
+    "image": "https://picsum.photos/seed/startuppitch/800/400"
+  },
+  {
+    "id": "evt-004",
+    "name": "AI and Machine Learning Summit",
+    "description": "Explore the latest advancements in artificial intelligence and machine learning with industry experts.",
+    "date": {
+      "start": "2025-08-10T09:00:00Z",
+      "end": "2025-08-12T17:00:00Z"
+    },
+    "location": {
+      "name": "Science Park Conference Center",
+      "address": "101 Innovation Drive",
+      "city": "Boston",
+      "country": "USA"
+    },
+    "status": "upcoming",
+    "organizer": {
+      "name": "AI Research Institute",
+      "email": "summit@airesearch.org",
+      "avatar": "https://github.com/polymet-ai.png"
+    },
+    "attendees": 800,
+    "category": "Technology",
+    "tags": ["AI", "machine learning", "data science", "research"],
+    "image": "https://picsum.photos/seed/aisummit/800/400"
+  },
+  {
+    "id": "evt-005",
+    "name": "Digital Marketing Masterclass",
+    "description": "A comprehensive masterclass covering the latest digital marketing strategies and tools for 2023.",
+    "date": {
+      "start": "2025-03-15T10:00:00Z",
+      "end": "2025-03-16T16:00:00Z"
+    },
+    "location": {
+      "name": "Marketing Hub",
+      "address": "202 Social Media Street",
+      "city": "Chicago",
+      "country": "USA"
+    },
+    "status": "completed",
+    "organizer": {
+      "name": "Digital Marketing Pros",
+      "email": "learn@dmprofs.com",
+      "avatar": "https://github.com/polymet-ai.png"
+    },
+    "attendees": 250,
+    "category": "Marketing",
+    "tags": ["digital marketing", "SEO", "social media", "content strategy"],
+    "image": "https://picsum.photos/seed/marketingclass/800/400"
+  },
+  {
+    "id": "evt-006",
+    "name": "Sustainable Architecture Expo",
+    "description": "Showcasing innovative sustainable architecture designs and eco-friendly building materials.",
+    "date": {
+      "start": "2025-07-01T09:00:00Z",
+      "end": "2025-07-03T18:00:00Z"
+    },
+    "location": {
+      "name": "Green Building Center",
+      "address": "303 Eco Avenue",
+      "city": "Portland",
+      "country": "USA"
+    },
+    "status": "upcoming",
+    "organizer": {
+      "name": "Sustainable Design Coalition",
+      "email": "expo@sustainabledesign.org",
+      "avatar": "https://github.com/polymet-ai.png"
+    },
+    "attendees": 600,
+    "category": "Architecture",
+    "tags": ["sustainability", "architecture", "eco-friendly", "design"],
+    "image": "https://picsum.photos/seed/architecture/800/400"
+  }
+]

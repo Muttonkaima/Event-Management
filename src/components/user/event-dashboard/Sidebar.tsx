@@ -2,15 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiX, FiMail, FiAward, FiFileText } from 'react-icons/fi';
+import { FiCalendar, FiLogOut, FiX, FiAward, FiUserCheck, FiCreditCard, FiVolume2 , FiBookOpen, FiMessageSquare, FiHelpCircle } from 'react-icons/fi';
 
 const navItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
-  { name: 'Events', href: '/events', icon: <FiCalendar className="w-5 h-5" /> },
-  { name: 'Email Builder', href: '/email-builder', icon: <FiMail className="w-5 h-5" /> },
-  { name: 'Form Builder', href: '/form-builder', icon: <FiFileText className="w-5 h-5" /> },
-  { name: 'Badge Designer', href: '/badge-designer', icon: <FiAward className="w-5 h-5" /> },
-  { name: 'Settings', href: '/settings', icon: <FiSettings className="w-5 h-5" /> },
+  { name: 'Event Info', href: '/user/event-info', icon: <FiCalendar className="w-5 h-5" /> },
+  { name: 'My Registration', href: '/user/my-registration', icon: <FiUserCheck className="w-5 h-5" /> },
+  { name: 'Payment Details', href: '/user/payment-details', icon: <FiCreditCard className="w-5 h-5" /> },
+  { name: 'My Badge', href: '/user/my-badge', icon: <FiAward className="w-5 h-5" /> },
+  { name: 'Announcements', href: '/user/announcements', icon: <FiVolume2 className="w-5 h-5" /> },
+  { name: 'Event Resources', href: '/user/event-resources', icon: <FiBookOpen className="w-5 h-5" /> },
+  { name: 'Feedback', href: '/user/feedback', icon: <FiMessageSquare className="w-5 h-5" /> },
+  { name: 'Support', href: '/user/support', icon: <FiHelpCircle className="w-5 h-5" /> }
 ];
 
 export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boolean; toggleSidebarAction: () => void }) {
@@ -51,7 +53,7 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
                   href={item.href}
                   className={`flex items-center p-3 rounded-lg transition-colors ${
                     pathname === item.href
-                      ? 'bg-black/10 text-black'
+                      ? 'bg-gray-100 text-black'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -63,10 +65,10 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
           </ul>
           
           <div className="mt-6 pt-4 border-t border-gray-200">
-            <Link href="/">
-            <button className="flex items-center w-full p-3 text-red-600 rounded-lg hover:bg-red-50 cursor-pointer">
+            <Link href="/user/my-events">
+            <button className="flex items-center w-full p-3 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
               <FiLogOut className="w-5 h-5 mr-3" />
-              <span>Logout</span>
+              <span>Back to Events</span>
             </button>
             </Link>
           </div>
