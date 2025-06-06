@@ -1,0 +1,83 @@
+{
+    "template": "webinar",
+    "templateImage": "/images/image1.jpg",
+    "event": {
+      "name": "SJBIT Cultural Event",
+      "description": "this is the cultural event description",
+      "startDate": "2025-06-08T10:00",
+      "endDate": "2025-06-09T17:00",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "timezone": "UTC",
+      "eventType": "in-person",
+      "address": "sjbit, uttarahalli main road, ",
+      "city": "Bangalore Urban",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560060",
+      "meetingLink": "",
+      "templateImage": "/images/image4.jpg"
+    },
+    "branding": {
+      "colorTheme": "sunset",
+      "fontStyle": "elegant",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "/uploads/upload-1749210478204.png",
+      "bannerUrl": "/uploads/upload-1749210483341.jpg"
+    },
+    "sessions": [
+      {
+        "title": "Welcome speech",
+        "speaker": "Prashanth",
+        "startTime": "10:00",
+        "duration": 30,
+        "description": "speech by our principal",
+        "tags": [
+          "keynote",
+          "panel"
+        ],
+        "id": 1749210516057
+      },
+      {
+        "title": "Dance",
+        "speaker": "CSE department",
+        "startTime": "11:00",
+        "duration": 30,
+        "description": "they will come and dance",
+        "tags": [
+          "networking"
+        ],
+        "id": 1749210558269
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-06-07T10:00",
+      "registrationClose": "2025-06-07T17:00",
+      "confirmationEmail": "Thank you for registering for our event. We look forward to seeing you!",
+      "termsConditions": "By registering for this event, you agree to our terms and conditions.",
+      "updateDeadline": "2025-06-07T23:59",
+      "maxAttendees": 300,
+      "tickets": [
+        {
+          "id": "1749210614054",
+          "name": "General",
+          "type": "free"
+        },
+        {
+          "id": "1749210619699",
+          "name": "VIP",
+          "type": "paid",
+          "price": 100,
+          "currency": "INR"
+        }
+      ]
+    }
+  }
