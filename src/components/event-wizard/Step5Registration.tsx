@@ -1,5 +1,5 @@
 import { useEventWizard } from '@/contexts/EventWizardContext';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,12 +10,32 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+type Ticket = {
+  id: string;
+  name: string;
+  type: 'free' | 'paid';
+  price?: number;
+  currency?: string;
+};
+
 export function Step5Registration() {
   const router = useRouter();
   const { state, actions } = useEventWizard();
   const { registration } = state;
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [limitAttendees, setLimitAttendees] = useState(!!registration.maxAttendees);
+  const [tickets, setTickets] = useState<Ticket[]>(
+    registration.tickets && registration.tickets.length > 0 
+      ? registration.tickets 
+      : []
+  );
+  
+  // Sync tickets with registration when component mounts
+  useState(() => {
+    if ((!registration.tickets || registration.tickets.length === 0) && tickets.length > 0) {
+      actions.updateRegistration({ tickets });
+    }
+  });
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -57,7 +77,8 @@ export function Step5Registration() {
 
   const handleComplete = () => {
     if (validateForm()) {
-      // Here you would typically save the event data
+      // Save tickets to registration
+      actions.updateRegistration({ tickets });
       alert('🎉 Event setup completed successfully! Your event is now ready to publish.');
       router.push('/events');
     }
@@ -68,6 +89,33 @@ export function Step5Registration() {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
+  };
+
+  const addTicket = () => {
+    const newTicket: Ticket = {
+      id: Date.now().toString(),
+      name: `Ticket ${tickets.length + 1}`,
+      type: 'free',
+      price: 0,
+      currency: 'USD'
+    };
+    const updatedTickets = [...tickets, newTicket];
+    setTickets(updatedTickets);
+    actions.updateRegistration({ tickets: updatedTickets });
+  };
+
+  const updateTicket = (id: string, updates: Partial<Ticket>) => {
+    const updatedTickets = tickets.map(ticket => 
+      ticket.id === id ? { ...ticket, ...updates } : ticket
+    );
+    setTickets(updatedTickets);
+    actions.updateRegistration({ tickets: updatedTickets });
+  };
+
+  const removeTicket = (id: string) => {
+    const updatedTickets = tickets.filter(ticket => ticket.id !== id);
+    setTickets(updatedTickets);
+    actions.updateRegistration({ tickets: updatedTickets });
   };
 
   const toggleAttendeeLimit = (checked: boolean) => {
@@ -132,6 +180,20 @@ export function Step5Registration() {
             )}
           </div>
           </div>
+
+          {/* Update/Cancellation Deadline */}
+          <div className="mt-4">
+            <Label htmlFor="updateDeadline" className="text-gray-900">Update/Cancellation Deadline</Label>
+            <Input
+              type="datetime-local"
+              id="updateDeadline"
+              value={registration.updateDeadline || ''}
+              onChange={(e) => handleInputChange('updateDeadline', e.target.value)}
+              min={new Date().toISOString().slice(0, 16)}
+              className="mt-1 w-full"
+            />
+            <p className="text-xs text-gray-500 mt-1">Last date attendees can update or cancel their registration</p>
+          </div>
         </div>
 
         {/* Attendee Limit */}
@@ -160,54 +222,115 @@ export function Step5Registration() {
 
 
 
-        {/* Payment Options */}
+        {/* Tickets */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Options</h3>
-       
-          <RadioGroup
-            value={registration.paymentType}
-            onValueChange={(value: 'free' | 'paid') => handleInputChange('paymentType', value)}
-            className="space-x-3 flex"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="free" id="free" className="cursor-pointer text-gray-700" />
-              <Label htmlFor="free" className="text-sm font-medium text-gray-700">Free</Label>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Tickets</h3>
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="sm" 
+              onClick={addTicket}
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" /> Add Ticket
+            </Button>
+          </div>
+          
+          {tickets.length === 0 ? (
+            <div className="text-center py-8 border-2 border-dashed rounded-lg">
+              <p className="text-gray-500">No tickets added yet</p>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={addTicket}
+                className="mt-2"
+              >
+                Add your first ticket
+              </Button>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="paid" id="paid" className="cursor-pointer text-gray-700" />
-              <Label htmlFor="paid" className="text-sm font-medium text-gray-700">Paid</Label>
-            </div>
-          </RadioGroup>
+          ) : (
+            <div className="space-y-4">
+              {tickets.map((ticket) => (
+                <div key={ticket.id} className="border rounded-lg p-4 relative">
+                  <button
+                    type="button"
+                    onClick={() => removeTicket(ticket.id)}
+                    className="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
+                    aria-label="Remove ticket"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <Label htmlFor={`ticket-name-${ticket.id}`} className="text-sm font-medium text-gray-700">Ticket Name *</Label>
+                      <Input
+                        id={`ticket-name-${ticket.id}`}
+                        placeholder="e.g., General Admission, VIP, Early Bird"
+                        value={ticket.name}
+                        onChange={(e) => updateTicket(ticket.id, { name: e.target.value })}
+                        className="mt-1"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 mb-2 block">Ticket Type</Label>
+                      <RadioGroup
+                        value={ticket.type}
+                        onValueChange={(value: 'free' | 'paid') => updateTicket(ticket.id, { type: value as 'free' | 'paid' })}
+                        className="flex space-x-4 text-gray-700"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="free" id={`free-${ticket.id}`} className="cursor-pointer" />
+                          <Label htmlFor={`free-${ticket.id}`} className="text-sm font-medium text-gray-700">Free</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="paid" id={`paid-${ticket.id}`} className="cursor-pointer" />
+                          <Label htmlFor={`paid-${ticket.id}`} className="text-sm font-medium text-gray-700">Paid</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                  </div>
 
-          {registration.paymentType === 'paid' && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="ticketPrice" className="text-sm font-medium text-gray-700">Ticket Price</Label>
-                  <Input
-                    type="number"
-                    id="ticketPrice"
-                    placeholder="0.00"
-                    step="0.01"
-                    value={registration.ticketPrice || ''}
-                    onChange={(e) => handleInputChange('ticketPrice', parseFloat(e.target.value) || undefined)}
-                  />
+                  {ticket.type === 'paid' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+                      <div>
+                        <Label htmlFor={`price-${ticket.id}`} className="text-sm font-medium text-gray-700">Price *</Label>
+                        <Input
+                          id={`price-${ticket.id}`}
+                          type="number"
+                          placeholder="0.00"
+                          step="0.01"
+                          min="0"
+                          value={ticket.price || ''}
+                          onChange={(e) => updateTicket(ticket.id, { price: parseFloat(e.target.value) || 0 })}
+                          className="mt-1"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor={`currency-${ticket.id}`} className="text-sm font-medium text-gray-700">Currency</Label>
+                        <Select
+                          value={ticket.currency || 'USD'}
+                          onValueChange={(value) => updateTicket(ticket.id, { currency: value })}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="USD">USD ($)</SelectItem>
+                            <SelectItem value="INR">INR (₹)</SelectItem>
+                            <SelectItem value="EUR">EUR (€)</SelectItem>
+                            <SelectItem value="GBP">GBP (£)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <Label htmlFor="currency" className="text-sm font-medium text-gray-700">Currency</Label>
-                  <Select value={registration.currency} onValueChange={(value) => handleInputChange('currency', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="INR">INR</SelectItem>
-                      <SelectItem value="EUR">EUR</SelectItem>
-                      <SelectItem value="GBP">GBP</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+              ))}
             </div>
           )}
         </div>

@@ -115,6 +115,14 @@ export interface SessionData {
   tags: string[];
 }
 
+export interface Ticket {
+  id: string;
+  name: string;
+  type: 'free' | 'paid';
+  price?: number;
+  currency?: string;
+}
+
 export interface EventWizardData {
   currentStep: number;
   template: EventTemplate;
@@ -155,10 +163,9 @@ export interface EventWizardData {
   registration: {
     registrationOpen: string;
     registrationClose: string;
+    updateDeadline?: string;
     maxAttendees?: number;
-    paymentType: 'free' | 'paid';
-    ticketPrice?: number;
-    currency: string;
+    tickets: Ticket[];
     confirmationEmail: string;
     termsConditions: string;
     fields: Array<{

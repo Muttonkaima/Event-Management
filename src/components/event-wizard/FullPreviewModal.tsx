@@ -129,6 +129,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
   const dateTimeText = formatDateTime(event.startDate, event.endDate, event.startTime, event.endTime);
   const locationText = getLocationText(event);
 
+  console.log(registration);
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
@@ -313,9 +314,25 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                       </span>
                     </div>
 
-                    <div className="flex items-center text-white">
-                      <Tag className="w-5 h-5 text-white mr-3" />
-                      <span>{registration.paymentType === 'free' ? 'Free event' : `$${registration.ticketPrice || 0} ${registration.currency}`}</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center text-white">
+                        <Tag className="w-5 h-5 text-white mr-3 flex-shrink-0" />
+                        <span className="font-medium">Tickets</span>
+                      </div>
+                      {(!registration?.tickets || registration.tickets.length === 0) ? (
+                        <div className="text-white ml-8">Free event</div>
+                      ) : (
+                        <div className="space-y-2 ml-8">
+                          {registration.tickets.map((ticket: any, index: number) => (
+                            <div key={index} className="flex justify-between items-center">
+                              <span className="text-white">{ticket.name}</span>
+                              <span className="text-white">
+                                {ticket.type === 'free' ? 'Free' : `${ticket.currency || 'INR'} ${ticket.price ? ticket.price.toFixed(2) : '0.00'}`}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
