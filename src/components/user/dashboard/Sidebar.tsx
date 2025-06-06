@@ -7,7 +7,7 @@ import { FiHome, FiCalendar, FiLogOut, FiX, FiBell, FiHelpCircle } from 'react-i
 const navItems = [
   { name: 'Dashboard', href: '/user/dashboard', icon: <FiHome className="w-5 h-5" /> },
   { name: 'My Events', href: '/user/my-events', icon: <FiCalendar className="w-5 h-5" /> },
-  { name: 'Notifications', href: '/user/notifications', icon: <FiBell className="w-5 h-5" /> },
+  { name: 'Announcements', href: '/user/announcements', icon: <FiBell className="w-5 h-5" /> },
   { name: 'Support', href: '/user/support', icon: <FiHelpCircle className="w-5 h-5" /> }
 ];
 

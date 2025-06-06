@@ -213,7 +213,7 @@ export default function EventsPage() {
               // Grid View Card
               <Link
                 key={event.id}
-                href={`/user/event-dashboard/${event.id}`}
+                href={`/user/event-dashboard/`}
                 className="block bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300"
               >
                 <div className="relative h-48">
@@ -284,7 +284,7 @@ export default function EventsPage() {
               // List View Row
               <Link
                 key={event.id}
-                href={`/event-overview/${event.id}`}
+                href={`/user/event-dashboard`}
                 className="block bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-300"
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-4">

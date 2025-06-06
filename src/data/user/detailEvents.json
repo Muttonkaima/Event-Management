@@ -59,8 +59,8 @@
       }
     ],
     "registration": {
-      "registrationOpen": "2025-06-07T10:00",
-      "registrationClose": "2025-06-07T17:00",
+      "registrationOpen": "2025-06-04T10:00",
+      "registrationClose": "2025-06-04T17:00",
       "confirmationEmail": "Thank you for registering for our event. We look forward to seeing you!",
       "termsConditions": "By registering for this event, you agree to our terms and conditions.",
       "updateDeadline": "2025-06-07T23:59",
