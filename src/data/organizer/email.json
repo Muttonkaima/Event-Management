@@ -1,0 +1,68 @@
+{
+    "name": "Email Template",
+    "blocks": [
+      {
+        "id": "header-1",
+        "type": "header",
+        "properties": {
+          "headerText": "Let’s Splash Some Colors! You're Invited to Our Holi Celebration! ",
+          "textAlignment": "center",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textColor": "#000000",
+          "backgroundColor": "#ffffff",
+          "padding": 16
+        }
+      },
+      {
+        "id": "text-1",
+        "type": "text",
+        "properties": {
+          "textContent": "Celebrate the festival of colors with music, fun, and endless joy. Join us for an unforgettable Holi bash!",
+          "textAlignment": "left",
+          "fontSize": 16,
+          "fontWeight": "normal",
+          "textColor": "#374151",
+          "backgroundColor": "transparent",
+          "padding": 16
+        }
+      },
+      {
+        "id": "image-1",
+        "type": "image",
+        "properties": {
+          "imageUrl": "https://t3.ftcdn.net/jpg/07/36/96/96/360_F_736969693_81Hm9gJNf0GumgIOVASQVe4d1vdgXgSn.jpg",
+          "backgroundColor": "transparent",
+          "padding": 16,
+          "borderRadius": 20
+        }
+      },
+      {
+        "id": "text-2",
+        "type": "text",
+        "properties": {
+          "textContent": " Holi Hai! 🌼\n\nYou're warmly invited to our Holi Celebration 2025 – a vibrant gathering filled with colors, laughter, music, and delicious treats!\n\n🎨 Event Details:\n\nDate: [Insert Date, e.g., March 14, 2025]\n\nTime: [Insert Time, e.g., 10:00 AM onwards]\n\nVenue: [Insert Venue, e.g., Company Lawn / Clubhouse / Community Grounds]\n\nDress Code: White or light-colored clothes (that you don’t mind getting colorful!)\n\n🌟 What to Expect:\n\nOrganic colors & water games\n\nDJ & dance floor\n\nLive food counters & thandai\n\nGroup games, dhol beats, and more!\n\nCome, celebrate the joy of togetherness and the spirit of Holi. Don’t forget to bring your brightest smile and a playful spirit!\n\n🎁 Surprise contests and giveaways await!",
+          "textAlignment": "left",
+          "fontSize": 16,
+          "fontWeight": "normal",
+          "textColor": "#374151",
+          "backgroundColor": "transparent",
+          "padding": 16
+        }
+      },
+      {
+        "id": "button-1",
+        "type": "button",
+        "properties": {
+          "buttonText": "Register",
+          "textAlignment": "center",
+          "fontSize": 16,
+          "fontWeight": "medium",
+          "textColor": "#ffffff",
+          "backgroundColor": "#00f52a",
+          "padding": 16,
+          "borderRadius": 10
+        }
+      }
+    ]
+  }

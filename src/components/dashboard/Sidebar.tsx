@@ -7,9 +7,9 @@ import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiX, FiMail, FiAward
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
   { name: 'Events', href: '/events', icon: <FiCalendar className="w-5 h-5" /> },
-  { name: 'Email Builder', href: '/email-builder', icon: <FiMail className="w-5 h-5" /> },
-  { name: 'Form Builder', href: '/form-builder', icon: <FiFileText className="w-5 h-5" /> },
-  { name: 'Badge Designer', href: '/badge-designer', icon: <FiAward className="w-5 h-5" /> },
+  { name: 'Email Templates', href: '/email-builder', icon: <FiMail className="w-5 h-5" /> },
+  { name: 'Form Templates', href: '/form-builder', icon: <FiFileText className="w-5 h-5" /> },
+  { name: 'Badge Designs', href: '/badge-designer', icon: <FiAward className="w-5 h-5" /> },
   { name: 'Settings', href: '/settings', icon: <FiSettings className="w-5 h-5" /> },
 ];
 
