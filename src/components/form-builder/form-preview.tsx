@@ -139,7 +139,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 cursor-pointer"
             >
               <X className="h-5 w-5 text-gray-500" />
               <span className="sr-only">Close</span>
@@ -184,10 +184,14 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
                 {fields.length > 0 ? (
                   fields.map((field) => (
                     <div key={field.id} className="mb-6 last:mb-0">
-                      <div className="mb-2 text-sm text-gray-900">
+                      <div className="mb-2 text-sm text-gray-900 flex items-center gap-1">
                         {field.label}
+                        {field.required && <span className="text-red-500">*</span>}
                       </div>
                       {renderField(field)}
+                      {field.helpText && (
+                        <div className="text-xs text-gray-500 mt-1">{field.helpText}</div>
+                      )}
                     </div>
 
                   ))
@@ -199,12 +203,12 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
                 )}
               </div>
               <div className="flex justify-end">
-              <Button
+                <Button
                   variant="outline"
                   size="sm"
                   className="cursor-not-allowed"
-                  >Submit</Button>
-                  </div>
+                >Submit</Button>
+              </div>
               {/* Email Footer */}
               <div className="mt-12 pt-6 border-t border-gray-100 text-center text-sm text-gray-500">
                 <p>© {new Date().getFullYear()} Your Company. All rights reserved.</p>

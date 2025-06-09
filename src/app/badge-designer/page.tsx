@@ -2,10 +2,9 @@
 
 import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, X as XIcon, Edit3 } from "lucide-react";
+import { Plus, FileText, X as XIcon, Edit3, Trash2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import badgeData from "@/data/organizer/badge.json";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
@@ -14,7 +13,7 @@ import {
   DialogTitle as DialogTitleUI,
   DialogClose,
 } from "@/components/ui/dialog";
-import { FiSearch } from "react-icons/fi";
+import { FiAward, FiSearch } from "react-icons/fi";
 
 function renderBadgeElement(element: any) {
   // Dynamically render badge elements based on their type and properties
@@ -93,7 +92,7 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void }> = ({ badge, onP
         e.stopPropagation();
         onPreview();
       }}
-    >
+    >x
       {/* Floating Preview Image */}
       <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-20 flex justify-center w-full">
         <div className="rounded-full bg-white/80 shadow-lg ring-4 ring-pink-100 group-hover:ring-blue-200 transition-all duration-300 p-1">
@@ -114,6 +113,30 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void }> = ({ badge, onP
         <div className="flex flex-col gap-1 w-full">
           <h3 className="font-bold text-lg text-gray-900 truncate w-full mb-1">{badge.name}</h3>
           <div className="flex flex-wrap justify-center gap-2 mb-2">
+            <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-40">
+              <button
+                className="h-8 w-8 flex items-center justify-center rounded-full bg-white/80 shadow hover:bg-blue-50 text-blue-600 border border-blue-100"
+                title="Edit"
+                tabIndex={-1}
+                onClick={e => {
+                  e.stopPropagation();
+                  alert('Editing functionality is coming soon');
+                }}
+              >
+                <Edit3 className="h-4 w-4" />
+              </button>
+              <button
+                className="h-8 w-8 flex items-center justify-center rounded-full bg-white/80 shadow hover:bg-red-50 text-red-600 border border-red-100"
+                title="Delete"
+                tabIndex={-1}
+                onClick={e => {
+                  e.stopPropagation();
+                  alert('Delete functionality is coming soon');
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
             {/* Meta info chips */}
             {badge.width && badge.height && (
               <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium shadow-sm border border-blue-200">
@@ -134,26 +157,16 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void }> = ({ badge, onP
         </div>
         {/* Actions: visible on hover/always on mobile */}
         <div className="flex gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 sm:opacity-100">
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-gray-900 border border-gray-300 cursor-pointer bg-white hover:bg-gray-50 shadow-sm"
-            onClick={e => {
-              e.stopPropagation();
-              alert("Edit functionality coming soon!");
-            }}
-          >
-            <Edit3 className="mr-2 h-4 w-4" /> Edit
-          </Button>
+
           <Button
             size="sm"
-            className="bg-black hover:bg-black/90 text-white cursor-pointer shadow-sm"
+            className="bg-white hover:bg-black hover:text-white text-black cursor-pointer shadow-sm"
             onClick={e => {
               e.stopPropagation();
               alert("Use functionality coming soon!");
             }}
           >
-            <Plus className="mr-2 h-4 w-4" /> Use
+            <FiAward className="mr-2 h-4 w-4" /> Use Badge
           </Button>
         </div>
       </div>
@@ -178,9 +191,12 @@ export default function Dashboard() {
     <DashboardLayout title="Badges">
       <div className="max-w-6xl p-3">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Badge Templates</h2>
-          <Button onClick={handleNewBadge} className="bg-black cursor-pointer">
-            <Plus className="w-4 h-4 mr-2" /> Create New Badge Template
+          <div>
+            <h1 className="text-2xl text-gray-900 font-bold tracking-tight mb-1">Badge Templates</h1>
+            <p className="text-gray-500">Manage and create your badge templates with ease.</p>
+          </div>
+          <Button onClick={handleNewBadge} size="lg" className="bg-black hover:bg-black/90 text-white cursor-pointer">
+            <Plus className="mr-1 h-5 w-5" /> Create New Badge Template
           </Button>
         </div>
         {/* Search Bar */}

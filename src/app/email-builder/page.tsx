@@ -121,9 +121,6 @@ const EmailTemplateCard: React.FC<{
       className="relative group rounded-xl bg-white/70 shadow-md border hover:shadow-sm hover:-translate-y-1 transition-all duration-300 overflow-visible cursor-pointer flex flex-col border-b-5 border-b-black"
       onClick={e => { e.stopPropagation(); onPreview(); }}
     >
-      {/* Vertical Accent Bar */}
-      {/* <div className="absolute left-0 top-0 h-full w-1 border-r-gradient-to-b from-blue-400 via-blue-300 to-purple-300 rounded-l-xl" /> */}
-      {/* Card Preview Area */}
       <div className="relative">
         <div className="aspect-[16/9] bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden flex items-center justify-center rounded-t-xl">
           {previewImage ? (
@@ -141,13 +138,29 @@ const EmailTemplateCard: React.FC<{
           {/* Overlay on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-white/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
           {/* Floating Action Buttons */}
-          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-            <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/80 shadow hover:bg-blue-50 text-blue-600 border border-blue-100" onClick={e => { e.stopPropagation(); onEdit(); }}>
+          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-40">
+            <button
+              className="h-8 w-8 flex items-center justify-center rounded-full bg-white/80 shadow hover:bg-blue-50 text-blue-600 border border-blue-100"
+              title="Edit"
+              tabIndex={-1}
+              onClick={e => {
+                e.stopPropagation();
+                alert('Editing functionality is coming soon');
+              }}
+            >
               <Edit3 className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/80 shadow hover:bg-red-50 text-red-600 border border-red-100" onClick={e => { e.stopPropagation(); onDelete(); }}>
+            </button>
+            <button
+              className="h-8 w-8 flex items-center justify-center rounded-full bg-white/80 shadow hover:bg-red-50 text-red-600 border border-red-100"
+              title="Delete"
+              tabIndex={-1}
+              onClick={e => {
+                e.stopPropagation();
+                alert('Delete functionality is coming soon');
+              }}
+            >
               <Trash2 className="h-4 w-4" />
-            </Button>
+            </button>
           </div>
         </div>
       </div>
@@ -160,7 +173,6 @@ const EmailTemplateCard: React.FC<{
             {template.blocks.length} blocks
           </span>
         </div>
-        {/* Optionally, add more meta info here */}
       </div>
     </div>
   );
@@ -171,12 +183,6 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false); // Set to true if you want to simulate loading
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>("desktop");
-
-  // Simulate loading (optional)
-  // useEffect(() => {
-  //   setIsLoading(true);
-  //   setTimeout(() => setIsLoading(false), 800);
-  // }, []);
 
   const filteredTemplates = useMemo(() => {
     if (!searchQuery) return templates;
