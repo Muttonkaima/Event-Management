@@ -1,0 +1,50 @@
+{
+    "transactionId": "TXN1234567890",
+    "userId": "USR001",
+    "amount": 499.00,
+    "currency": "INR",
+    "status": "Success",
+    "paymentMethod": "UPI",
+    "paymentProvider": "Razorpay",
+    "paymentTime": "2025-06-09T15:45:23Z",
+    "receiptUrl": "https://yourapp.com/receipts/TXN1234567890",
+  
+    "payerDetails": {
+      "name": "Mithun Gowda",
+      "email": "mithun@example.com",
+      "phone": "+91-9876543210"
+    },
+  
+    "methodDetails": {
+      "upiId": "mithun@okicici",
+      "cardLast4": null,
+      "bankName": "ICICI Bank"
+    },
+  
+    "productDetails": {
+      "productId": "REG001",
+      "productName": "Event Registration - TechFest 2025",
+      "category": "VIP Ticket",
+      "quantity": 1
+    },
+  
+    "breakdown": {
+      "baseAmount": 450.00,
+      "taxAmount": 49.00,
+      "discount": 0.00,
+      "totalPaid": 499.00
+    },
+  
+    "refund": {
+      "isRefunded": false,
+      "refundId": null,
+      "refundAmount": null,
+      "refundDate": null
+    },
+  
+    "notes": {
+      "internalNote": "Early bird payment",
+      "userNote": "Paid using UPI"
+    }
+  }
+  
