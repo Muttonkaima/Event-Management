@@ -6,7 +6,7 @@
         "type": "attendee-name",
         "x": 144,
         "y": 122.61250305175781,
-        "width": 200,
+        "width": "max-content",
         "height": 40,
         "content": "Kichchha Sudeepa",
         "style": {
@@ -39,7 +39,7 @@
         "type": "attendee-role",
         "x": 152,
         "y": 201.6125030517578,
-        "width": 80,
+        "width": "max-content",
         "height": 50,
         "content": "ATTENDEE",
         "style": {
@@ -83,7 +83,7 @@
         "type": "event-date",
         "x": 160,
         "y": 26.612503051757812,
-        "width": 150,
+        "width": "max-content",
         "height": 30,
         "content": "15/06/2025",
         "style": {
@@ -99,7 +99,7 @@
         "type": "event-location",
         "x": 161,
         "y": 62.61250305175781,
-        "width": 150,
+        "width": "max-content",
         "height": 30,
         "content": "Mallathalli,Bengaluru",
         "style": {
@@ -112,7 +112,7 @@
       }
     ],
     "backgroundColor": "#FDF2F8",
-    "width": 350,
-    "height": 220,
+    "width": 500,
+    "height": 300,
     "exportedAt": "2025-06-09T07:34:15.105Z"
   }

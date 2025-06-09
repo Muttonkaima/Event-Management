@@ -82,8 +82,8 @@ export default function BadgeDesigner() {
         name: `Badge Export ${Date.now()}`,
         elements,
         backgroundColor,
-        width: 350,
-        height: 220,
+        width,
+        height,
         exportedAt: new Date().toISOString(),
       };
       

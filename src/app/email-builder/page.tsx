@@ -117,39 +117,52 @@ const EmailTemplateCard: React.FC<{
   const firstImageBlock = template.blocks.find((b: any) => b.type === 'image');
   const previewImage = template.previewImageUrl || firstImageBlock?.properties.imageUrl;
   return (
-    <Card className="group cursor-pointer hover:shadow-2xl hover:scale-[1.015] transition-all duration-300 bg-card relative overflow-hidden" onClick={e => { e.stopPropagation(); onPreview(); }}>
-      <CardHeader className="p-0 relative">
-        <div className="aspect-[16/9] bg-muted overflow-hidden flex items-center justify-center">
+    <div
+      className="relative group rounded-xl bg-white/70 shadow-md border hover:shadow-sm hover:-translate-y-1 transition-all duration-300 overflow-visible cursor-pointer flex flex-col border-b-5 border-b-black"
+      onClick={e => { e.stopPropagation(); onPreview(); }}
+    >
+      {/* Vertical Accent Bar */}
+      {/* <div className="absolute left-0 top-0 h-full w-1 border-r-gradient-to-b from-blue-400 via-blue-300 to-purple-300 rounded-l-xl" /> */}
+      {/* Card Preview Area */}
+      <div className="relative">
+        <div className="aspect-[16/9] bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden flex items-center justify-center rounded-t-xl">
           {previewImage ? (
-            <img src={previewImage} alt={template.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
+            <img
+              src={previewImage}
+              alt={template.name}
+              className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105 group-hover:brightness-95"
+              draggable={false}
+            />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-              <Palette className="w-12 h-12 text-primary/50" />
+            <div className="w-full h-full flex items-center justify-center">
+              <Palette className="w-14 h-14 text-blue-200" />
             </div>
           )}
+          {/* Overlay on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-white/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          {/* Floating Action Buttons */}
+          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+            <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/80 shadow hover:bg-blue-50 text-blue-600 border border-blue-100" onClick={e => { e.stopPropagation(); onEdit(); }}>
+              <Edit3 className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/80 shadow hover:bg-red-50 text-red-600 border border-red-100" onClick={e => { e.stopPropagation(); onDelete(); }}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </CardHeader>
-      <CardContent className="p-4">
-        <CardTitle className="text-lg truncate text-gray-900 transition-colors">{template.name}</CardTitle>
-        <CardDescription className="text-xs text-gray-500 mt-1 flex items-center">
-          {/* Could add last updated, etc. */}
-          {template.blocks.length} blocks
-        </CardDescription>
-      </CardContent>
-      <CardFooter className="p-4 border-t flex justify-between items-center">
-        <div className="text-xs text-gray-500">
-          {template.blocks.length} blocks
+      </div>
+      {/* Card Content */}
+      <div className="flex-1 flex flex-col px-5 py-4 gap-2">
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="font-semibold text-base text-gray-900 truncate flex-1">{template.name}</h3>
+          {/* Block count chip */}
+          <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium shadow-sm border border-blue-200">
+            {template.blocks.length} blocks
+          </span>
         </div>
-        <div className="flex gap-1">
-          <Button variant="ghost" size="icon" className="h-7 w-7  text-gray-500 hover:text-blue-500" onClick={e => { e.stopPropagation(); onEdit(); }}>
-            <Edit3 className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-500 hover:text-red-500" onClick={e => { e.stopPropagation(); onDelete(); }}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+        {/* Optionally, add more meta info here */}
+      </div>
+    </div>
   );
 };
 
