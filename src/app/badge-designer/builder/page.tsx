@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { ElementsSidebar } from '@/components/badge-designer/elements-sidebar';
 import { BadgeCanvas } from '@/components/badge-designer/badge-canvas';
@@ -115,11 +115,34 @@ export default function BadgeDesigner() {
       if (updates.width !== undefined) setWidth(updates.width);
       if (updates.height !== undefined) setHeight(updates.height);
     } else {
-      setElements(elements.map(el => 
-        el.id === elementId ? { ...el, ...updates } : el
-      ));
+      setElements(prevElements =>
+        prevElements.map(el => {
+          if (el.id !== elementId) return el;
+          // Merge updates with the latest element state
+          return { ...el, ...updates, style: { ...el.style, ...updates.style } };
+        })
+      );
     }
   };
+
+  // Clamp all element positions and sizes after card resize
+  useEffect(() => {
+    setElements(prevElements =>
+      prevElements.map(el => {
+        let newX = Math.max(0, Math.min(el.x, width - el.width));
+        let newY = Math.max(0, Math.min(el.y, height - el.height));
+        let newWidth = Math.min(el.width, width - newX);
+        let newHeight = Math.min(el.height, height - newY);
+        return {
+          ...el,
+          x: newX,
+          y: newY,
+          width: newWidth,
+          height: newHeight,
+        };
+      })
+    );
+  }, [width, height]);
 
   const handleElementDelete = (elementId: string) => {
     setElements(prev => prev.filter(el => el.id !== elementId));

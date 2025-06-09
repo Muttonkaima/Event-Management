@@ -1,0 +1,118 @@
+{
+    "name": "Badge Export 1749454455105",
+    "elements": [
+      {
+        "id": "element-1",
+        "type": "attendee-name",
+        "x": 144,
+        "y": 122.61250305175781,
+        "width": 200,
+        "height": 40,
+        "content": "Kichchha Sudeepa",
+        "style": {
+          "fontSize": 22,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "color": "#ff0000",
+          "backgroundColor": "transparent"
+        }
+      },
+      {
+        "id": "element-2",
+        "type": "qr-code",
+        "x": 361,
+        "y": 161.6125030517578,
+        "width": 123,
+        "height": 123,
+        "content": "QR",
+        "style": {
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "color": "#000000",
+          "backgroundColor": "#F3F4F6",
+          "borderRadius": 4
+        }
+      },
+      {
+        "id": "element-3",
+        "type": "attendee-role",
+        "x": 152,
+        "y": 201.6125030517578,
+        "width": 80,
+        "height": 50,
+        "content": "ATTENDEE",
+        "style": {
+          "fontSize": 35,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "color": "#2563EB",
+          "backgroundColor": "transparent"
+        }
+      },
+      {
+        "id": "element-1749454139585",
+        "type": "attendee-photo",
+        "x": 400,
+        "y": 20.612503051757812,
+        "width": 80,
+        "height": 80,
+        "content": "",
+        "style": {
+          "backgroundColor": "#F3F4F6",
+          "borderRadius": 4,
+          "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpTU_9JKTU-gImKoqhKoXu_5nfhSZl8tEMbdYaeSxrz39PH37McFK4iiLer2Wg3mKHZZ5OJvGMy3GO9R0xhzX_m4GdsFJs1QOX8V8eAIk5Ug"
+        }
+      },
+      {
+        "id": "element-1749454165740",
+        "type": "event-logo",
+        "x": 21,
+        "y": 21.612503051757812,
+        "width": 120,
+        "height": 60,
+        "content": "",
+        "style": {
+          "backgroundColor": "#F3F4F6",
+          "borderRadius": 0,
+          "imageUrl": "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/corporate-company-logo-design-template-2402e0689677112e3b2b6e0f399d7dc3_screen.jpg?ts=1561532453"
+        }
+      },
+      {
+        "id": "element-1749454329082",
+        "type": "event-date",
+        "x": 160,
+        "y": 26.612503051757812,
+        "width": 150,
+        "height": 30,
+        "content": "15/06/2025",
+        "style": {
+          "fontSize": 14,
+          "fontWeight": "normal",
+          "textAlign": "left",
+          "color": "#6B7280",
+          "backgroundColor": "transparent"
+        }
+      },
+      {
+        "id": "element-1749454350525",
+        "type": "event-location",
+        "x": 161,
+        "y": 62.61250305175781,
+        "width": 150,
+        "height": 30,
+        "content": "Mallathalli,Bengaluru",
+        "style": {
+          "fontSize": 14,
+          "fontWeight": "normal",
+          "textAlign": "left",
+          "color": "#6B7280",
+          "backgroundColor": "transparent"
+        }
+      }
+    ],
+    "backgroundColor": "#FDF2F8",
+    "width": 350,
+    "height": 220,
+    "exportedAt": "2025-06-09T07:34:15.105Z"
+  }
