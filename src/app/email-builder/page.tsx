@@ -297,7 +297,7 @@ export default function Dashboard() {
                     ))}
                     {/* Close Button */}
                     <DialogClose asChild>
-                      <Button variant="ghost" size="icon" className="rounded-full">
+                      <Button variant="ghost" size="icon" className="rounded-full cursor-pointer">
                         <XIcon className="h-5 w-5" />
                       </Button>
                     </DialogClose>

@@ -10,6 +10,7 @@ import { Eye, Save, Home, ArrowBigLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
+import { downloadJSON } from "./utils";
 
 // Dynamically import DndProvider with no SSR
 const DndProvider = dynamic(
@@ -24,11 +25,19 @@ export default function FormBuilder() {
 
   const handleSave = async () => {
     try {
-      await saveForm();
-      toast({
-        title: "Form Saved",
-        description: savedFormId ? "Your form has been updated successfully." : "Your form has been saved successfully.",
-      });
+      const formJSON = {
+        title: form.title,
+        description: form.description,
+        fields: fields.map(f => ({
+          type: f.type,
+          label: f.label,
+          placeholder: f.placeholder,
+          helpText: f.helpText,
+          required: f.required,
+          options: f.options,
+        }))
+      };
+      downloadJSON(formJSON, `${(form.title||'form').replace(/\s+/g,'_').toLowerCase()}.json`);
     } catch (error) {
       toast({
         title: "Error",
@@ -87,6 +96,7 @@ export default function FormBuilder() {
               <Save className="w-4 h-4 mr-2" />
               {isSaving ? "Saving..." : savedFormId ? "Update Form" : "Save Form"}
             </Button>
+           
           </div>
         </header>
 

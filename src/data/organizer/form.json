@@ -1,0 +1,73 @@
+{
+    "title": "Event Registration Form",
+    "description": "Please fill out the registration form below to secure your spot at the event.",
+    "fields": [
+      {
+        "type": "text-input",
+        "label": "First Name ",
+        "placeholder": "Enter you first name",
+        "helpText": "Please fill in block letters",
+        "required": true
+      },
+      {
+        "type": "text-input",
+        "label": "Last Name",
+        "placeholder": "Enter your last name",
+        "helpText": "Please fill in block letters",
+        "required": true
+      },
+      {
+        "type": "number",
+        "label": "Age",
+        "placeholder": "Enter your age",
+        "helpText": "Please enter in numbers only",
+        "required": true
+      },
+      {
+        "type": "dropdown",
+        "label": "School",
+        "placeholder": "Select your school",
+        "helpText": "Atleast select one",
+        "required": true,
+        "options": [
+          "BGS school",
+          "New Baldwin school"
+        ]
+      },
+      {
+        "type": "textarea",
+        "label": "Address",
+        "placeholder": "Enter your address",
+        "helpText": "Fill entire address",
+        "required": true
+      },
+      {
+        "type": "file",
+        "label": "Photo",
+        "placeholder": "Upload Photo",
+        "helpText": "Keep it less than 1 MB",
+        "required": true
+      },
+      {
+        "type": "date",
+        "label": "Date of Birth",
+        "placeholder": "Select date",
+        "helpText": "Enter your DOB",
+        "required": true
+      },
+      {
+        "type": "phone",
+        "label": "Phone Number",
+        "placeholder": "Enter your phone number",
+        "helpText": "",
+        "required": false
+      },
+      {
+        "type": "checkbox",
+        "label": "I agree to terms & conditions",
+        "placeholder": "Enter value",
+        "helpText": "Please select this to proceed",
+        "required": false
+      }
+    ]
+  }
