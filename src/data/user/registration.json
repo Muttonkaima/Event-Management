@@ -1,0 +1,15 @@
+{
+    "formTitle": "Event Registration Form",
+    "submittedAt": "2025-06-09T16:30:00Z",
+    "formData": {
+      "First Name": "Mithun",
+      "Last Name": "Gowda",
+      "Age": 21,
+      "School": "BGS school",
+      "Address": "123 Main Street, Bengaluru, Karnataka",
+      "Photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpTU_9JKTU-gImKoqhKoXu_5nfhSZl8tEMbdYaeSxrz39PH37McFK4iiLer2Wg3mKHZZ5OJvGMy3GO9R0xhzX_m4GdsFJs1QOX8V8eAIk5Ug",
+      "Date of Birth": "2004-05-15",
+      "Phone Number": "+91 9876543210",
+      "I agree to terms & conditions": true
+    }
+}

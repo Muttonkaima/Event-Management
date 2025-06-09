@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { FiCalendar, FiLogOut, FiX, FiAward, FiUserCheck, FiCreditCard, FiVolume2, FiBookOpen, FiMessageSquare, FiHelpCircle } from 'react-icons/fi';
 
 const navItems = [
-  { name: 'Event Info', href: '/user/event-info', icon: <FiCalendar className="w-5 h-5" /> },
+  { name: 'Event Info', href: '/user/event-dashboard', icon: <FiCalendar className="w-5 h-5" /> },
   { name: 'My Registration', href: '/user/my-registration', icon: <FiUserCheck className="w-5 h-5" /> },
   { name: 'Payment Details', href: '/user/payment-details', icon: <FiCreditCard className="w-5 h-5" /> },
   { name: 'My Badge', href: '/user/my-badge', icon: <FiAward className="w-5 h-5" /> },
