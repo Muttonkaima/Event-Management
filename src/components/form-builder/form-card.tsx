@@ -11,6 +11,7 @@ interface FormCardProps {
 }
 
 export default function FormCard({ form, onPreview }: FormCardProps) {
+  // The form.id is now always available for use in keys, navigation, etc.
   return (
     <div
       className="relative group rounded-2xl overflow-hidden min-h-[210px] shadow-xl border border-gray-100 border-b-5 border-b-black bg-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col"

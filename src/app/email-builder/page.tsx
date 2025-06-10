@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, FileText, Edit3, Trash2, Smartphone, Tablet, Monitor, Palette, X as XIcon } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import emailTemplateFromFile from "@/data/organizer/email.json"; // Import the single template from email.json
+import emailTemplateFromFile from "@/data/organizer/email.json"; // Import the multiple templates from email.json
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { FiSearch } from "react-icons/fi";
 
-const templates = emailTemplateFromFile ? [emailTemplateFromFile] : [];
+// Ensure templates is always an array
+const templates = Array.isArray(emailTemplateFromFile) ? emailTemplateFromFile : [emailTemplateFromFile];
 
 function renderBlock(block: any) {
   const { type, properties } = block;
@@ -184,12 +185,13 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false); // Set to true if you want to simulate loading
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>("desktop");
 
+  // Filtered templates for search
   const filteredTemplates = useMemo(() => {
     if (!searchQuery) return templates;
     return templates.filter((template: any) =>
       template.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [searchQuery, templates]);
 
   const handleNewForm = () => {
     window.location.href = "/email-builder/builder";
@@ -244,11 +246,11 @@ export default function Dashboard() {
           </div>
         ) : filteredTemplates.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredTemplates.map((template: any, idx: number) => (
+            {filteredTemplates.map((template: any) => (
               <EmailTemplateCard
-                key={idx}
+                key={template.id}
                 template={template}
-                onPreview={() => setOpenIdx(idx)}
+                onPreview={() => setOpenIdx(templates.findIndex(t => t.id === template.id))}
                 onEdit={() => alert('Edit functionality coming soon!')}
                 onDelete={() => alert('Delete functionality coming soon!')}
               />
@@ -280,6 +282,7 @@ export default function Dashboard() {
                     <DialogHeaderUI>
                       <DialogTitleUI className="text-xl font-semibold truncate pr-8 text-gray-900">
                         {filteredTemplates[openIdx].name}
+                        <span className="ml-2 text-xs text-gray-400">{filteredTemplates[openIdx].id}</span>
                       </DialogTitleUI>
                     </DialogHeaderUI>
                   </div>

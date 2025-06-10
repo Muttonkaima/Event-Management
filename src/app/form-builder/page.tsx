@@ -10,6 +10,8 @@ import FormPreview from "@/components/form-builder/form-preview";
 import formData from "@/data/organizer/form.json";
 
 export default function Dashboard() {
+  // Ensure formData is an array
+  const forms = Array.isArray(formData) ? formData : [formData];
   const [open, setOpen] = useState(false);
   const [selectedForm, setSelectedForm] = useState<any | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,15 +20,13 @@ export default function Dashboard() {
     window.location.href = '/form-builder/builder';
   };
 
-  // In future, support multiple forms
-  const forms = formData ? [formData] : [];
-
+  // forms is now always an array (see above)
   const filteredForms = useMemo(() => {
     if (!searchQuery) return forms;
     return forms.filter((form: any) =>
       form.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [searchQuery, forms]);
 
   return (
     <DashboardLayout title="Forms">
@@ -70,9 +70,9 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {forms.map((form, idx) => (
+            {filteredForms.map((form: any) => (
               <FormCard
-                key={form.title + idx}
+                key={form.id}
                 form={form}
                 onPreview={() => {
                   setSelectedForm(form);

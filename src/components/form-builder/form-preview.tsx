@@ -130,6 +130,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
             <div>
               <DialogTitle className="text-xl font-semibold text-gray-900">
                 Form Preview
+                <span className="ml-2 text-xs text-gray-400">{form.id}</span>
               </DialogTitle>
               <p className="text-sm text-gray-500 mt-1">
                 This is how your form will appear to users

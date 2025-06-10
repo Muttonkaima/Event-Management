@@ -181,8 +181,8 @@ export default function Dashboard() {
     window.location.href = "/badge-designer/builder";
   };
 
-  // Support for multiple badges in future
-  const badges = useMemo(() => (badgeData ? [badgeData] : []), []);
+  // Ensure badges is always an array
+  const badges = useMemo(() => (Array.isArray(badgeData) ? badgeData : [badgeData]), []);
   const filteredBadges = badges.filter(badge =>
     badge.name.toLowerCase().includes(searchQuery.toLowerCase())
   ); // Add search/filter logic if needed
@@ -230,8 +230,8 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredBadges.map((badge, idx) => (
-              <BadgeCard key={badge.name + idx} badge={badge} onPreview={() => setOpenIdx(idx)} />
+            {filteredBadges.map((badge) => (
+              <BadgeCard key={badge.id} badge={badge} onPreview={() => setOpenIdx(badges.findIndex(b => b.id === badge.id))} />
             ))}
           </div>
         )}
@@ -245,6 +245,7 @@ export default function Dashboard() {
                   <DialogHeaderUI>
                     <DialogTitleUI className="text-xl font-semibold truncate pr-8 text-gray-900">
                       {filteredBadges[openIdx].name}
+                      <span className="ml-2 text-xs text-gray-400">{filteredBadges[openIdx].id}</span>
                     </DialogTitleUI>
                   </DialogHeaderUI>
                   <DialogClose asChild>
