@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "title": "Event Schedule Update",
+    "content": "The welcome speech has been moved 30 minutes earlier. Please plan accordingly.",
+    "date": "2025-06-05",
+    "isImportant": true
+  },
+  {
+    "id": 2,
+    "title": "Parking Information",
+    "content": "Complimentary parking is available at the venue. Please show your ticket at the entrance.",
+    "date": "2025-06-04",
+    "isImportant": false
+  },
+  {
+    "id": 3,
+    "title": "Dress Code Reminder",
+    "content": "The event has a semi-formal dress code. We look forward to seeing you in your best attire!",
+    "date": "2025-06-03",
+    "isImportant": false
+  },
+  {
+    "id": 4,
+    "title": "Guest Speaker Announced",
+    "content": "We are excited to welcome Dr. Ayesha Khan as the keynote speaker for the closing session.",
+    "date": "2025-06-07",
+    "isImportant": true
+  },
+  {
+    "id": 5,
+    "title": "Workshop Registrations Closing Soon",
+    "content": "Registrations for hands-on workshops will close on June 6. Reserve your spot soon!",
+    "date": "2025-06-02",
+    "isImportant": true
+  },
+  {
+    "id": 6,
+    "title": "Weather Advisory",
+    "content": "Expect light showers on the day of the event. Carry umbrellas or raincoats if needed.",
+    "date": "2025-06-06",
+    "isImportant": true
+  },
+  {
+    "id": 7,
+    "title": "Photography Notice",
+    "content": "Professional photographers will be covering the event. Contact organizers for copies.",
+    "date": "2025-06-05",
+    "isImportant": false
+  },
+  {
+    "id": 8,
+    "title": "Check-In Instructions",
+    "content": "Please bring your QR badge and a valid ID for smooth check-in at the reception desk.",
+    "date": "2025-06-04",
+    "isImportant": true
+  },
+  {
+    "id": 9,
+    "title": "Lunch Menu Preview",
+    "content": "Explore the curated multi-cuisine lunch buffet available during the event.",
+    "date": "2025-06-03",
+    "isImportant": false
+  },
+  {
+    "id": 10,
+    "title": "Networking Session Details",
+    "content": "Join us for a casual networking session post-event with refreshments and music.",
+    "date": "2025-06-06",
+    "isImportant": false
+  }
+]
