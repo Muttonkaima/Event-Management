@@ -10,7 +10,7 @@ const navItems = [
   { name: 'Payment Details', href: '/user/payment-details', icon: <FiCreditCard className="w-5 h-5" /> },
   { name: 'My Badge', href: '/user/my-badge', icon: <FiAward className="w-5 h-5" /> },
   { name: 'Announcements', href: '/user/announcements', icon: <FiVolume2 className="w-5 h-5" /> },
-  { name: 'Event Resources', href: '/user/event-resources', icon: <FiBookOpen className="w-5 h-5" /> },
+  // { name: 'Event Resources', href: '/user/event-resources', icon: <FiBookOpen className="w-5 h-5" /> },
   { name: 'Feedback', href: '/user/feedback', icon: <FiMessageSquare className="w-5 h-5" /> },
   { name: 'Support', href: '/user/support', icon: <FiHelpCircle className="w-5 h-5" /> }
 ];
