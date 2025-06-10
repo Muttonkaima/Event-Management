@@ -3,7 +3,7 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import Image from "next/image";
-import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 import { useRef } from "react";
 
 interface TicketModalProps {
@@ -64,7 +64,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
     // Fix oklch colors before capture
     replaceOklchWithFallback(ticketRef.current);
     // Capture the ticket as an image
-    const canvas = await import("html2canvas").then(m => m.default(ticketRef.current!, { backgroundColor: null, useCORS: true }));
+    const canvas = await html2canvas(ticketRef.current, { backgroundColor: null, useCORS: true });
     const imgData = canvas.toDataURL("image/png");
 
     // Restore buttons after capture
@@ -72,28 +72,11 @@ const TicketModal: React.FC<TicketModalProps> = ({
       (btn as HTMLElement).style.display = prevDisplay[i] || '';
     });
 
-    // Use jsPDF's built-in A4 landscape size (in px at 96dpi)
-    const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    // Calculate image size to fit A4 landscape, preserving aspect ratio
-    const imgWidth = canvas.width;
-    const imgHeight = canvas.height;
-    let renderWidth = pageWidth;
-    // Reduce max height for a more compact ticket (e.g., 320pt)
-    const maxHeight = 500;
-    let renderHeight = (imgHeight / imgWidth) * renderWidth;
-    if (renderHeight > maxHeight) {
-      renderHeight = maxHeight;
-      renderWidth = (imgWidth / imgHeight) * renderHeight;
-    }
-    // Center image
-    const x = (pageWidth - renderWidth) / 2;
-    const y = (pageHeight - renderHeight) / 2;
-
-    pdf.addImage(imgData, "PNG", x, y, renderWidth, renderHeight);
-    pdf.save("ticket.pdf");
+    // Download as PNG
+    const link = document.createElement('a');
+    link.href = imgData;
+    link.download = 'ticket.png';
+    link.click();
   };
 
   return (
