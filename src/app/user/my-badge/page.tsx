@@ -86,7 +86,7 @@ export default function MyBadgePage() {
             <div className="flex flex-col items-center justify-center w-full min-h-[calc(100vh-120px)] px-2 py-6">
                 {/* Modern Header */}
                 <div className="w-full max-w-2xl flex flex-col items-center gap-2 mb-6 animate-fade-in">
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-black drop-shadow-lg tracking-tight">Your Event Badge</h1>
+                    <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-black tracking-tight">Your Event Badge</h1>
                     <span className="text-base md:text-lg text-gray-500 dark:text-gray-500 text-center">Show this badge at the event for entry & networking</span>
                 </div>
 
@@ -120,19 +120,6 @@ export default function MyBadgePage() {
                                 await handleDownload();
                                 // Show confetti!
                                 if (typeof window !== 'undefined' && window.confetti) window.confetti();
-                                else if (typeof window !== 'undefined') {
-                                    // fallback: burst emoji
-                                    const el = document.createElement('div');
-                                    el.style.position = 'fixed';
-                                    el.style.left = '50%';
-                                    el.style.top = '40%';
-                                    el.style.fontSize = '3rem';
-                                    el.style.transform = 'translate(-50%, -50%)';
-                                    el.style.pointerEvents = 'none';
-                                    el.style.zIndex = '9999';
-                                    document.body.appendChild(el);
-                                    setTimeout(() => el.remove(), 1200);
-                                }
                             }}
                             className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-black focus:ring-offset-2 mt-6 cursor-pointer"
                         >
@@ -146,7 +133,6 @@ export default function MyBadgePage() {
                     </div>
                 </div>
             </div>
-            {/* Glassmorphic and animation styles */}
             <style>{`
         .glass-card {
           background: rgba(255,255,255,0.7);
