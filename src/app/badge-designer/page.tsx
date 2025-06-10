@@ -87,12 +87,12 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void }> = ({ badge, onP
   const exportDate = badge.exportedAt ? new Date(badge.exportedAt).toLocaleDateString() : "";
   return (
     <div
-      className="relative group mt-6 rounded-2xl bg-gradient-to-br from-pink-50 via-white to-blue-50 shadow-lg border border-gray-100 border-b-5 border-b-black hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-visible cursor-pointer"
+      className="relative group mt-6 rounded-2xl bg-gradient-to-br from-pink-100 via-white to-blue-100 shadow-lg border border-gray-100 border-b-5 border-b-black hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-visible cursor-pointer"
       onClick={e => {
         e.stopPropagation();
         onPreview();
       }}
-    >x
+    >
       {/* Floating Preview Image */}
       <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-20 flex justify-center w-full">
         <div className="rounded-full bg-white/80 shadow-lg ring-4 ring-pink-100 group-hover:ring-blue-200 transition-all duration-300 p-1">
