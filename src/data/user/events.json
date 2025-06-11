@@ -1,152 +1,255 @@
 [
   {
-    "id": "evt-001",
-    "name": "Annual Tech Conference 2023",
-    "description": "Join us for the biggest tech conference of the year featuring keynotes from industry leaders and workshops on cutting-edge technologies.",
-    "date": {
-      "start": "2025-06-15T09:00:00Z",
-      "end": "2025-06-17T18:00:00Z"
+    "id": "event-1",
+    "template": "webinar",
+    "templateImage": "/images/image1.jpg",
+    "event": {
+      "name": "SJBIT Cultural Event",
+      "description": "this is the cultural event description",
+      "startDate": "2025-06-08T10:00",
+      "endDate": "2025-06-09T17:00",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "timezone": "UTC",
+      "eventType": "in-person",
+      "address": "sjbit, uttarahalli main road, ",
+      "city": "Bangalore Urban",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560060",
+      "meetingLink": "",
+      "templateImage": "/images/image4.jpg"
     },
-    "location": {
-      "name": "Tech Convention Center",
-      "address": "123 Innovation Blvd",
-      "city": "San Francisco",
-      "country": "USA"
+    "branding": {
+      "colorTheme": "sunset",
+      "fontStyle": "elegant",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "/uploads/upload-1749210478204.png",
+      "bannerUrl": "/uploads/upload-1749210483341.jpg"
     },
-    "status": "upcoming",
-    "organizer": {
-      "name": "TechEvents Inc.",
-      "email": "contact@techevents.com",
-      "avatar": "https://github.com/polymet-ai.png"
-    },
-    "attendees": 1200,
-    "category": "Technology",
-    "tags": ["tech", "innovation", "conference", "networking"],
-    "image": "https://picsum.photos/seed/techconf/800/400"
+    "sessions": [
+      {
+        "title": "Welcome speech",
+        "speaker": "Prashanth",
+        "startTime": "10:00",
+        "duration": 30,
+        "description": "speech by our principal",
+        "tags": [
+          "keynote",
+          "panel"
+        ],
+        "id": 1749210516057
+      },
+      {
+        "title": "Dance",
+        "speaker": "CSE department",
+        "startTime": "11:00",
+        "duration": 30,
+        "description": "they will come and dance",
+        "tags": [
+          "networking"
+        ],
+        "id": 1749210558269
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-06-04T10:00",
+      "registrationClose": "2025-06-04T17:00",
+      "confirmationEmail": "Thank you for registering for our event. We look forward to seeing you!",
+      "termsConditions": "By registering for this event, you agree to our terms and conditions.",
+      "updateDeadline": "2025-06-05T23:59",
+      "maxAttendees": 300,
+      "tickets": [
+        {
+          "id": "1749210614054",
+          "name": "General",
+          "type": "free"
+        },
+        {
+          "id": "1749210619699",
+          "name": "VIP",
+          "type": "paid",
+          "price": 499,
+          "currency": "INR"
+        }
+      ]
+    }
   },
   {
-    "id": "evt-002",
-    "name": "Design Systems Workshop",
-    "description": "A hands-on workshop focused on creating and maintaining effective design systems for product teams.",
-    "date": {
-      "start": "2025-04-20T10:00:00Z",
-      "end": "2025-04-20T16:00:00Z"
+    "id": "event-4",
+    "template": "webinar",
+    "templateImage": "/images/image1.jpg",
+    "event": {
+      "name": "Tech Carnival 2025",
+      "description": "A carnival of innovation, gaming, and tech exhibitions.",
+      "startDate": "2025-09-10T10:00",
+      "endDate": "2025-09-11T18:00",
+      "startTime": "10:00",
+      "endTime": "18:00",
+      "timezone": "UTC",
+      "eventType": "in-person",
+      "address": "City Convention Center",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560001",
+      "meetingLink": "",
+      "templateImage": "/images/image1.jpg"
     },
-    "location": {
-      "name": "Creative Hub",
-      "address": "456 Design Avenue",
-      "city": "New York",
-      "country": "USA"
+    "branding": {
+      "colorTheme": "sunset",
+      "fontStyle": "creative",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "https://static.vecteezy.com/system/resources/thumbnails/002/597/070/small/ghost-esport-mascot-logo-design-vector.jpg",
+      "bannerUrl": "https://cdn.pixabay.com/photo/2015/10/29/14/39/web-1012468_1280.jpg"
     },
-    "status": "completed",
-    "organizer": {
-      "name": "DesignPro Academy",
-      "email": "workshops@designpro.com",
-      "avatar": "https://github.com/polymet-ai.png"
-    },
-    "attendees": 75,
-    "category": "Design",
-    "tags": ["design", "workshop", "UI/UX", "product design"],
-    "image": "https://picsum.photos/seed/designworkshop/800/400"
+    "sessions": [
+      {
+        "title": "Tech Expo",
+        "speaker": "Various Startups",
+        "startTime": "10:30",
+        "duration": 90,
+        "description": "Exhibition of tech innovations",
+        "tags": [
+          "expo"
+        ],
+        "id": 1749211310001
+      },
+      {
+        "title": "Gaming Tournament",
+        "speaker": "E-Sports India",
+        "startTime": "15:00",
+        "duration": 120,
+        "description": "Valorant & FIFA knockout tournament",
+        "tags": [
+          "gaming",
+          "tournament"
+        ],
+        "id": 1749211320002
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-08-25T10:00",
+      "registrationClose": "2025-09-05T17:00",
+      "confirmationEmail": "Your Tech Carnival Pass is confirmed!",
+      "termsConditions": "Entry restricted to college students above 18.",
+      "updateDeadline": "2025-09-07T23:59",
+      "maxAttendees": 1000,
+      "tickets": [
+        {
+          "id": "1749211330003",
+          "name": "Visitor",
+          "type": "free"
+        },
+        {
+          "id": "1749211340004",
+          "name": "Gamer Entry",
+          "type": "paid",
+          "price": 349,
+          "currency": "INR"
+        }
+      ]
+    }
   },
   {
-    "id": "evt-003",
-    "name": "Startup Pitch Night",
-    "description": "An evening of innovative startup pitches with feedback from venture capitalists and industry experts.",
-    "date": {
-      "start": "2025-06-05T18:00:00Z",
-      "end": "2025-06-06T21:00:00Z"
+    "id": "event-5",
+    "template": "webinar",
+    "templateImage": "/images/image4.jpg",
+    "event": {
+      "name": "Women in Tech Conference",
+      "description": "Celebrating achievements of women in technology and leadership.",
+      "startDate": "2025-10-05T09:00",
+      "endDate": "2025-10-05T17:30",
+      "startTime": "09:00",
+      "endTime": "17:30",
+      "timezone": "UTC",
+      "eventType": "in-person",
+      "address": "Infosys Campus, Electronics City",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560100",
+      "meetingLink": "",
+      "templateImage": "/images/image4.jpg"
     },
-    "location": {
-      "name": "Venture Hub",
-      "address": "789 Startup Lane",
-      "city": "Austin",
-      "country": "USA"
+    "branding": {
+      "colorTheme": "ocean",
+      "fontStyle": "minimal",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "https://static.vecteezy.com/system/resources/previews/019/166/318/non_2x/lion-head-lion-logo-symbol-gaming-logo-elegant-element-for-brand-abstract-symbols-vector.jpg",
+      "bannerUrl": "https://img.lovepik.com/background/20211021/large/lovepik-blue-background-of-science-and-technology-image_500486349.jpg"
     },
-    "status": "ongoing",
-    "organizer": {
-      "name": "Founder Network",
-      "email": "events@foundernetwork.com",
-      "avatar": "https://github.com/polymet-ai.png"
-    },
-    "attendees": 150,
-    "category": "Business",
-    "tags": ["startup", "pitch", "venture capital", "entrepreneurship"],
-    "image": "https://picsum.photos/seed/startuppitch/800/400"
-  },
-  {
-    "id": "evt-004",
-    "name": "AI and Machine Learning Summit",
-    "description": "Explore the latest advancements in artificial intelligence and machine learning with industry experts.",
-    "date": {
-      "start": "2025-08-10T09:00:00Z",
-      "end": "2025-08-12T17:00:00Z"
-    },
-    "location": {
-      "name": "Science Park Conference Center",
-      "address": "101 Innovation Drive",
-      "city": "Boston",
-      "country": "USA"
-    },
-    "status": "upcoming",
-    "organizer": {
-      "name": "AI Research Institute",
-      "email": "summit@airesearch.org",
-      "avatar": "https://github.com/polymet-ai.png"
-    },
-    "attendees": 800,
-    "category": "Technology",
-    "tags": ["AI", "machine learning", "data science", "research"],
-    "image": "https://picsum.photos/seed/aisummit/800/400"
-  },
-  {
-    "id": "evt-005",
-    "name": "Digital Marketing Masterclass",
-    "description": "A comprehensive masterclass covering the latest digital marketing strategies and tools for 2023.",
-    "date": {
-      "start": "2025-03-15T10:00:00Z",
-      "end": "2025-03-16T16:00:00Z"
-    },
-    "location": {
-      "name": "Marketing Hub",
-      "address": "202 Social Media Street",
-      "city": "Chicago",
-      "country": "USA"
-    },
-    "status": "completed",
-    "organizer": {
-      "name": "Digital Marketing Pros",
-      "email": "learn@dmprofs.com",
-      "avatar": "https://github.com/polymet-ai.png"
-    },
-    "attendees": 250,
-    "category": "Marketing",
-    "tags": ["digital marketing", "SEO", "social media", "content strategy"],
-    "image": "https://picsum.photos/seed/marketingclass/800/400"
-  },
-  {
-    "id": "evt-006",
-    "name": "Sustainable Architecture Expo",
-    "description": "Showcasing innovative sustainable architecture designs and eco-friendly building materials.",
-    "date": {
-      "start": "2025-07-01T09:00:00Z",
-      "end": "2025-07-03T18:00:00Z"
-    },
-    "location": {
-      "name": "Green Building Center",
-      "address": "303 Eco Avenue",
-      "city": "Portland",
-      "country": "USA"
-    },
-    "status": "upcoming",
-    "organizer": {
-      "name": "Sustainable Design Coalition",
-      "email": "expo@sustainabledesign.org",
-      "avatar": "https://github.com/polymet-ai.png"
-    },
-    "attendees": 600,
-    "category": "Architecture",
-    "tags": ["sustainability", "architecture", "eco-friendly", "design"],
-    "image": "https://picsum.photos/seed/architecture/800/400"
+    "sessions": [
+      {
+        "title": "Leadership Talk",
+        "speaker": "Ananya Rao",
+        "startTime": "10:00",
+        "duration": 60,
+        "description": "Empowering journeys in tech",
+        "tags": [
+          "keynote",
+          "leadership"
+        ],
+        "id": 1749211410001
+      },
+      {
+        "title": "Mentorship Circle",
+        "speaker": "Various Mentors",
+        "startTime": "14:00",
+        "duration": 90,
+        "description": "1-on-1 mentorship speed rounds",
+        "tags": [
+          "networking",
+          "mentorship"
+        ],
+        "id": 1749211420002
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-09-20T10:00",
+      "registrationClose": "2025-10-01T17:00",
+      "confirmationEmail": "Your registration is successful. Welcome!",
+      "termsConditions": "Event registration is non-transferable.",
+      "updateDeadline": "2025-10-03T23:59",
+      "maxAttendees": 600,
+      "tickets": [
+        {
+          "id": "1749211430003",
+          "name": "General",
+          "type": "free"
+        },
+        {
+          "id": "1749211440004",
+          "name": "Premium",
+          "type": "paid",
+          "price": 599,
+          "currency": "INR"
+        }
+      ]
+    }
   }
 ]

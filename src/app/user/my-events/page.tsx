@@ -3,95 +3,39 @@
 import { useState } from 'react';
 import { FiSearch, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
 import Link from 'next/link';
-import eventsData from '@/data/user/events.json';
-import DashboardLayout from '@/components/user/dashboard/DashboardLayout';
+import { adaptEvents, Event } from '@/app/user/my-events/events';
+import rawEvents from '@/data/user/events.json';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
 type ViewMode = 'grid' | 'list';
-
-interface Event {
-  id: string;
-  name: string;
-  description: string;
-  date: {
-    start: string;
-    end: string;
-  };
-  location: {
-    name: string;
-    city: string;
-    address: string;
-    country: string;
-  };
-  status: string;
-  organizer: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-  attendees: number;
-  category: string;
-  tags: string[];
-  image: string;
-}
+// Use Event type from adapter, which includes branding
+// (local interface removed to avoid conflicts)
 
 export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState('All Categories');
   const [dateFilter, setDateFilter] = useState('All Dates');
-  const searchParams = useSearchParams();
-  const urlFilter = searchParams.get('filter');
-  const [statusFilter, setStatusFilter] = useState(
-    urlFilter === 'past' ? 'completed' :
-      urlFilter === 'upcoming' ? 'upcoming' :
-        'All Status'
-  );
+  const [locationFilter, setLocationFilter] = useState('All Locations');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
-  const isDateInRange = (eventDate: string, range: string): boolean => {
-    const today = new Date();
-    const eventDateObj = new Date(eventDate);
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
-    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-    const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-    switch (range) {
-      case 'Today':
-        return eventDateObj >= startOfDay && eventDateObj <= endOfDay;
-      case 'Tomorrow':
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        return eventDateObj.getDate() === tomorrow.getDate() &&
-          eventDateObj.getMonth() === tomorrow.getMonth() &&
-          eventDateObj.getFullYear() === tomorrow.getFullYear();
-      case 'This Week':
-        return eventDateObj >= startOfWeek && eventDateObj <= endOfWeek;
-      case 'This Month':
-        return eventDateObj >= startOfMonth && eventDateObj <= endOfMonth;
-      default:
-        return true;
-    }
-  };
+  // Adapt events.json to Event[]
+  const eventsData: Event[] = adaptEvents(rawEvents);
 
   // Get unique categories, locations for filters
   const categories = ['All Categories', ...new Set(eventsData.map((event: Event) => event.category))];
+  const locations = ['All Locations', ...new Set(eventsData.map((event: Event) => event.location.city))];
   const dates = ['All Dates', 'Today', 'Tomorrow', 'This Week', 'This Month'];
-  const status = ['All Status', ...new Set(eventsData.map((event: Event) => event.status))];
 
   // Filter events based on search and filters
   const filteredEvents = eventsData.filter((event: Event) => {
     const matchesSearch = event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (event.branding?.visibility?.showDescription !== false && event.description.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory = categoryFilter === 'All Categories' || event.category === categoryFilter;
-    const matchesStatus = statusFilter === 'All Status' || event.status === statusFilter;
-
+    const matchesLocation = locationFilter === 'All Locations' || event.location.city === locationFilter;
     // Simple date filtering (can be enhanced based on actual date comparison)
-    const matchesDate = dateFilter === 'All Dates' || isDateInRange(event.date.start, dateFilter); // Implement actual date filtering
-
-    return matchesSearch && matchesCategory && matchesStatus && matchesDate;
+    const matchesDate = dateFilter === 'All Dates' || true;
+    return matchesSearch && matchesCategory && matchesLocation && matchesDate;
   });
 
   // Format date to be more readable
@@ -112,12 +56,17 @@ export default function EventsPage() {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Events</h1>
-            <p className="text-sm text-gray-600">Access all the events you've registered for — view details, update your registration, download badges, and stay informed.</p>
+            <h1 className="text-2xl font-bold text-gray-900">Events</h1>
+            <p className="text-sm text-gray-600">Find and join events that interest you</p>
           </div>
           <div className="flex items-center gap-4">
 
-
+            <Link
+              href="/create-event"
+              className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg cursor-pointer hover:bg-gray-800 transition-colors"
+            >
+              Create Event
+            </Link>
             <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode('grid')}
@@ -153,10 +102,10 @@ export default function EventsPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 w-full">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <div className="relative">
               <select
-                className="appearance-none w-full pl-3 pr-8 py-2 text-gray-700 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                className="appearance-none pl-3 pr-8 py-2 text-gray-700 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
               >
@@ -172,23 +121,7 @@ export default function EventsPage() {
 
             <div className="relative">
               <select
-                className="appearance-none w-full pl-3 pr-8 py-2 text-gray-700 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-              >
-                <option value="All Status">All Status</option>
-                {status.filter(cat => cat !== 'All Status').map((status) => (
-                  <option key={status} value={status}>{status}</option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <FiChevronDown className="h-4 w-4 text-gray-700" />
-              </div>
-            </div>
-
-            <div className="relative">
-              <select
-                className="appearance-none w-full pl-3 pr-8 py-2 text-gray-700 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                className="appearance-none pl-3 pr-8 py-2 text-gray-700 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
               >
@@ -201,7 +134,6 @@ export default function EventsPage() {
               </div>
             </div>
           </div>
-
         </div>
 
         {/* Events Container */}
@@ -213,7 +145,7 @@ export default function EventsPage() {
               // Grid View Card
               <Link
                 key={event.id}
-                href={`/user/event-dashboard/`}
+                href={`/user/event-dashboard`}
                 className="block bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300"
               >
                 <div className="relative h-48">
@@ -224,6 +156,11 @@ export default function EventsPage() {
                     width={48}
                     height={48}
                   />
+                  {event.branding?.visibility?.showLogo && event.branding?.logoUrl && (
+                    <div className="absolute top-3 left-3 bg-white rounded-full p-1 shadow-md">
+                      <Image src={event.branding.logoUrl} alt={event.name + ' logo'} width={48} height={48} className="rounded-full object-cover" />
+                    </div>
+                  )}
                   <div className="absolute top-3 right-3">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${event.status === 'upcoming' ? 'bg-green-100 text-green-800' :
                       event.status === 'ongoing' ? 'bg-blue-100 text-blue-800' :
@@ -238,17 +175,21 @@ export default function EventsPage() {
                     <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{event.name}</h3>
                   </div>
 
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">{event.description}</p>
+                  {event.branding?.visibility?.showDescription !== false && (
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">{event.description}</p>
+                  )}
 
                   <div className="space-y-3">
                     <div className="flex items-center text-sm text-gray-500">
                       <FiCalendar className="mr-2 h-4 w-4 flex-shrink-0" />
                       <span>{formatDate(event.date.start)}</span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <FiMapPin className="mr-2 h-4 w-4 flex-shrink-0" />
-                      <span>{event.location.name}, {event.location.city}</span>
-                    </div>
+                    {event.branding?.visibility?.showLocation !== false && (
+                      <div className="flex items-center text-sm text-gray-500">
+                        <FiMapPin className="mr-2 h-4 w-4 flex-shrink-0" />
+                        <span>{event.location.name}, {event.location.city}</span>
+                      </div>
+                    )}
                     <div className="flex items-center text-sm text-gray-500">
                       <FiUsers className="mr-2 h-4 w-4 flex-shrink-0" />
                       <span>{event.attendees.toLocaleString()} attendees</span>
@@ -290,13 +231,25 @@ export default function EventsPage() {
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                   <div className="md:w-1/4">
                     <div className="relative h-32 rounded-lg overflow-hidden">
-                      <Image
-                        src={event.image}
-                        alt={event.name}
-                        className="w-full h-full object-cover"
-                        width={48}
-                        height={48}
-                      />
+                      {event.branding?.visibility?.showBanner !== false && event.branding?.bannerUrl ? (
+                        <Image
+                          src={event.branding.bannerUrl}
+                          alt={event.name}
+                          className="w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          priority
+                        />
+                      ) : (
+                        <Image
+                          src={event.image}
+                          alt={event.name}
+                          className="w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          priority
+                        />
+                      )}
                       <div className="absolute top-2 right-2">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${event.status === 'upcoming' ? 'bg-green-100 text-green-800' :
                           event.status === 'ongoing' ? 'bg-blue-100 text-blue-800' :

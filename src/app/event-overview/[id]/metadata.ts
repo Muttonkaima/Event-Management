@@ -1,8 +1,6 @@
 import { Metadata, ResolvingMetadata } from 'next';
-import { adaptEvents, Event } from '@/app/events/events-new-adapter';
+import { adaptEvents, Event } from '@/app/events/events';
 import rawEvents from '@/data/events.json';
-
-
 
 export async function generateMetadata(
   { params }: { params: { id: string } },

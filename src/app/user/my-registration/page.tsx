@@ -131,14 +131,14 @@ export default function RegistrationDetails() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {(formStructure.fields as FormField[]).map((field) => {
+        <div className="grid grid-cols-1 md:grid-cols-2  gap-4 mt-6">
+          {(formStructure[0]?.fields as FormField[] || []).map((field, index) => {
             const value = (currentData as Record<string, any>)[field.label.trim()];
             if (field.type === "file") return null; // Avatar handled above
             return (
               <Card
-                key={field.label}
-                className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition flex flex-col gap-1"
+                key={index}
+                className="p-4 border border-gray-200 rounded-2xl bg-white shadow-sm hover:shadow-md transition flex flex-col gap-1"
               >
                 <div className="text-sm text-gray-500 font-medium mb-1">{field.label}</div>
                 <div className="text-base font-medium text-gray-900 break-words">
@@ -180,7 +180,7 @@ function EditRegistrationModal({ open, onOpenChange, formTitle, formData, canEdi
   }
 
   return (
-    <DialogContent className="max-w-lg w-full bg-white rounded-xl shadow-lg p-0 overflow-auto">
+    <DialogContent className="max-w-lg w-full bg-white rounded-2xl shadow-lg p-0 overflow-auto">
     <form onSubmit={handleSubmit} className="flex flex-col h-[calc(100vh-4rem)]">
       {/* Sticky header for mobile UX */}
       <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-6 pt-4 pb-2 flex items-center justify-between">
@@ -202,7 +202,7 @@ function EditRegistrationModal({ open, onOpenChange, formTitle, formData, canEdi
       <DialogDescription className="px-6 text-sm text-gray-500 mb-2 mt-1">You can update your details before the deadline.</DialogDescription>
   
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 px-6 pt-2 pb-1">
-        {formStructure.fields.map((field: any) => {
+        {formStructure[0]?.fields.map((field: any) => {
           if (field.type === "file") return null; // Avatar upload not supported
           const value = fields[field.label.trim()];
   

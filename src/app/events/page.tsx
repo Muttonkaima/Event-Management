@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FiSearch, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
 import Link from 'next/link';
-import { adaptEvents, Event } from './events-new-adapter';
+import { adaptEvents, Event } from './events';
 import rawEvents from '@/data/events.json';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import Image from 'next/image';

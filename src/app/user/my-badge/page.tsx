@@ -4,6 +4,7 @@ import DashboardLayout from '@/components/user/event-dashboard/DashboardLayout';
 import badgeData from '@/data/user/badge.json';
 import html2canvas from 'html2canvas';
 import { useRef } from 'react';
+import Image from 'next/image';
 
 function renderBadgeElement(el: any) {
     const style: React.CSSProperties = {
@@ -48,15 +49,12 @@ function renderBadgeElement(el: any) {
         );
     }
     if (el.type === 'qr-code') {
-        // Replace with QR code image if available; fallback to box with content
         return (
             <div key={el.id} style={{ ...style, background: el.style?.backgroundColor, borderRadius: el.style?.borderRadius }}>
-                {/* You can replace this with a QR code generator if you want */}
-                <span style={{ width: '100%', textAlign: 'center', fontWeight: 'bold', color: el.style?.color, fontSize: el.style?.fontSize }}>QR</span>
+                <img src='/images/qrcode.png' alt="QR Code" style={{ width: '100%', height: '100%', borderRadius: el.style?.borderRadius || 0, objectFit: 'contain', background: el.style?.backgroundColor }} />
             </div>
         );
     }
-    // Default: text element
     return (
         <div key={el.id} style={style}>{el.content}</div>
     );
@@ -135,14 +133,14 @@ export default function MyBadgePage() {
             </div>
             <style>{`
         .glass-card {
-          background: rgba(255,255,255,0.7);
+          background: transparent;
           border-radius: 2rem;
           box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
           backdrop-filter: blur(12px);
           border: 1.5px solid rgba(255,255,255,0.18);
         }
         @media (max-width: 600px) {
-          .glass-card { padding: 1.5rem 0.25rem; }
+          .glass-card { padding: 1.5rem 1.5rem; }
         }
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(12px); }

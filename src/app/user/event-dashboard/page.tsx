@@ -188,7 +188,7 @@ export default function Dashboard() {
         {/* Header with Banner */}
         <header className="relative">
           {branding.bannerUrl && branding.visibility.showBanner ? (
-            <div className="h-64 md:h-96 w-full overflow-hidden">
+            <div className="h-64 md:h-96 w-full overflow-hidden rounded-2xl">
               <Image
                 src={branding.bannerUrl}
                 alt={`${event.name} Banner`}
@@ -205,7 +205,7 @@ export default function Dashboard() {
           )}
 
           {branding.visibility.showLogo && branding.logoUrl && (
-            <div className="absolute -bottom-16 left-8 w-32 h-32 md:w-40 md:h-40 rounded-lg overflow-hidden border-4 border-white shadow-lg">
+            <div className="absolute -bottom-16 left-8 w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-white shadow-lg">
               <Image
                 src={branding.logoUrl}
                 alt={`${event.name} Logo`}

@@ -10,7 +10,7 @@ import ToolCard from "@/components/event-dashboard/tool-card";
 import { MapPin, Calendar, Share2, ArrowRight } from "lucide-react";
 import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
 import { notFound } from 'next/navigation';
-import { adaptEvents, Event } from '@/app/events/events-new-adapter';
+import { adaptEvents, Event } from '@/app/events/events';
 import rawEvents from '@/data/events.json';
 import Image from 'next/image';
 import AnalyticsClientWrapper from '@/components/event-dashboard/analytics-client-wrapper';
