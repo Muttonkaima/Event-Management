@@ -56,7 +56,7 @@ interface PaymentData {
 
 const paymentData = paymentDataRaw as PaymentData;
 import DashboardLayout from "@/components/user/event-dashboard/DashboardLayout";
-import { CheckCircle, XCircle, Clock, CreditCard, IndianRupee, ReceiptText, User, Banknote, FileWarning, ExternalLink } from "lucide-react";
+import { CheckCircle, XCircle, Clock, CreditCard, IndianRupee, ReceiptText, User, Banknote, FileWarning, ExternalLink, Package, Tag } from "lucide-react";
 
 export default function PaymentDetailsPage() {
   if (!paymentData || !paymentData.transactionId) {
@@ -98,50 +98,56 @@ export default function PaymentDetailsPage() {
 
   return (
     <DashboardLayout title="Payment Details">
-      <section className="w-full max-w-4xl mx-auto px-4 py-8">
-        {/* Summary Card */}
-        <div className="bg-white rounded-2xl shadow-md p-6 md:p-8 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="flex items-center gap-4">
-            {statusIcon}
+      <section className="w-full max-w-5xl mx-auto px-4 py-10">
+        {/* Modern Summary Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 px-6 py-7 mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 transition-all">
+          <div className="flex items-start gap-5">
+            <div className={`rounded-full p-3 ${status === "Success" ? "bg-green-100" : status === "Failed" ? "bg-red-100" : "bg-yellow-100"}`}>
+              {statusIcon}
+            </div>
             <div>
-              <div className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                {status} <span className="text-base font-normal text-gray-400">({transactionId})</span>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xl font-semibold text-gray-900 mb-1">
+                <span>{status}</span>
+                <span className="text-xs font-mono font-normal text-gray-400 break-all max-w-[90vw] sm:max-w-xs truncate" title={transactionId}>
+                  ({transactionId})
+                </span>
               </div>
-              <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
+              <div className="flex items-center gap-2 text-gray-500 text-sm mb-2">
                 <Clock className="w-4 h-4" />
                 {paymentTime ? new Date(paymentTime).toLocaleString() : "-"}
+              </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-gray-50 text-gray-700 text-xs font-medium">
+                <Tag className="w-3 h-3" /> {paymentMethod} <span className="mx-1">|</span> {paymentProvider}
               </div>
             </div>
           </div>
           <div className="flex flex-col items-end gap-2 min-w-[180px]">
-            <div className="flex items-center gap-2 text-2xl font-bold text-black">
-              <IndianRupee className="w-5 h-5 text-green-600" />
+            <div className="flex items-center gap-2 text-3xl font-bold text-gray-900">
+              <IndianRupee className="w-5 h-5 text-green-700" />
               {amount?.toLocaleString()} <span className="text-base font-normal text-gray-500">{currency}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600 text-sm">
-              <CreditCard className="w-4 h-4" /> {paymentMethod} <span className="mx-1">|</span> {paymentProvider}
-            </div>
-            {receiptUrl && (
-              <a
-                href={receiptUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold text-xs transition"
+            <button
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    localStorage.setItem("paymentDetailsForReceipt", JSON.stringify(paymentData));
+                    window.open("/user/payment-details/receipt", "_blank");
+                  }
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold text-xs transition-all border border-blue-100 cursor-pointer"
               >
                 <ReceiptText className="w-4 h-4" /> View Receipt <ExternalLink className="w-3 h-3" />
-              </a>
-            )}
+              </button>
           </div>
         </div>
 
         {/* Details Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
           {/* Payer Details */}
-          <div className="bg-white rounded-2xl shadow p-5 flex flex-col gap-2">
-            <div className="flex items-center gap-2 mb-1 text-gray-800 font-semibold text-base">
-              <User className="w-5 h-5 text-blue-500" /> Payer Details
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-col gap-2 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 mb-3 text-gray-900 font-semibold text-base">
+              <User className="w-5 h-5 text-blue-600" /> Payer Details
             </div>
-            <div className="text-sm text-gray-600">{payerDetails.name}</div>
+            <div className="text-sm text-gray-700 font-medium">{payerDetails.name}</div>
             <div className="text-sm text-gray-600">{payerDetails.email}</div>
             <div className="text-sm text-gray-600">{payerDetails.phone}</div>
           </div>
