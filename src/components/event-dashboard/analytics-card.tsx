@@ -42,7 +42,7 @@ export default function AnalyticsCard({
 
     return (
       <div className={cn(
-        "p-2 rounded-lg bg-gray-100 text-gray-900"
+        "p-2 rounded-lg text-gray-900"
       )}>
         <IconComponent className="h-6 w-6" />
       </div>
@@ -74,13 +74,13 @@ export default function AnalyticsCard({
   };
 
   return (
-    <Card className="group hover:shadow-md transition-all duration-200 overflow-hidden border border-gray-200 bg-white">
+    <Card className="group hover:shadow-md transition-all duration-200 overflow-hidden border border-gray-200 bg-white rounded-2xl">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-sm font-medium text-gray-900">
             {title}
           </CardTitle>
-          <div className="p-1.5 rounded-md bg-gray-100 transition-colors">
+          <div className="p-1.5 rounded-md transition-colors">
             {getIcon(icon)}
           </div>
         </div>

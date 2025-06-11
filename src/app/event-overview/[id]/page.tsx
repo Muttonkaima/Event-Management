@@ -13,6 +13,8 @@ import { notFound } from 'next/navigation';
 import { adaptEvents, Event } from '@/app/events/events-new-adapter';
 import rawEvents from '@/data/events.json';
 import Image from 'next/image';
+import AnalyticsClientWrapper from '@/components/event-dashboard/analytics-client-wrapper';
+import { PlusCircle } from 'lucide-react';
 
 
 export async function generateStaticParams() {
@@ -53,6 +55,9 @@ export default async function EventOverview({ params }: PageProps) {
   if (!event) {
     notFound();
   }
+
+  // Initialize sessions with empty array if undefined
+  const sessions = event.sessions || [];
 
   // Get banner or template image
   const bannerImage = event.branding?.bannerUrl || event.image || event.branding?.logoUrl;
@@ -115,44 +120,6 @@ export default async function EventOverview({ params }: PageProps) {
         return status;
     }
   };
-
-  const analyticsData = [
-    {
-      title: "Registrations",
-      value: "1,245",
-      change: "+0%",
-      changeType: "neutral" as const,
-      icon: "user-plus"
-    },
-    {
-      title: "Check-ins",
-      value: "876",
-      change: "+8%",
-      changeType: "positive" as const,
-      icon: "check-circle"
-    },
-    {
-      title: "Net Sales",
-      value: "$24,500",
-      change: "+5%",
-      changeType: "positive" as const,
-      icon: "dollar-sign"
-    },
-    {
-      title: "Active Users",
-      value: "342",
-      change: "-3%",
-      changeType: "negative" as const,
-      icon: "users"
-    },
-    {
-      title: "Leads Scanned",
-      value: "528",
-      change: "+59%",
-      changeType: "positive" as const,
-      icon: "qr-code"
-    }
-  ];
 
   const toolsData = [
     {
@@ -245,23 +212,29 @@ export default async function EventOverview({ params }: PageProps) {
             </div>
             
             <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-3 mb-2">
-                <Badge className={cn(
-                  "px-3 py-1.5 text-sm font-medium",
-                  getStatusBadgeVariant(event.status)
-                )}>
-                  {getStatusText(event.status)}
-                </Badge>
-                <div className="flex items-center gap-2 text-sm text-white">
-                  <Calendar className="h-4 w-4" />
-                  <span>{formatDate(event.date.start)}</span>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 mb-2">
+                <div className="w-fit">
+                  <Badge className={cn(
+                    "px-3 py-1.5 text-sm font-medium whitespace-nowrap",
+                    getStatusBadgeVariant(event.status)
+                  )}>
+                    {getStatusText(event.status)}
+                  </Badge>
                 </div>
-                {event.location && (
-                  <div className="flex items-center gap-2 text-sm text-white">
-                    <MapPin className="h-4 w-4" />
-                    <span>{event.location.name}, {event.location.city}</span>
+                <div className="flex items-center gap-2 text-sm text-white flex-wrap">
+                  <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-md">
+                    <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span className="whitespace-nowrap text-xs sm:text-sm">{formatDate(event.date.start)}</span>
                   </div>
-                )}
+                  {event.location && (
+                    <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-md">
+                      <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm line-clamp-1">
+                        {event.location.name}, {event.location.city}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
               
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
@@ -353,6 +326,67 @@ export default async function EventOverview({ params }: PageProps) {
               />
             </div>
 
+            {/* Sessions Section */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Sessions</h2>
+              </div>
+              {sessions.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {sessions.slice(0, 3).map((session) => (
+                    <Card key={session.id} className="overflow-hidden shadow-lg bg-transparent rounded-2xl">
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-lg text-gray-900">{session.title}</CardTitle> <br />
+                            <p className="text-sm text-gray-700">
+                             Start time: {session.startTime} <br />
+                             Duration: {session.duration} minutes
+                            </p>
+                            <p className="text-sm text-gray-700 line-clamp-2">
+                          {session.description || 'No description available'}
+                        </p>
+                          </div>
+                          <Badge variant="outline" className="text-gray-500">
+                            {session.type || 'Session'}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        
+                        {session.speaker && (
+                          <div className="mt-3 flex items-center">
+                            <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-medium">
+                              {session.speaker.split(' ').filter(Boolean).map((n: string) => n[0]).join('')}
+                            </div>
+                            <div className="ml-2">
+                              <p className="text-sm font-bold text-gray-700">{session.speaker}</p>
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
+                  <div className="mx-auto h-12 w-12 text-gray-400" aria-hidden="true">
+                    <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">No sessions created</h3>
+                  <p className="mt-1 text-sm text-gray-700">Get started by creating your first session.</p>
+                  <div className="mt-6 text-gray-900">
+                    <Button className="bg-gray-900 text-white cursor-pointer">
+                      <PlusCircle className="-ml-1 mr-2 h-5 w-5" />
+                      New Session
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Quick Actions */}
             <div>
               <div className="flex items-center justify-between mb-6 text-gray-900">
@@ -385,99 +419,7 @@ export default async function EventOverview({ params }: PageProps) {
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <AnalyticsCard 
-                title="Total Registrations" 
-                value={event.registration?.attendees?.length.toString() || '0'} 
-                change="+12% from last month" 
-                changeType="positive" 
-                icon="user-plus"
-                trend="up"
-              />
-              <AnalyticsCard 
-                title="Check-ins" 
-                value="124" 
-                change="+8.1% from last event" 
-                changeType="positive" 
-                icon="check-circle"
-                trend="up"
-              />
-              <AnalyticsCard 
-                title="Revenue" 
-                value="$3,287" 
-                change="+19% from last month" 
-                changeType="positive" 
-                icon="dollar-sign"
-                trend="up"
-              />
-              <AnalyticsCard 
-                title="Engagement" 
-                value="87%" 
-                change="+2.3% from last event" 
-                changeType="positive" 
-                icon="users"
-                trend="up"
-              />
-            </div>
-            
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-gray-900">Attendance Overview</CardTitle>
-                  <CardDescription className="text-gray-600">
-                    Registration and check-in metrics
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="aspect-[4/3] flex items-center justify-center bg-muted/30 rounded-lg">
-                    <p className="text-gray-900">Attendance chart</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-gray-900">Top Sessions</CardTitle>
-                  <CardDescription className="text-gray-600">
-                    Most popular sessions by attendance
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium">Session {i}</p>
-                          <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-primary rounded-full" 
-                              style={{ width: `${80 - (i * 15)}%` }}
-                            />
-                          </div>
-                        </div>
-                        <span className="text-sm font-medium">
-                          {80 - (i * 15)}%
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-gray-900">Event Analytics</CardTitle>
-                <CardDescription className="text-gray-600">
-                  Detailed metrics and insights about your event
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="aspect-video flex items-center justify-center bg-muted/30 rounded-lg">
-                  <p className="text-gray-900">Detailed analytics dashboard</p>
-                </div>
-              </CardContent>
-            </Card>
+            <AnalyticsClientWrapper />
           </TabsContent>
 
           <TabsContent value="tools" className="space-y-6">

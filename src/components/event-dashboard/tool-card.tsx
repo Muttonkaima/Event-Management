@@ -103,7 +103,7 @@ export default function ToolCard({
   const content = (
     <Card 
       className={cn(
-        "group h-full flex flex-col transition-all duration-200 overflow-hidden border border-gray-200 bg-white",
+        "group h-full flex flex-col transition-all duration-200 overflow-hidden border border-gray-200 bg-white rounded-2xl",
         isActive 
           ? "hover:border-primary/50 hover:shadow-md" 
           : "opacity-70 border-dashed"
