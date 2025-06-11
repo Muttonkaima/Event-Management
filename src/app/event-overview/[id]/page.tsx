@@ -15,7 +15,7 @@ import rawEvents from '@/data/events.json';
 import Image from 'next/image';
 import AnalyticsClientWrapper from '@/components/event-dashboard/analytics-client-wrapper';
 import { PlusCircle } from 'lucide-react';
-
+import ShareLinkButton from '@/components/event-dashboard/shareButton';
 
 export async function generateStaticParams() {
   const eventsData: Event[] = adaptEvents(rawEvents);
@@ -77,20 +77,6 @@ export default async function EventOverview({ params }: PageProps) {
       hour12: true
     };
     return new Date(dateString).toLocaleDateString('en-US', options);
-  };
-
-  // Format date range
-  const formatDateRange = (start: string, end: string) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-
-    // If same day, show single date with time range
-    if (startDate.toDateString() === endDate.toDateString()) {
-      return `${formatDate(start)} - ${endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
-    }
-
-    // Otherwise show date range
-    return `${formatDate(start)} - ${formatDate(end)}`;
   };
 
   // Get status badge color
@@ -252,10 +238,7 @@ export default async function EventOverview({ params }: PageProps) {
                   <Settings2 className="mr-2 h-4 w-4" />
                   Manage Event
                 </Button>
-                <Button variant="outline" className="cursor-pointer bg-black border-none text-white">
-                  <Share2 className="mr-2 h-4 w-4" />
-                  Share
-                </Button>
+                <ShareLinkButton />
               </div>
             </div>
           </div>

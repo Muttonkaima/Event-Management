@@ -204,7 +204,7 @@ export default function PaymentDetailsPage() {
               <FileWarning className="w-5 h-5 text-yellow-500" /> Notes
             </div>
             {notes.userNote && <div className="text-sm text-gray-600">User: {notes.userNote}</div>}
-            {notes.internalNote && <div className="text-xs text-gray-400 mt-1">Internal: {notes.internalNote}</div>}
+            {notes.internalNote && <div className="text-xs text-gray-500 mt-1">Internal: {notes.internalNote}</div>}
           </div>
         </div>
       </section>
