@@ -125,8 +125,8 @@
       {
         "id": "element-1",
         "type": "attendee-name",
-        "x": 144,
-        "y": 122.61250305175781,
+        "x": 134,
+        "y": 152.61250305175781,
         "width": "max-content",
         "height": 40,
         "content": "Mithun Gowda",
@@ -141,8 +141,8 @@
       {
         "id": "element-2",
         "type": "qr-code",
-        "x": 361,
-        "y": 161.6125030517578,
+        "x": 161,
+        "y": 261.6125030517578,
         "width": 123,
         "height": 123,
         "content": "QR",
@@ -159,7 +159,7 @@
         "id": "element-3",
         "type": "attendee-role",
         "x": 152,
-        "y": 201.6125030517578,
+        "y": 190.6125030517578,
         "width": "max-content",
         "height": 50,
         "content": "VIP",
@@ -174,8 +174,8 @@
       {
         "id": "element-1749454139585",
         "type": "attendee-photo",
-        "x": 400,
-        "y": 20.612503051757812,
+        "x": 20,
+        "y": 150.612503051757812,
         "width": 80,
         "height": 80,
         "content": "",
@@ -188,7 +188,7 @@
       {
         "id": "element-1749454165740",
         "type": "event-logo",
-        "x": 21,
+        "x": 90,
         "y": 21.612503051757812,
         "width": 120,
         "height": 60,
@@ -202,8 +202,8 @@
       {
         "id": "element-1749454329082",
         "type": "event-date",
-        "x": 160,
-        "y": 26.612503051757812,
+        "x": 50,
+        "y": 102.612503051757812,
         "width": "max-content",
         "height": 30,
         "content": "19/06/2025",
@@ -218,8 +218,8 @@
       {
         "id": "element-1749454350525",
         "type": "event-location",
-        "x": 161,
-        "y": 62.61250305175781,
+        "x": 130,
+        "y": 102.61250305175781,
         "width": "max-content",
         "height": 30,
         "content": "Bidadi,Bengaluru",
@@ -233,8 +233,8 @@
       }
     ],
     "backgroundColor": "#FDF2F8",
-    "width": 500,
-    "height": 300,
+    "width": 300,
+    "height": 400,
     "exportedAt": "2025-06-10T07:34:15.105Z"
   }
 ]
