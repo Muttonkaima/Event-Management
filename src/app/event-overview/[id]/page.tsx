@@ -193,7 +193,7 @@ export default async function EventOverview({ params }: PageProps) {
           <Tabs defaultValue="overview" className="space-y-6">
             {/* Tab Navigation */}
             <div className="space-y-4">
-              <TabsList className="inline-flex bg-gray-100 text-gray-500 rounded-lg">
+              <TabsList className="inline-flex bg-gray-100 text-gray-500 rounded-lg shadow-inner">
                 <TabsTrigger value="overview" className="cursor-pointer rounded-lg">Overview</TabsTrigger>
                 <TabsTrigger value="analytics" className="cursor-pointer rounded-lg">Analytics</TabsTrigger>
                 <TabsTrigger value="tools" className="cursor-pointer rounded-lg">Tools</TabsTrigger>
@@ -215,7 +215,7 @@ export default async function EventOverview({ params }: PageProps) {
                       priority
                     />
                     {event.branding?.visibility?.showLogo && event.branding?.logoUrl && (
-                      <div className="absolute top-3 left-3 bg-white rounded-full p-1 shadow-md z-10">
+                      <div className="absolute top-3 left-3 bg-white rounded-full p-1 shadow-md">
                         <Image src={event.branding.logoUrl} alt={event.name + ' logo'} width={48} height={48} className="rounded-full object-cover" />
                       </div>
                     )}
