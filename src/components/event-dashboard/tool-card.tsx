@@ -1,14 +1,12 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  FormInput,
+  FileText,
   Mail,
-  Badge as BadgeIcon,
+  Award,
   Scan,
   Monitor,
   Calendar,
-  MoreHorizontal
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -17,10 +15,9 @@ interface ToolCardProps {
   title: string;
   description: string;
   link: string;
-  status: "Published" | "In Progress" | "Completed" | "Not Started";
-  statusColor: "blue" | "yellow" | "green" | "gray";
-  actionText: string;
+  status: "New" | "Popular" | "Premium" | "";
   icon: string;
+  isActive: boolean;
 }
 
 export default function ToolCard({
@@ -28,69 +25,68 @@ export default function ToolCard({
   description,
   link,
   status,
-  statusColor,
-  actionText,
-  icon
+  icon,
+  isActive
 }: ToolCardProps) {
   const getIcon = (iconName: string) => {
+    const className = "h-7 w-7 text-gray-900";
     switch (iconName) {
       case "form-input":
-        return <FormInput className="h-6 w-6 text-gray-900" />;
+        return <FileText className={className} />;
       case "mail":
-        return <Mail className="h-6 w-6 text-gray-900" />;
+        return <Mail className={className} />;
       case "badge":
-        return <BadgeIcon className="h-6 w-6 text-gray-900" />;
+        return <Award className={className} />;
       case "scan":
-        return <Scan className="h-6 w-6 text-gray-900" />;
+        return <Scan className={className} />;
       case "monitor":
-        return <Monitor className="h-6 w-6 text-gray-900" />;
+        return <Monitor className={className} />;
       case "calendar":
-        return <Calendar className="h-6 w-6 text-gray-900" />;
+        return <Calendar className={className} />;
       default:
-        return <FormInput className="h-6 w-6 text-gray-900" />;
+        return <FileText className={className} />;
     }
   };
 
-  const getStatusColor = (color: string) => {
-    switch (color) {
-      case "blue":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-100";
-      case "yellow":
-        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
-      case "green":
-        return "bg-green-100 text-green-800 hover:bg-green-100";
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "New":
+        return "bg-green-100 text-green-800";
+      case "Popular":
+        return "bg-blue-100 text-blue-800";
+      case "Premium":
+        return "bg-yellow-100 text-yellow-800";
       default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+        return "";
     }
   };
 
   return (
     <Link href={link}>
-      <Card className={cn(
-        "transition-shadow bg-white hover:shadow-md",
-        status === "In Progress" && "opacity-50 cursor-not-allowed"
-      )}>
-        <CardContent className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <div className="p-3 bg-gray-100 rounded-lg">
-              {getIcon(icon)}
-            </div>
-            <Button variant="ghost" size="icon">
-              <MoreHorizontal className="h-6 w-6" />
-            </Button>
+      <div className={`border rounded-xl p-4 bg-white min-h-[200px] flex flex-col justify-between ${isActive ? 'hover:shadow-lg transition-all duration-200' : 'opacity-60 cursor-not-allowed'}`}>
+        <div className="flex items-start justify-between">
+          <div className="p-1 bg-gray-100 rounded-md">
+            {getIcon(icon)}
           </div>
-          <h4 className="font-semibold text-gray-900 mb-2">{title}</h4>
-          <p className="text-sm text-gray-500 mb-4">{description}</p>
-          <div className="flex items-center justify-between">
-            <Badge className={`${getStatusColor(statusColor)} text-xs`}>
+          {status && (
+            <span
+              className={cn(
+                "text-xs px-2 py-0.5 rounded-full font-medium",
+                getStatusStyle(status)
+              )}
+            >
               {status}
-            </Badge>
-            <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
-              {actionText}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            </span>
+          )}
+        </div>
+        <div className="mt-4">
+          <h3 className="font-medium text-gray-900">{title}</h3>
+          <p className="text-sm text-gray-500 mt-1">{description}</p>
+        </div>
+        <Button className="mt-4 w-full text-sm text-gray-900 bg-transparent border-2 border-gray-200 hover:bg-black hover:text-white hover:border-none" variant="outline" disabled={!isActive}>
+          Open Tool
+        </Button>
+      </div>
     </Link>
   );
 }

@@ -133,55 +133,49 @@ export default async function EventOverview({ params }: PageProps) {
       title: "Registration Form Builder",
       description: "Create and customize your event registration form",
       link: "/form-builder",
-      status: "Completed" as const,
-      statusColor: "blue" as const,
-      actionText: "Edit",
-      icon: "form-input"
+      status: "Popular" as const,
+      icon: "form-input",
+      isActive: true
     },
     {
       title: "Email Builder",
       description: "Design emails for confirmations and reminders",
       link: "/email-builder",
-      status: "Completed" as const,
-      statusColor: "yellow" as const,
-      actionText: "Continue",
-      icon: "mail"
+      status: "Popular" as const,
+      icon: "mail",
+      isActive: true
     },
     {
       title: "Badge Designer",
       description: "Create custom badges for your attendees",
       link: "/badge-designer",
-      status: "Completed" as const,
-      statusColor: "green" as const,
-      actionText: "Continue",
-      icon: "badge"
+      status: "Popular" as const,
+      icon: "badge",
+      isActive: true
     },
     {
       title: "Lead Scanner",
       description: "Set up and configure lead scanning",
       link: "#",
-      status: "In Progress" as const,
-      statusColor: "gray" as const,
-      actionText: "Start",
-      icon: "scan"
+      status: "Premium" as const,
+      icon: "scan",
+      isActive: false
     },
     {
       title: "Live Display Setup",
       description: "Configure displays for your event venue",
       link: "#",
-      status: "In Progress" as const,
-      statusColor: "gray" as const,
-      actionText: "Start",
-      icon: "monitor"
+      status: "Premium" as const,
+      icon: "monitor",
+      isActive: false
     },
     {
       title: "Session Manager",
       description: "Manage sessions, speakers and schedules",
       link: "#",
-      status: "In Progress" as const,
-      statusColor: "yellow" as const,
-      actionText: "Continue",
-      icon: "calendar"
+      status: "New" as const,
+      icon: "calendar",
+      isActive: false
     }
   ];
 
