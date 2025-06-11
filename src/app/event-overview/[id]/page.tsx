@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { BarChart2, LayoutDashboard, Settings2, Wrench } from "lucide-react";
+import Link from "next/link";
 import AnalyticsCard from "@/components/event-dashboard/analytics-card";
 import ToolCard from "@/components/event-dashboard/tool-card";
-import { MapPin, MoreHorizontal, User, Clock, Users, Tag } from "lucide-react";
+import { MapPin, Calendar, Share2, ArrowRight } from "lucide-react";
 import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
 import { notFound } from 'next/navigation';
 import { adaptEvents, Event } from '@/app/events/events-new-adapter';
@@ -23,6 +26,22 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+// Animation variants
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
 export default async function EventOverview({ params }: PageProps) {
   // Await the params promise
   const { id } = await params;
@@ -34,6 +53,13 @@ export default async function EventOverview({ params }: PageProps) {
   if (!event) {
     notFound();
   }
+
+  // Get banner or template image
+  const bannerImage = event.branding?.bannerUrl || event.image || event.branding?.logoUrl;
+  const logoImage = event.branding?.logoUrl || event.image;
+  
+  // Calculate registration progress
+  const registrationProgress = Math.min(Math.round((event.attendees / (event.registration?.maxAttendees || 100)) * 100), 100);
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -180,184 +206,295 @@ export default async function EventOverview({ params }: PageProps) {
   ];
 
   return (
-    <OverviewLayout title="Event Overview">
-      {/* Main Content Area */}
-      <main className="flex-1">
-        <div className="p-2 max-w-7xl mx-auto">
-          <Tabs defaultValue="overview" className="space-y-6">
-            {/* Tab Navigation */}
-            <div className="space-y-4">
-              <TabsList className="inline-flex bg-gray-100 text-gray-500 rounded-lg shadow-inner">
-                <TabsTrigger value="overview" className="cursor-pointer rounded-lg">Overview</TabsTrigger>
-                <TabsTrigger value="analytics" className="cursor-pointer rounded-lg">Analytics</TabsTrigger>
-                <TabsTrigger value="tools" className="cursor-pointer rounded-lg">Tools</TabsTrigger>
-              </TabsList>
+    <OverviewLayout title={event.name}>
+    <div className="min-h-screen bg-transparent">
+      {/* Hero Section */}
+      <div className="relative h-72 overflow-hidden rounded-2xl">
+        {bannerImage ? (
+          <Image
+            src={bannerImage}
+            alt={event.name}
+            fill
+            className="object-cover"
+            priority
+            quality={100}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-black" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+        
+        <div className="relative container mx-auto px-4 h-full flex items-end pb-8">
+          <div className="flex flex-col md:flex-row items-start md:items-end gap-6 w-full">
+            <div className="relative -mt-16 w-32 h-32 md:w-36 md:h-36 rounded-2xl border-4 border-background bg-card shadow-xl overflow-hidden">
+              {logoImage ? (
+                <Image
+                  src={logoImage}
+                  alt={`${event.name} logo`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 6rem, 8rem"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+                  <span className="text-4xl font-bold text-white/80">
+                    {event.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-3 mb-2">
+                <Badge className={cn(
+                  "px-3 py-1.5 text-sm font-medium",
+                  getStatusBadgeVariant(event.status)
+                )}>
+                  {getStatusText(event.status)}
+                </Badge>
+                <div className="flex items-center gap-2 text-sm text-white">
+                  <Calendar className="h-4 w-4" />
+                  <span>{formatDate(event.date.start)}</span>
+                </div>
+                {event.location && (
+                  <div className="flex items-center gap-2 text-sm text-white">
+                    <MapPin className="h-4 w-4" />
+                    <span>{event.location.name}, {event.location.city}</span>
+                  </div>
+                )}
+              </div>
+              
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
+                {event.name}
+              </h1>
+              
+              {event.description && (
+                <p className="mt-2 text-base text-white/80 max-w-3xl">
+                  {event.description}
+                </p>
+              )}
+              
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-white">
+                <Button className="cursor-pointer text-white">
+                  <Settings2 className="mr-2 h-4 w-4" />
+                  Manage Event
+                </Button>
+                <Button variant="outline" className="cursor-pointer bg-black border-none text-white">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        <Tabs defaultValue="overview" className="space-y-8">
+          <TabsList className="grid w-full md:w-auto grid-cols-3 bg-gray-100 p-1.5 h-auto rounded-xl shadow-inner">
+            <TabsTrigger 
+              value="overview" 
+              className="py-2 px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-700 cursor-pointer"
+            >
+              <LayoutDashboard className="h-4 w-4 mr-2" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="analytics" 
+              className="py-2 px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-700 cursor-pointer"
+            >
+              <BarChart2 className="h-4 w-4 mr-2" />
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger 
+              value="tools" 
+              className="py-2 px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-700 cursor-pointer"
+            >
+              <Wrench className="h-4 w-4 mr-2" />
+              Tools
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-8">
+            {/* Analytics Cards */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <AnalyticsCard 
+                title="Total Registrations" 
+                value={event.registration?.attendees?.length.toString() || '0'} 
+                change="+12% from last month" 
+                changeType="positive" 
+                icon="user-plus"
+                trend="up"
+              />
+              <AnalyticsCard 
+                title="Check-ins" 
+                value="124" 
+                change="+8.1% from last event" 
+                changeType="positive" 
+                icon="check-circle"
+                trend="up"
+              />
+              <AnalyticsCard 
+                title="Revenue" 
+                value="$3,287" 
+                change="+19% from last month" 
+                changeType="positive" 
+                icon="dollar-sign"
+                trend="up"
+              />
+              <AnalyticsCard 
+                title="Engagement" 
+                value="87%" 
+                change="+2.3% from last event" 
+                changeType="positive" 
+                icon="users"
+                trend="up"
+              />
             </div>
 
-
-            <TabsContent value="overview" className="space-y-6">
-              {/* Event Info Card */}
-              <Card>
-                <div className="flex flex-col md:flex-row bg-white rounded-lg">
-                  <div className="relative w-full md:w-48 h-40 md:h-auto">
-                    <Image
-                      src={event.image}
-                      alt={event.name}
-                      className="w-full h-full object-cover rounded-lg md:rounded-l-lg md:rounded-r-none"
-                      fill
-                      sizes="(max-width: 768px) 100vw, 300px"
-                      priority
+            {/* Quick Actions */}
+            <div>
+              <div className="flex items-center justify-between mb-6 text-gray-900">
+                <div>
+                  <h2 className="text-xl font-semibold">Quick Actions</h2>
+                  <p className="text-sm text-muted-gray-900">
+                    Quickly access important event management tools
+                  </p>
+                </div>
+                <Link href={`/event-overview/${event.id}?tab=tools`}>
+                  <Button variant="ghost" size="sm" className="text-primary">
+                    View all tools
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {toolsData
+                  .filter(tool => tool.isActive)
+                  .slice(0, 3)
+                  .map((tool) => (
+                    <ToolCard 
+                      key={tool.title} 
+                      {...tool} 
+                      isActive={tool.isActive} 
                     />
-                    {event.branding?.visibility?.showLogo && event.branding?.logoUrl && (
-                      <div className="absolute top-3 left-3 bg-white rounded-full p-1 shadow-md">
-                        <Image src={event.branding.logoUrl} alt={event.name + ' logo'} width={48} height={48} className="rounded-full object-cover" />
-                      </div>
-                    )}
+                  ))}
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <AnalyticsCard 
+                title="Total Registrations" 
+                value={event.registration?.attendees?.length.toString() || '0'} 
+                change="+12% from last month" 
+                changeType="positive" 
+                icon="user-plus"
+                trend="up"
+              />
+              <AnalyticsCard 
+                title="Check-ins" 
+                value="124" 
+                change="+8.1% from last event" 
+                changeType="positive" 
+                icon="check-circle"
+                trend="up"
+              />
+              <AnalyticsCard 
+                title="Revenue" 
+                value="$3,287" 
+                change="+19% from last month" 
+                changeType="positive" 
+                icon="dollar-sign"
+                trend="up"
+              />
+              <AnalyticsCard 
+                title="Engagement" 
+                value="87%" 
+                change="+2.3% from last event" 
+                changeType="positive" 
+                icon="users"
+                trend="up"
+              />
+            </div>
+            
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-gray-900">Attendance Overview</CardTitle>
+                  <CardDescription className="text-gray-600">
+                    Registration and check-in metrics
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="aspect-[4/3] flex items-center justify-center bg-muted/30 rounded-lg">
+                    <p className="text-gray-900">Attendance chart</p>
                   </div>
-                  <CardContent className={`flex-1 p-4 ${event.branding?.fontStyle || ''}`} style={{ fontFamily: event.branding?.fontStyle || undefined }}>
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Badge className={getStatusBadgeVariant(event.status)}>
-                            {getStatusText(event.status)}
-                          </Badge>
-                          <span className="text-sm text-gray-500">
-                            {formatDateRange(event.date.start, event.date.end)} • In Person
-                          </span>
-                        </div>
-                        <h2 className="text-lg md:text-xl font-semibold text-gray-900" style={{ color: event.branding?.colorTheme || undefined }}>
-                          {event.name}
-                        </h2>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span>{event.location.name}, {event.location.city}, {event.location.country}</span>
-                        </div>
-
-                        {/* Additional Event Details */}
-                        <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
-                          <div className="flex items-center text-gray-600">
-                            <User className="h-4 w-4 mr-2 text-gray-400" />
-                            <span>Organizer: {event.organizer.name}</span>
-                          </div>
-                          <div className="flex items-center text-gray-600">
-                            <Users className="h-4 w-4 mr-2 text-gray-400" />
-                            <span>{event.attendees.toLocaleString()} attendees</span>
-                          </div>
-                          <div className="flex items-center text-gray-600">
-                            <Tag className="h-4 w-4 mr-2 text-gray-400" />
-                            <span>{event.category}</span>
-                          </div>
-                          <div className="flex items-center text-gray-600">
-                            <Clock className="h-4 w-4 mr-2 text-gray-400" />
-                            <span>{getStatusText(event.status)}</span>
-                          </div>
-                        </div>
-
-                        {/* Tags */}
-                        {event.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {event.tags.slice(0, 3).map((tag: string) => (
-                              <Badge key={tag} variant="outline" className="text-xs text-gray-400">
-                                {tag}
-                              </Badge>
-                            ))}
-                            {event.tags.length > 3 && (
-                              <Badge variant="outline" className="text-xs text-gray-400">
-                                +{event.tags.length - 3} more
-                              </Badge>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Description */}
-                        {event.branding?.visibility?.showDescription !== false && (
-                          <div className="mt-4">
-                            <p className="text-gray-700 text-base md:text-lg leading-relaxed">
-                              {event.description}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Schedule (sessions) */}
-                        {event.branding?.visibility?.showSchedule !== false && event.sessions && event.sessions.length > 0 && (
-                          <div className="mt-6">
-                            <h3 className="text-md font-semibold text-gray-800 mb-2">Schedule</h3>
-                            <ul className="divide-y divide-gray-100">
-                              {event.sessions.map((session: any, idx: number) => (
-                                <li key={idx} className="py-2 flex flex-col md:flex-row md:items-center md:justify-between">
-                                  <span className="font-medium text-gray-900">{session.title}</span>
-                                  <span className="text-sm text-gray-500">{formatDate(session.start)} - {formatDate(session.end)}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {/* Registration */}
-                        {event.branding?.visibility?.showRegistration !== false && event.registration && (
-                          <div className="mt-6">
-                            <h3 className="text-md font-semibold text-gray-800 mb-2">Registration</h3>
-                            <div className="flex flex-col md:flex-row md:items-center gap-2">
-                              <span className="text-gray-700">Max Attendees: {event.registration.maxAttendees}</span>
-                              <span className="text-gray-700">Price: {event.registration.price ? `$${event.registration.price}` : 'Free'}</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <Button variant="ghost" size="icon" className="mt-4 md:mt-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </div>
+                </CardContent>
               </Card>
-
-              {/* Event Analytics */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Event Analytics
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                  {analyticsData.map((item, index) => (
-                    <AnalyticsCard key={index} {...item} />
-                  ))}
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-gray-900">Top Sessions</CardTitle>
+                  <CardDescription className="text-gray-600">
+                    Most popular sessions by attendance
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium">Session {i}</p>
+                          <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-primary rounded-full" 
+                              style={{ width: `${80 - (i * 15)}%` }}
+                            />
+                          </div>
+                        </div>
+                        <span className="text-sm font-medium">
+                          {80 - (i * 15)}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-gray-900">Event Analytics</CardTitle>
+                <CardDescription className="text-gray-600">
+                  Detailed metrics and insights about your event
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="aspect-video flex items-center justify-center bg-muted/30 rounded-lg">
+                  <p className="text-gray-900">Detailed analytics dashboard</p>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-              {/* Event Tools */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Event Tools
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {toolsData.map((tool, index) => (
-                    <ToolCard key={index} {...tool} />
-                  ))}
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="analytics" className="space-y-6">
-              <div className="text-center py-12">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Analytics Coming Soon
-                </h3>
-                <p className="text-gray-500">
-                  Detailed analytics and reporting features will be available here.
-                </p>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="tools" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {toolsData.map((tool, index) => (
-                  <ToolCard key={index} {...tool} />
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
+          <TabsContent value="tools" className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {toolsData.map((tool, index) => (
+                <ToolCard 
+                  key={tool.title} 
+                  {...tool} 
+                  isActive={tool.isActive}
+                  isExternal={index % 3 === 0} // Example: Every 3rd tool is external
+                />
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
     </OverviewLayout>
   );
 }

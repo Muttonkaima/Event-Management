@@ -1,12 +1,16 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   UserPlus, 
   CheckCircle, 
   DollarSign, 
   Users, 
-  QrCode 
+  QrCode,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AnalyticsCardProps {
   title: string;
@@ -14,6 +18,8 @@ interface AnalyticsCardProps {
   change: string;
   changeType: "positive" | "negative" | "neutral";
   icon: string;
+  description?: string;
+  trend?: 'up' | 'down' | 'neutral';
 }
 
 export default function AnalyticsCard({ 
@@ -21,50 +27,81 @@ export default function AnalyticsCard({
   value, 
   change, 
   changeType, 
-  icon 
+  icon,
+  description,
+  trend = 'up'
 }: AnalyticsCardProps) {
   const getIcon = (iconName: string) => {
-    switch (iconName) {
-      case "user-plus":
-        return <UserPlus className="h-6 w-6 text-gray-900" />;
-      case "check-circle":
-        return <CheckCircle className="h-6 w-6 text-gray-900" />;
-      case "dollar-sign":
-        return <DollarSign className="h-6 w-6 text-gray-900" />;
-      case "users":
-        return <Users className="h-6 w-6 text-gray-900" />;
-      case "qr-code":
-        return <QrCode className="h-6 w-6 text-gray-900" />;
+    const IconComponent = {
+      'user-plus': UserPlus,
+      'check-circle': CheckCircle,
+      'dollar-sign': DollarSign,
+      'users': Users,
+      'qr-code': QrCode,
+    }[iconName] || UserPlus;
+
+    return (
+      <div className={cn(
+        "p-2 rounded-lg bg-gray-100 text-gray-900"
+      )}>
+        <IconComponent className="h-6 w-6" />
+      </div>
+    );
+  };
+
+  const getTrendIcon = (trend: string) => {
+    const className = "h-3.5 w-3.5";
+    
+    switch (trend) {
+      case 'up':
+        return <ArrowUpRight className={cn(className, "text-green-500")} />;
+      case 'down':
+        return <ArrowDownRight className={cn(className, "text-red-500")} />;
       default:
-        return <UserPlus className="h-6 w-6 text-gray-900" />;
+        return <Minus className={cn(className, "text-muted-foreground")} />;
     }
   };
 
   const getChangeColor = (type: string) => {
     switch (type) {
       case "positive":
-        return "bg-green-100 text-green-800";
+        return "text-green-600";
       case "negative":
-        return "bg-red-100 text-red-800";
+        return "text-red-600";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "text-muted-foreground";
     }
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow bg-white">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="p-2 bg-gray-100 rounded-lg">
+    <Card className="group hover:shadow-md transition-all duration-200 overflow-hidden border border-gray-200 bg-white">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <CardTitle className="text-sm font-medium text-gray-900">
+            {title}
+          </CardTitle>
+          <div className="p-1.5 rounded-md bg-gray-100 transition-colors">
             {getIcon(icon)}
           </div>
-          <Badge className={`text-xs ${getChangeColor(changeType)} hover:${getChangeColor(changeType)}`}>
-            {change}
-          </Badge>
         </div>
-        <div>
-          <div className="text-2xl font-bold text-gray-900">{value}</div>
-          <div className="text-sm text-gray-500">{title}</div>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="flex items-end justify-between">
+          <div>
+            <h3 className="text-2xl font-semibold tracking-tight text-gray-900">
+              {value}
+            </h3>
+            {description && (
+              <p className="text-xs text-gray-500 mt-1">{description}</p>
+            )}
+          </div>
+          <div className={cn(
+            "flex items-center gap-1 text-sm font-medium",
+            getChangeColor(changeType)
+          )}>
+            {getTrendIcon(trend)}
+            <span>{change}</span>
+          </div>
         </div>
       </CardContent>
     </Card>
