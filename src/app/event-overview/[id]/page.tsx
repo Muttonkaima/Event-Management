@@ -7,12 +7,14 @@ import ToolCard from "@/components/event-dashboard/tool-card";
 import { MapPin, MoreHorizontal, User, Clock, Users, Tag } from "lucide-react";
 import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
 import { notFound } from 'next/navigation';
-import eventsData from '@/data/events.json';
+import { adaptEvents, Event } from '@/app/events/events-new-adapter';
+import rawEvents from '@/data/events.json';
 import Image from 'next/image';
-import type { Event } from './metadata';
+
 
 export async function generateStaticParams() {
-  return eventsData.map(event => ({
+  const eventsData: Event[] = adaptEvents(rawEvents);
+  return eventsData.map((event: Event) => ({
     id: event.id,
   }));
 }
@@ -24,9 +26,10 @@ interface PageProps {
 export default async function EventOverview({ params }: PageProps) {
   // Await the params promise
   const { id } = await params;
-  
+
   // Find the event with the matching ID
-  const event = (eventsData as Event[]).find((e) => e.id === id);
+  const eventsData: Event[] = adaptEvents(rawEvents);
+  const event = eventsData.find((e) => e.id === id);
 
   if (!event) {
     notFound();
@@ -202,14 +205,22 @@ export default async function EventOverview({ params }: PageProps) {
               {/* Event Info Card */}
               <Card>
                 <div className="flex flex-col md:flex-row bg-white rounded-lg">
-                  <Image
-                    src={event.image}
-                    alt={event.name}
-                    className="w-full md:w-48 h-40 md:h-auto object-cover rounded-lg md:rounded-l-lg md:rounded-r-none"
-                    width={48}
-                    height={48}
-                  />
-                  <CardContent className="flex-1 p-4">
+                  <div className="relative w-full md:w-48 h-40 md:h-auto">
+                    <Image
+                      src={event.image}
+                      alt={event.name}
+                      className="w-full h-full object-cover rounded-lg md:rounded-l-lg md:rounded-r-none"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 300px"
+                      priority
+                    />
+                    {event.branding?.visibility?.showLogo && event.branding?.logoUrl && (
+                      <div className="absolute top-3 left-3 bg-white rounded-full p-1 shadow-md z-10">
+                        <Image src={event.branding.logoUrl} alt={event.name + ' logo'} width={48} height={48} className="rounded-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+                  <CardContent className={`flex-1 p-4 ${event.branding?.fontStyle || ''}`} style={{ fontFamily: event.branding?.fontStyle || undefined }}>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
@@ -220,7 +231,7 @@ export default async function EventOverview({ params }: PageProps) {
                             {formatDateRange(event.date.start, event.date.end)} • In Person
                           </span>
                         </div>
-                        <h2 className="text-lg md:text-xl font-semibold text-gray-900">
+                        <h2 className="text-lg md:text-xl font-semibold text-gray-900" style={{ color: event.branding?.colorTheme || undefined }}>
                           {event.name}
                         </h2>
                         <div className="flex items-center text-sm text-gray-500">
@@ -261,6 +272,41 @@ export default async function EventOverview({ params }: PageProps) {
                                 +{event.tags.length - 3} more
                               </Badge>
                             )}
+                          </div>
+                        )}
+
+                        {/* Description */}
+                        {event.branding?.visibility?.showDescription !== false && (
+                          <div className="mt-4">
+                            <p className="text-gray-700 text-base md:text-lg leading-relaxed">
+                              {event.description}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Schedule (sessions) */}
+                        {event.branding?.visibility?.showSchedule !== false && event.sessions && event.sessions.length > 0 && (
+                          <div className="mt-6">
+                            <h3 className="text-md font-semibold text-gray-800 mb-2">Schedule</h3>
+                            <ul className="divide-y divide-gray-100">
+                              {event.sessions.map((session: any, idx: number) => (
+                                <li key={idx} className="py-2 flex flex-col md:flex-row md:items-center md:justify-between">
+                                  <span className="font-medium text-gray-900">{session.title}</span>
+                                  <span className="text-sm text-gray-500">{formatDate(session.start)} - {formatDate(session.end)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Registration */}
+                        {event.branding?.visibility?.showRegistration !== false && event.registration && (
+                          <div className="mt-6">
+                            <h3 className="text-md font-semibold text-gray-800 mb-2">Registration</h3>
+                            <div className="flex flex-col md:flex-row md:items-center gap-2">
+                              <span className="text-gray-700">Max Attendees: {event.registration.maxAttendees}</span>
+                              <span className="text-gray-700">Price: {event.registration.price ? `$${event.registration.price}` : 'Free'}</span>
+                            </div>
                           </div>
                         )}
                       </div>

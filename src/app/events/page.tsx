@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { FiSearch, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
 import Link from 'next/link';
 import { adaptEvents, Event } from './events-new-adapter';
-import rawEvents from '@/data/events-new.json';
+import rawEvents from '@/data/events.json';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import Image from 'next/image';
 type ViewMode = 'grid' | 'list';
@@ -19,7 +19,7 @@ export default function EventsPage() {
   const [locationFilter, setLocationFilter] = useState('All Locations');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
-  // Adapt events-new.json to Event[]
+  // Adapt events.json to Event[]
   const eventsData: Event[] = adaptEvents(rawEvents);
 
   // Get unique categories, locations for filters

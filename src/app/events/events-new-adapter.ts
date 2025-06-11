@@ -1,5 +1,5 @@
 // Adapter to transform events-new.json to the Event interface expected by EventsPage
-import rawEvents from '@/data/events-new.json';
+import rawEvents from '@/data/events.json';
 
 export interface Event {
   id: string;
@@ -40,6 +40,12 @@ export interface Event {
     logoUrl?: string;
     bannerUrl?: string;
   };
+  sessions?: any[];
+  registration?: {
+    maxAttendees?: number;
+    price?: number;
+    [key: string]: any;
+  };
 }
 
 function getStatus(event: any): string {
@@ -62,6 +68,8 @@ export function adaptEvents(raw = rawEvents): Event[] {
       id: e.id,
       name: event.name,
       description: visibility.showDescription === false ? '' : event.description,
+      sessions: e.sessions || [],
+      registration: e.registration || {},
       date: {
         start: event.startDate || '',
         end: event.endDate || '',
