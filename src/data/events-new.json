@@ -1,0 +1,423 @@
+[
+  {
+    "id": "event-1",
+    "template": "webinar",
+    "templateImage": "/images/image1.jpg",
+    "event": {
+      "name": "SJBIT Cultural Event",
+      "description": "this is the cultural event description",
+      "startDate": "2025-06-08T10:00",
+      "endDate": "2025-06-09T17:00",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "timezone": "UTC",
+      "eventType": "in-person",
+      "address": "sjbit, uttarahalli main road, ",
+      "city": "Bangalore Urban",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560060",
+      "meetingLink": "",
+      "templateImage": "/images/image4.jpg"
+    },
+    "branding": {
+      "colorTheme": "sunset",
+      "fontStyle": "elegant",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "/uploads/upload-1749210478204.png",
+      "bannerUrl": "/uploads/upload-1749210483341.jpg"
+    },
+    "sessions": [
+      {
+        "title": "Welcome speech",
+        "speaker": "Prashanth",
+        "startTime": "10:00",
+        "duration": 30,
+        "description": "speech by our principal",
+        "tags": [
+          "keynote",
+          "panel"
+        ],
+        "id": 1749210516057
+      },
+      {
+        "title": "Dance",
+        "speaker": "CSE department",
+        "startTime": "11:00",
+        "duration": 30,
+        "description": "they will come and dance",
+        "tags": [
+          "networking"
+        ],
+        "id": 1749210558269
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-06-04T10:00",
+      "registrationClose": "2025-06-04T17:00",
+      "confirmationEmail": "Thank you for registering for our event. We look forward to seeing you!",
+      "termsConditions": "By registering for this event, you agree to our terms and conditions.",
+      "updateDeadline": "2025-06-05T23:59",
+      "maxAttendees": 300,
+      "tickets": [
+        {
+          "id": "1749210614054",
+          "name": "General",
+          "type": "free"
+        },
+        {
+          "id": "1749210619699",
+          "name": "VIP",
+          "type": "paid",
+          "price": 499,
+          "currency": "INR"
+        }
+      ]
+    }
+  },
+  {
+    "id": "event-2",
+    "template": "webinar",
+    "templateImage": "/images/image2.jpg",
+    "event": {
+      "name": "AI and Robotics Symposium",
+      "description": "A national-level symposium on AI, ML, and robotics applications.",
+      "startDate": "2025-07-15T09:30",
+      "endDate": "2025-07-15T18:00",
+      "startTime": "09:30",
+      "endTime": "18:00",
+      "timezone": "UTC",
+      "eventType": "in-person",
+      "address": "Tech Park Auditorium, Whitefield",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560066",
+      "meetingLink": "",
+      "templateImage": "/images/image2.jpg"
+    },
+    "branding": {
+      "colorTheme": "professional",
+      "fontStyle": "modern",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "",
+      "bannerUrl": ""
+    },
+    "sessions": [
+      {
+        "title": "Opening Keynote",
+        "speaker": "Dr. Sneha Iyer",
+        "startTime": "10:00",
+        "duration": 45,
+        "description": "Insights on the future of AI",
+        "tags": [
+          "keynote"
+        ],
+        "id": 1749211110001
+      },
+      {
+        "title": "Robotics Demo",
+        "speaker": "MIT Robotics Team",
+        "startTime": "12:00",
+        "duration": 60,
+        "description": "Live demo of humanoid robots",
+        "tags": [
+          "demo",
+          "tech"
+        ],
+        "id": 1749211120002
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-07-01T10:00",
+      "registrationClose": "2025-07-10T17:00",
+      "confirmationEmail": "Thanks for registering! See you at the symposium.",
+      "termsConditions": "You agree to abide by the event rules and privacy policy.",
+      "updateDeadline": "2025-07-12T23:59",
+      "maxAttendees": 500,
+      "tickets": [
+        {
+          "id": "1749211130003",
+          "name": "Student Pass",
+          "type": "free"
+        },
+        {
+          "id": "1749211140004",
+          "name": "Professional",
+          "type": "paid",
+          "price": 999,
+          "currency": "INR"
+        }
+      ]
+    }
+  },
+  {
+    "id": "event-3",
+    "template": "webinar",
+    "templateImage": "/images/image3.jpeg",
+    "event": {
+      "name": "Startup Pitch Fest",
+      "description": "Pitch your startup ideas to leading VCs and incubators.",
+      "startDate": "2025-08-12T10:00",
+      "endDate": "2025-08-12T17:00",
+      "startTime": "10:00",
+      "endTime": "17:00",
+      "timezone": "UTC",
+      "eventType": "in-person",
+      "address": "Startup Incubator Hub, HSR Layout",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560102",
+      "meetingLink": "",
+      "templateImage": "/images/image3.jpeg"
+    },
+    "branding": {
+      "colorTheme": "forest",
+      "fontStyle": "classic",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "",
+      "bannerUrl": ""
+    },
+    "sessions": [
+      {
+        "title": "Investor Panel",
+        "speaker": "VC Circle",
+        "startTime": "10:00",
+        "duration": 60,
+        "description": "Top investors discuss market trends",
+        "tags": [
+          "panel"
+        ],
+        "id": 1749211210001
+      },
+      {
+        "title": "Startup Demos",
+        "speaker": "Selected Founders",
+        "startTime": "13:00",
+        "duration": 120,
+        "description": "Founders pitch and demo live",
+        "tags": [
+          "pitch",
+          "demo"
+        ],
+        "id": 1749211220002
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-08-01T09:00",
+      "registrationClose": "2025-08-10T17:00",
+      "confirmationEmail": "Welcome to Startup Pitch Fest!",
+      "termsConditions": "All participants must adhere to the NDA policy.",
+      "updateDeadline": "2025-08-11T23:59",
+      "maxAttendees": 200,
+      "tickets": [
+        {
+          "id": "1749211230003",
+          "name": "Entry",
+          "type": "free"
+        },
+        {
+          "id": "1749211240004",
+          "name": "Pitch Slot",
+          "type": "paid",
+          "price": 799,
+          "currency": "INR"
+        }
+      ]
+    }
+  },
+  {
+    "id": "event-4",
+    "template": "webinar",
+    "templateImage": "/images/image1.jpg",
+    "event": {
+      "name": "Tech Carnival 2025",
+      "description": "A carnival of innovation, gaming, and tech exhibitions.",
+      "startDate": "2025-09-10T10:00",
+      "endDate": "2025-09-11T18:00",
+      "startTime": "10:00",
+      "endTime": "18:00",
+      "timezone": "UTC",
+      "eventType": "in-person",
+      "address": "City Convention Center",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560001",
+      "meetingLink": "",
+      "templateImage": "/images/image1.jpg"
+    },
+    "branding": {
+      "colorTheme": "sunset",
+      "fontStyle": "creative",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "https://static.vecteezy.com/system/resources/previews/008/296/267/non_2x/colorful-swirl-logo-design-concept-illustration-vector.jpg",
+      "bannerUrl": "https://cdn.pixabay.com/photo/2015/10/29/14/39/web-1012468_1280.jpg"
+    },
+    "sessions": [
+      {
+        "title": "Tech Expo",
+        "speaker": "Various Startups",
+        "startTime": "10:30",
+        "duration": 90,
+        "description": "Exhibition of tech innovations",
+        "tags": [
+          "expo"
+        ],
+        "id": 1749211310001
+      },
+      {
+        "title": "Gaming Tournament",
+        "speaker": "E-Sports India",
+        "startTime": "15:00",
+        "duration": 120,
+        "description": "Valorant & FIFA knockout tournament",
+        "tags": [
+          "gaming",
+          "tournament"
+        ],
+        "id": 1749211320002
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-08-25T10:00",
+      "registrationClose": "2025-09-05T17:00",
+      "confirmationEmail": "Your Tech Carnival Pass is confirmed!",
+      "termsConditions": "Entry restricted to college students above 18.",
+      "updateDeadline": "2025-09-07T23:59",
+      "maxAttendees": 1000,
+      "tickets": [
+        {
+          "id": "1749211330003",
+          "name": "Visitor",
+          "type": "free"
+        },
+        {
+          "id": "1749211340004",
+          "name": "Gamer Entry",
+          "type": "paid",
+          "price": 349,
+          "currency": "INR"
+        }
+      ]
+    }
+  },
+  {
+    "id": "event-5",
+    "template": "webinar",
+    "templateImage": "/images/image4.jpg",
+    "event": {
+      "name": "Women in Tech Conference",
+      "description": "Celebrating achievements of women in technology and leadership.",
+      "startDate": "2025-10-05T09:00",
+      "endDate": "2025-10-05T17:30",
+      "startTime": "09:00",
+      "endTime": "17:30",
+      "timezone": "UTC",
+      "eventType": "in-person",
+      "address": "Infosys Campus, Electronics City",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560100",
+      "meetingLink": "",
+      "templateImage": "/images/image4.jpg"
+    },
+    "branding": {
+      "colorTheme": "ocean",
+      "fontStyle": "minimal",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg?semt=ais_hybrid&w=740",
+      "bannerUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSq2Celgxopr5dd4AmPoC7zdgVPEu4nQwRPkQ&s"
+    },
+    "sessions": [
+      {
+        "title": "Leadership Talk",
+        "speaker": "Ananya Rao",
+        "startTime": "10:00",
+        "duration": 60,
+        "description": "Empowering journeys in tech",
+        "tags": [
+          "keynote",
+          "leadership"
+        ],
+        "id": 1749211410001
+      },
+      {
+        "title": "Mentorship Circle",
+        "speaker": "Various Mentors",
+        "startTime": "14:00",
+        "duration": 90,
+        "description": "1-on-1 mentorship speed rounds",
+        "tags": [
+          "networking",
+          "mentorship"
+        ],
+        "id": 1749211420002
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-09-20T10:00",
+      "registrationClose": "2025-10-01T17:00",
+      "confirmationEmail": "Your registration is successful. Welcome!",
+      "termsConditions": "Event registration is non-transferable.",
+      "updateDeadline": "2025-10-03T23:59",
+      "maxAttendees": 600,
+      "tickets": [
+        {
+          "id": "1749211430003",
+          "name": "General",
+          "type": "free"
+        },
+        {
+          "id": "1749211440004",
+          "name": "Premium",
+          "type": "paid",
+          "price": 599,
+          "currency": "INR"
+        }
+      ]
+    }
+  }
+]
