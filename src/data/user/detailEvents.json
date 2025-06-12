@@ -67,17 +67,25 @@
       "maxAttendees": 300,
       "tickets": [
         {
-          "id": "1749210614054",
-          "name": "General",
-          "type": "free"
-        },
-        {
           "id": "1749210619699",
           "name": "VIP",
           "type": "paid",
           "price": 499,
-          "currency": "INR"
+          "currency": "INR",
+          "purchaseDate": "2025-06-03T14:30:00Z",
+          "qrCode": "/images/qrcode.png"
+        },
+        {
+          "id": "1749210619698",
+          "name": "VIkjbP",
+          "type": "paid",
+          "price": 799,
+          "currency": "INR",
+          "purchaseDate": "2025-06-03T14:30:00Z",
+          "qrCode": "/images/qrcode.png"
         }
-      ]
+      ],
+      "isRegistered": true,
+      "checkInStatus": false
     }
   }

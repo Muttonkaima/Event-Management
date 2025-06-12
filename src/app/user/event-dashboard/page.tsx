@@ -129,18 +129,14 @@ export default function Dashboard() {
   const [eventData, setEventData] = useState<EventData | null>(eventDataJson as EventData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [userRegistration, setUserRegistration] = useState({
-    isRegistered: true,
-    ticket: {
-      id: "1749210619699",
-      name: "VIP",
-      type: "paid" as const,
-      price: 499,
-      currency: "INR",
-      purchaseDate: "2025-06-03T14:30:00Z",
-      qrCode: "/images/qrcode.png"
-    },
-    checkInStatus: false
+  // Initialize userRegistration from eventDataJson.registration
+  const [userRegistration, setUserRegistration] = useState(() => {
+    const registration = (eventDataJson as any).registration || {};
+    return {
+      isRegistered: registration.isRegistered ?? false,
+      tickets: registration.tickets ?? [],
+      checkInStatus: registration.checkInStatus ?? false,
+    };
   });
   const router = useRouter();
 
@@ -266,15 +262,17 @@ export default function Dashboard() {
                       </p>
                     </div>
                   </div>
+                  {userRegistration.tickets && userRegistration.tickets.length ===1 && (
                   <button
                     className={`${selectedTheme.colors[0]} text-white px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center cursor-pointer`}
-                    onClick={() => setTicketModalOpen(true)}
+                    onClick={() => setTicketModalOpen(userRegistration.tickets[0].id)}
                   >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     View Ticket
                   </button>
+                  )}
                 </div>
 
               </div>
@@ -482,77 +480,83 @@ export default function Dashboard() {
                 )} */}
 
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Your Ticket</h3>
-                    <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
-                      <div className={`${selectedTheme.colors[0]} p-4 text-white`}>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="text-lg font-bold">{userRegistration.ticket.name} Ticket</h4>
-                            <p className="text-sm opacity-90">
-                              {userRegistration.ticket.type === 'paid'
-                                ? `Paid: ${userRegistration.ticket.currency} ${userRegistration.ticket.price}`
-                                : 'Free Admission'}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-xs opacity-80">Order #{userRegistration.ticket.id}</div>
-                            <div className="text-xs opacity-80 mt-1">
-                              {format(parseISO(userRegistration.ticket.purchaseDate), 'MMM d, yyyy')}
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Your Tickets</h3>
+                    {userRegistration.tickets && userRegistration.tickets.length > 0 ? (
+                      userRegistration.tickets.map((ticket: any, idx: number) => (
+                        <div key={ticket.id || idx} className="border rounded-lg overflow-hidden bg-white shadow-sm mb-6">
+                          <div className={`${selectedTheme.colors[0]} p-4 text-white`}>
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="text-lg font-bold">{ticket.name} Ticket</h4>
+                                <p className="text-sm opacity-90">
+                                  {ticket.type === 'paid'
+                                    ? `Paid: ${ticket.currency} ${ticket.price}`
+                                    : 'Free Admission'}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-xs opacity-80">Order #{ticket.id}</div>
+                                <div className="text-xs opacity-80 mt-1">
+                                  {ticket.purchaseDate ? format(parseISO(ticket.purchaseDate), 'MMM d, yyyy') : ''}
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <div className="p-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div>
-                            <p className="text-sm text-gray-500">Event</p>
-                            <p className="font-medium text-gray-700">{event.name}</p>
+                          <div className="p-4">
+                            <div className="flex items-center justify-between mb-4">
+                              <div>
+                                <p className="text-sm text-gray-500">Event</p>
+                                <p className="font-medium text-gray-700">{event.name}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-sm text-gray-500">Date</p>
+                                <p className='text-gray-700'>{formatDate(event.startDate)}</p>
+                              </div>
+                            </div>
+                            <div className="border-t border-gray-200 pt-4">
+                              <p className="text-sm text-gray-500 mb-2">Check-in Status</p>
+                              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${userRegistration.checkInStatus
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                <span className={`w-2 h-2 rounded-full mr-2 ${userRegistration.checkInStatus ? 'bg-green-500' : 'bg-yellow-500'
+                                  }`}></span>
+                                {userRegistration.checkInStatus ? 'Checked In' : 'Not Checked In'}
+                              </div>
+                            </div>
+                            <div className="flex justify-end mt-4">
+                              <button
+                                className={`${selectedTheme.colors[0]} text-white px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center cursor-pointer`}
+                                onClick={() => setTicketModalOpen(ticket.id)}
+                              >
+                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                View Ticket
+                              </button>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-sm text-gray-500">Date</p>
-                            <p className='text-gray-700'>{formatDate(event.startDate)}</p>
+                          <div className="border-t border-gray-200 p-4 bg-gray-50">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-600">Need help? <a href="#" className="text-blue-600 hover:underline">Contact support</a></span>
+                            </div>
                           </div>
+                          <TicketModal
+                            open={ticketModalOpen === ticket.id}
+                            onOpenChange={() => setTicketModalOpen(false)}
+                            event={event}
+                            ticket={ticket}
+                            user={userRegistration}
+                            colorTheme={selectedTheme}
+                            fontStyle={selectedFont}
+                            logoUrl={branding.logoUrl}
+                            bannerUrl={branding.bannerUrl}
+                          />
                         </div>
-                        <div className="border-t border-gray-200 pt-4">
-                          <p className="text-sm text-gray-500 mb-2">Check-in Status</p>
-                          <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${userRegistration.checkInStatus
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                            <span className={`w-2 h-2 rounded-full mr-2 ${userRegistration.checkInStatus ? 'bg-green-500' : 'bg-yellow-500'
-                              }`}></span>
-                            {userRegistration.checkInStatus ? 'Checked In' : 'Not Checked In'}
-                          </div>
-                        </div>
-                        <div className="flex justify-end mt-4">
-                          <button
-                            className={`${selectedTheme.colors[0]} text-white px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center cursor-pointer`}
-                            onClick={() => setTicketModalOpen(true)}
-                          >
-                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            View Ticket
-                          </button>
-                        </div>
-                      </div>
-                      <div className="border-t border-gray-200 p-4 bg-gray-50">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Need help? <a href="#" className="text-blue-600 hover:underline">Contact support</a></span>
-                        </div>
-                      </div>
-                    </div>
-                    <TicketModal
-                      open={ticketModalOpen}
-                      onOpenChange={setTicketModalOpen}
-                      event={event}
-                      ticket={userRegistration.ticket}
-                      user={userRegistration}
-                      colorTheme={selectedTheme}
-                      fontStyle={selectedFont}
-                      logoUrl={branding.logoUrl}
-                      bannerUrl={branding.bannerUrl}
-                    />
+                      ))
+                    ) : (
+                      <div className="text-gray-500">No tickets found.</div>
+                    )}
                   </div>
                 </div>
               </div>
