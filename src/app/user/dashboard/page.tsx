@@ -48,21 +48,46 @@ export default function DashboardPage() {
     // Simulate API call
     const fetchData = () => {
       try {
-        // Process announcements to include event names
-        const processedAnnouncements = announcementsData.map(announcement => {
-          const event = eventsData.find(e => e.id === announcement.eventId);
+        // Get today's date (ignore time for comparison)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Map and classify events
+        const mappedEvents = eventsData.map((item: any) => {
+          const isPast = new Date(item.event.endDate) < today;
+          const isUpcoming = !isPast;
           return {
-            ...announcement,
-            eventName: event?.name || 'Event'
+            id: item.id,
+            name: item.event.name,
+            description: item.event.description,
+            date: {
+              start: item.event.startDate,
+              end: item.event.endDate,
+            },
+            location: {
+              name: item.event.address,
+              city: item.event.city,
+              country: item.event.country,
+            },
+            image: item.branding.bannerUrl || item.event.templateImage,
+            status: isPast ? 'past' : 'upcoming',
           };
         });
 
-        // Filter events based on status
-        const upcoming = eventsData.filter(event => event.status === 'upcoming');
-        const past = eventsData.filter(event => event.status === 'completed');
+        const upcoming = mappedEvents.filter(ev => ev.status === 'upcoming');
+        const past = mappedEvents.filter(ev => ev.status === 'past');
 
-        setUpcomingEvents(upcoming as Event[]);
-        setPastEvents(past as Event[]);
+        // Process announcements to include event names from new structure
+        const processedAnnouncements = announcementsData.map(announcement => {
+          const event = mappedEvents.find(e => e.id === announcement.eventId);
+          return {
+            ...announcement,
+            eventName: event?.name || 'Event',
+          };
+        });
+
+        setUpcomingEvents(upcoming);
+        setPastEvents(past);
         setAnnouncements(processedAnnouncements);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -182,7 +207,7 @@ export default function DashboardPage() {
                 upcomingEvents.slice(0, 3).map((event) => (
                   <Link 
                     key={event.id} 
-                    href={`/user/event-dashboard/${event.id}`}
+                    href={`/user/event-dashboard`}
                     className="block p-6 hover:bg-gray-50 transition-colors duration-150"
                   >
                     <div className="flex items-start">
@@ -241,7 +266,7 @@ export default function DashboardPage() {
                 pastEvents.slice(0, 3).map((event) => (
                   <Link 
                     key={event.id} 
-                    href={`/user/event-dashboard/${event.id}`}
+                    href={`/user/event-dashboard`}
                     className="block p-6 hover:bg-gray-50 transition-colors duration-150"
                   >
                     <div className="flex items-start">

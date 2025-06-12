@@ -5,7 +5,7 @@ import { FiSearch, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid,
 import Link from 'next/link';
 import { adaptEvents, Event } from '@/app/user/my-events/events';
 import rawEvents from '@/data/user/events.json';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import DashboardLayout from '@/components/user/dashboard/DashboardLayout';
 import Image from 'next/image';
 type ViewMode = 'grid' | 'list';
 // Use Event type from adapter, which includes branding

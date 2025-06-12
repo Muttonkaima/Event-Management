@@ -12,7 +12,7 @@ const navItems = [
   { name: 'Announcements', href: '/user/event-announcements', icon: <FiVolume2 className="w-5 h-5" /> },
   // { name: 'Event Resources', href: '/user/event-resources', icon: <FiBookOpen className="w-5 h-5" /> },
   { name: 'Feedback', href: '/user/feedback', icon: <FiMessageSquare className="w-5 h-5" /> },
-  { name: 'Support', href: '/user/support', icon: <FiHelpCircle className="w-5 h-5" /> }
+  { name: 'Support', href: '/user/event-support', icon: <FiHelpCircle className="w-5 h-5" /> }
 ];
 
 export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boolean; toggleSidebarAction: () => void }) {
