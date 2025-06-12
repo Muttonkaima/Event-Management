@@ -1,4 +1,7 @@
-{
+[
+  {
+    "id": "my-event-1",
+    "eventId": "event-1",
     "template": "webinar",
     "templateImage": "/images/image1.jpg",
     "event": {
@@ -74,14 +77,174 @@
           "currency": "INR",
           "purchaseDate": "2025-06-03T14:30:00Z",
           "qrCode": "/images/qrcode.png"
-        },
+        }
+      ],
+      "isRegistered": true,
+      "checkInStatus": false
+    }
+  },
+  {
+    "id": "my-event-2",
+    "eventId": "event-2",
+    "template": "webinar",
+    "templateImage": "/images/image1.jpg",
+    "event": {
+      "name": "Tech Carnival 2025",
+      "description": "A carnival of innovation, gaming, and tech exhibitions.",
+      "startDate": "2025-09-10T10:00",
+      "endDate": "2025-09-11T18:00",
+      "startTime": "10:00",
+      "endTime": "18:00",
+      "timezone": "UTC",
+      "eventType": "online",
+      "address": "City Convention Center",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560001",
+      "meetingLink": "",
+      "templateImage": "/images/image1.jpg"
+    },
+    "branding": {
+      "colorTheme": "sunset",
+      "fontStyle": "creative",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "https://static.vecteezy.com/system/resources/thumbnails/002/597/070/small/ghost-esport-mascot-logo-design-vector.jpg",
+      "bannerUrl": "https://cdn.pixabay.com/photo/2015/10/29/14/39/web-1012468_1280.jpg"
+    },
+    "sessions": [
+      {
+        "title": "Tech Expo",
+        "speaker": "Various Startups",
+        "startTime": "10:30",
+        "duration": 90,
+        "description": "Exhibition of tech innovations",
+        "tags": [
+          "expo"
+        ],
+        "id": 1749211310001
+      },
+      {
+        "title": "Gaming Tournament",
+        "speaker": "E-Sports India",
+        "startTime": "15:00",
+        "duration": 120,
+        "description": "Valorant & FIFA knockout tournament",
+        "tags": [
+          "gaming",
+          "tournament"
+        ],
+        "id": 1749211320002
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-08-25T10:00",
+      "registrationClose": "2025-09-05T17:00",
+      "confirmationEmail": "Your Tech Carnival Pass is confirmed!",
+      "termsConditions": "Entry restricted to college students above 18.",
+      "updateDeadline": "2025-09-07T23:59",
+      "maxAttendees": 1000,
+      "tickets": [
         {
-          "id": "1749210619698",
-          "name": "VIkjbP",
+          "id": "1749210619679",
+          "name": "Gamer Entry",
           "type": "paid",
-          "price": 799,
+          "price": 349,
           "currency": "INR",
-          "purchaseDate": "2025-06-03T14:30:00Z",
+          "purchaseDate": "2025-06-04T14:30:00Z",
+          "qrCode": "/images/qrcode.png"
+        }
+      ],
+      "isRegistered": true,
+      "checkInStatus": false
+    }
+  },
+  {
+    "id": "my-event-3",
+    "eventId": "event-3",
+    "template": "webinar",
+    "templateImage": "/images/image4.jpg",
+    "event": {
+      "name": "Women in Tech Conference",
+      "description": "Celebrating achievements of women in technology and leadership.",
+      "startDate": "2025-10-05T09:00",
+      "endDate": "2025-10-05T17:30",
+      "startTime": "09:00",
+      "endTime": "17:30",
+      "timezone": "UTC",
+      "eventType": "hybrid",
+      "address": "Infosys Campus, Electronics City",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560100",
+      "meetingLink": "",
+      "templateImage": "/images/image4.jpg"
+    },
+    "branding": {
+      "colorTheme": "ocean",
+      "fontStyle": "minimal",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "logoUrl": "https://static.vecteezy.com/system/resources/previews/019/166/318/non_2x/lion-head-lion-logo-symbol-gaming-logo-elegant-element-for-brand-abstract-symbols-vector.jpg",
+      "bannerUrl": "https://img.lovepik.com/background/20211021/large/lovepik-blue-background-of-science-and-technology-image_500486349.jpg"
+    },
+    "sessions": [
+      {
+        "title": "Leadership Talk",
+        "speaker": "Ananya Rao",
+        "startTime": "10:00",
+        "duration": 60,
+        "description": "Empowering journeys in tech",
+        "tags": [
+          "keynote",
+          "leadership"
+        ],
+        "id": 1749211410001
+      },
+      {
+        "title": "Mentorship Circle",
+        "speaker": "Various Mentors",
+        "startTime": "14:00",
+        "duration": 90,
+        "description": "1-on-1 mentorship speed rounds",
+        "tags": [
+          "networking",
+          "mentorship"
+        ],
+        "id": 1749211420002
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-09-20T10:00",
+      "registrationClose": "2025-10-01T17:00",
+      "confirmationEmail": "Your registration is successful. Welcome!",
+      "termsConditions": "Event registration is non-transferable.",
+      "updateDeadline": "2025-10-03T23:59",
+      "maxAttendees": 600,
+      "tickets": [
+        {
+          "id": "1749210619659",
+          "name": "Premium",
+          "type": "paid",
+          "price": 599,
+          "currency": "INR",
+          "purchaseDate": "2025-06-07T14:30:00Z",
           "qrCode": "/images/qrcode.png"
         }
       ],
@@ -89,3 +252,4 @@
       "checkInStatus": false
     }
   }
+]

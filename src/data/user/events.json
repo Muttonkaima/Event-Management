@@ -84,7 +84,7 @@
     }
   },
   {
-    "id": "event-4",
+    "id": "event-2",
     "template": "webinar",
     "templateImage": "/images/image1.jpg",
     "event": {
@@ -168,7 +168,7 @@
     }
   },
   {
-    "id": "event-5",
+    "id": "event-3",
     "template": "webinar",
     "templateImage": "/images/image4.jpg",
     "event": {

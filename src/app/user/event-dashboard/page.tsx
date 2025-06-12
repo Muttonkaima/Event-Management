@@ -126,18 +126,22 @@ const fontStyles = [
 
 export default function Dashboard() {
   const [ticketModalOpen, setTicketModalOpen] = useState(false);
-  const [eventData, setEventData] = useState<EventData | null>(eventDataJson as EventData);
+  const [eventData, setEventData] = useState<EventData | null>(
+    (eventDataJson as EventData[])[0] || null
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Initialize userRegistration from eventDataJson.registration
+
   const [userRegistration, setUserRegistration] = useState(() => {
-    const registration = (eventDataJson as any).registration || {};
+    const registration: any = eventData?.registration || {};
     return {
       isRegistered: registration.isRegistered ?? false,
       tickets: registration.tickets ?? [],
       checkInStatus: registration.checkInStatus ?? false,
     };
   });
+
+
   const router = useRouter();
 
   if (loading) {
