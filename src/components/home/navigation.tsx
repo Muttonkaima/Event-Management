@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Menu, X } from "lucide-react";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -42,7 +42,7 @@ export default function Navigation() {
               <h1 className="text-2xl font-bold text-gray-900">EventFlow</h1>
             </div>
           </div>
-          
+
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               {navItems.map((item) => (
@@ -56,7 +56,7 @@ export default function Navigation() {
               ))}
             </div>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-4">
             <Link href="/login">
               <Button variant="ghost" className="text-gray-600 border border-gray-200 hover:text-gray-900 cursor-pointer">
@@ -69,16 +69,25 @@ export default function Navigation() {
               </Button>
             </Link>
           </div>
-          
+
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-6 w-6 text-gray-900" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px]">
-                <div className="flex flex-col space-y-4 mt-8">
+              <SheetContent side="right" className="w-[300px] bg-white">
+                <SheetClose asChild>
+                  <button
+                    className="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-100 transition"
+                    aria-label="Close"
+                  >
+                    <X className="h-5 w-5 text-gray-500" />
+                  </button>
+                </SheetClose>
+                <h1 className="text-2xl font-bold text-gray-900">EventFlow</h1>
+                <div className="flex flex-col space-y-2 mt-8">
                   {navItems.map((item) => (
                     <button
                       key={item.href}
@@ -90,12 +99,12 @@ export default function Navigation() {
                   ))}
                   <div className="pt-4 border-t border-gray-200 space-y-2">
                     <Link href="/login">
-                      <Button variant="ghost" className="w-full justify-start text-gray-600 hover:text-gray-900">
+                      <Button variant="ghost" className="w-full justify-center text-gray-600 hover:text-gray-900 border border-gray-200">
                         Sign In
                       </Button>
                     </Link>
                     <Link href="/login">
-                      <Button className="w-full bg-primary text-white hover:bg-secondary">
+                      <Button className="w-full bg-black text-white mt-2">
                         Get Started
                       </Button>
                     </Link>

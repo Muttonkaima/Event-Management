@@ -141,7 +141,7 @@ const AnalyticsDashboard = () => {
       {/* Main Charts Row */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Registration Timeline */}
-        <Card className="h-[400px] rounded-2xl bg-white">
+        <Card className="h-[400px] rounded-2xl bg-white pb-4">
           <CardHeader>
             <CardTitle className="text-gray-900">Registration Timeline</CardTitle>
             <CardDescription className="text-gray-600">
@@ -174,7 +174,7 @@ const AnalyticsDashboard = () => {
         </Card>
 
         {/* Registration by Type */}
-        <Card className="h-[400px] rounded-2xl bg-white">
+        <Card className="h-[400px] rounded-2xl bg-white pb-4">
           <CardHeader>
             <CardTitle className="text-gray-900">Registration by Type</CardTitle>
             <CardDescription className="text-gray-600">
@@ -321,7 +321,7 @@ const AnalyticsDashboard = () => {
                 <div key={index} className="space-y-1">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-700">{item.source}</span>
-                    <span className="font-medium">{item.percentage}%</span>
+                    <span className="font-medium text-gray-700">{item.percentage}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-1.5">
                     <div 

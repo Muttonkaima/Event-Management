@@ -7,7 +7,7 @@ import { BarChart2, LayoutDashboard, Settings2, Wrench } from "lucide-react";
 import Link from "next/link";
 import AnalyticsCard from "@/components/event-dashboard/analytics-card";
 import ToolCard from "@/components/event-dashboard/tool-card";
-import { MapPin, Calendar, Share2, ArrowRight } from "lucide-react";
+import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
 import { notFound } from 'next/navigation';
 import { adaptEvents, Event } from '@/app/events/events';
@@ -179,7 +179,7 @@ export default async function EventOverview({ params }: PageProps) {
         
         <div className="relative container mx-auto px-4 h-full flex items-end pb-8">
           <div className="flex flex-col md:flex-row items-start md:items-end gap-6 w-full">
-            <div className="relative -mt-16 w-32 h-32 md:w-36 md:h-36 rounded-2xl border-4 border-background bg-card shadow-xl overflow-hidden">
+            <div className="relative mt-16 w-32 h-32 md:w-36 md:h-36 rounded-2xl border-4 border-background bg-card shadow-xl overflow-hidden">
               {logoImage ? (
                 <Image
                   src={logoImage}
@@ -201,7 +201,7 @@ export default async function EventOverview({ params }: PageProps) {
               <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 mb-2">
                 <div className="w-fit">
                   <Badge className={cn(
-                    "px-3 py-1.5 text-sm font-medium whitespace-nowrap",
+                    "px-3 py-1 text-xs md:text-sm md:py-1.5 font-medium whitespace-nowrap",
                     getStatusBadgeVariant(event.status)
                   )}>
                     {getStatusText(event.status)}
@@ -228,12 +228,12 @@ export default async function EventOverview({ params }: PageProps) {
               </h1>
               
               {event.description && (
-                <p className="mt-2 text-base text-white/80 max-w-3xl">
+                <p className="mt-2 text-base text-white/90 max-w-3xl">
                   {event.description}
                 </p>
               )}
               
-              <div className="mt-4 flex flex-wrap items-center gap-3 text-white">
+              <div className="mt-4 flex items-center gap-3 text-white">
                 <Button className="cursor-pointer text-white">
                   <Settings2 className="mr-2 h-4 w-4" />
                   Manage Event
@@ -246,7 +246,7 @@ export default async function EventOverview({ params }: PageProps) {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-2 py-8">
         <Tabs defaultValue="overview" className="space-y-8">
           <TabsList className="grid w-full md:w-auto grid-cols-3 bg-gray-100 p-1.5 h-auto rounded-xl shadow-inner">
             <TabsTrigger 
