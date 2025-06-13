@@ -4,65 +4,9 @@ import { ArrowLeft, ArrowRight, CloudUpload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ColorTheme, FontStyle } from '@/shared/eventSchema';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-
-const colorThemes = [
-  {
-    id: 'professional' as ColorTheme,
-    name: 'Professional',
-    colors: ['bg-indigo-500', 'bg-indigo-300', 'bg-gray-600']
-  },
-  {
-    id: 'ocean' as ColorTheme,
-    name: 'Ocean Blue',
-    colors: ['bg-cyan-500', 'bg-blue-400', 'bg-teal-600']
-  },
-  {
-    id: 'sunset' as ColorTheme,
-    name: 'Sunset',
-    colors: ['bg-orange-500', 'bg-red-400', 'bg-yellow-500']
-  },
-  {
-    id: 'forest' as ColorTheme,
-    name: 'Forest',
-    colors: ['bg-green-600', 'bg-emerald-400', 'bg-lime-500']
-  }
-];
-
-const fontStyles = [
-  {
-    id: 'modern' as FontStyle,
-    name: 'Modern Sans',
-    description: 'Clean and professional for modern events',
-    className: 'font-sans'
-  },
-  {
-    id: 'classic' as FontStyle,
-    name: 'Classic Serif',
-    description: 'Traditional and elegant for formal events',
-    className: 'font-serif'
-  },
-  {
-    id: 'minimal' as FontStyle,
-    name: 'Minimal',
-    description: 'Light and airy for minimalist designs',
-    className: 'font-light tracking-wide'
-  },
-  {
-    id: 'creative' as FontStyle,
-    name: 'Creative',
-    description: 'Fun and unique for creative events',
-    className: 'font-mono'
-  },
-  {
-    id: 'elegant' as FontStyle,
-    name: 'Elegant',
-    description: 'Sophisticated for premium events',
-    className: 'font-serif font-light'
-  }
-];
+import { getColorThemes, getFontStyles} from '@/services/organization/eventService'
 
 export function Step3Branding() {
   const { state, actions } = useEventWizard();
@@ -70,6 +14,58 @@ export function Step3Branding() {
   const { uploadFile, isUploading } = useFileUpload();
   const [logoPreview, setLogoPreview] = useState<string | null>(branding.logoUrl || null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(branding.bannerUrl || null);
+  const [colorThemes, setColorThemes] = useState<any[]>([]);
+  const [fontStyles, setFontStyles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+      async function fetchColorThemes() {
+        setLoading(true);
+        setError(null);
+        try {
+          const response = await getColorThemes();
+          setColorThemes(response.data);
+        } catch (err: any) {
+          setError(err.message || 'Failed to fetch color themes');
+        } finally {
+          setLoading(false);
+        }
+      }
+      fetchColorThemes();
+    }, []);
+
+    useEffect(() => {
+      async function fetchFontStyles() {
+        setLoading(true);
+        setError(null);
+        try {
+          const response = await getFontStyles();
+          setFontStyles(response.data);
+        } catch (err: any) {
+          setError(err.message || 'Failed to fetch font styles');
+        } finally {
+          setLoading(false);
+        }
+      }
+      fetchFontStyles();
+    }, []);
+    
+  const handleColorThemeSelect = (theme: any) => {
+    const colors = theme.colors?.[0] || [];
+    actions.updateBranding({ 
+      colorTheme: theme.name || '',
+      themeGradient: colors.bgColor || '',
+      sidebarGradient: colors.sidebarColor || '',
+      buttonGradient: colors.buttonColor || '',
+     });
+  };
+
+  const handleFontStyleSelect = (font: any) => {
+    actions.updateBranding({ 
+      fontStyle: font.font_family
+       });
+  };
 
   const handlePrevious = () => {
     actions.setStep(2);
@@ -184,51 +180,63 @@ export function Step3Branding() {
         </div>
 
         {/* Color Themes */}
+        {loading ? (
+          <div className="text-center py-8 text-gray-500">Loading color themes...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">{error}</div>
+        ) : (
         <div>
           <Label className="text-sm font-medium text-gray-700 mb-4 block">Color Palette</Label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {colorThemes.map((theme) => (
               <div
-                key={theme.id}
+                key={theme._id}
                 className={`color-theme-option cursor-pointer p-4 border-2 rounded-lg transition-all ${
-                  branding.colorTheme === theme.id ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
+                  branding.colorTheme === theme.name ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
                 }`}
-                onClick={() => actions.updateBranding({ colorTheme: theme.id })}
+                onClick={() => handleColorThemeSelect(theme)}
               >
                 <div className="flex space-x-2 mb-2">
-                  {theme.colors.map((color, index) => (
-                    <div key={index} className={`w-4 h-4 rounded-full ${color}`} />
-                  ))}
+                    <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${theme.colors?.[0].bgColor}`} />
+                    <div className={`w-4 h-4 rounded-full ${theme.colors?.[0].sidebarColor}`} />
+                    <div className={`w-4 h-4 rounded-full ${theme.colors?.[0].buttonColor}`} />
                 </div>
                 <p className="text-sm font-medium text-gray-900">{theme.name}</p>
               </div>
             ))}
           </div>
         </div>
+        )}
 
         {/* Font Styles */}
+        {loading ? (
+          <div className="text-center py-8 text-gray-500">Loading font styles...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">{error}</div>
+        ) : (
         <div>
           <Label className="text-sm font-medium text-gray-700 mb-4 block">Font Style</Label>
           <div className="space-y-3">
             {fontStyles.map((font) => (
               <div
-                key={font.id}
+                key={font._id}
                 className={`font-option cursor-pointer p-4 border-2 rounded-lg transition-all ${
-                  branding.fontStyle === font.id ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
+                  branding.fontStyle === font.font_family ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
                 }`}
-                onClick={() => actions.updateBranding({ fontStyle: font.id })}
+                onClick={() => handleFontStyleSelect(font)}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className={`font-medium text-gray-900 ${font.className}`}>{font.name}</h4>
+                    <h4 className={`font-medium text-gray-900 ${font.font_family}`}>{font.name}</h4>
                     <p className="text-sm text-gray-600">{font.description}</p>
                   </div>
-                  <span className={`text-2xl text-gray-300 ${font.className}`}>Aa</span>
+                  <span className={`text-2xl text-gray-300 ${font.font_family}`}>Aa</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
+        )}
 
         {/* Element Visibility */}
         <div>
