@@ -38,7 +38,7 @@ export interface Event {
       showRegistration: boolean;
     };
     logoUrl?: string;
-    bannerUrl?: string;
+   bannerUrl?: string;
   };
   sessions?: any[];
   registration?: {
@@ -103,7 +103,7 @@ export function adaptEvents(raw = rawEvents): Event[] {
           showRegistration: visibility.showRegistration !== false,
         },
         logoUrl: branding.logoUrl || '',
-        bannerUrl: branding.bannerUrl || '',
+       bannerUrl: branding.bannerUrl || '',
       },
     };
   });

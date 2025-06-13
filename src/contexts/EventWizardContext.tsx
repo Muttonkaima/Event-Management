@@ -14,7 +14,7 @@ const initialState: EventWizardData = {
     startTime: '09:00',
     endTime: '17:00',
     timezone: 'UTC',
-    eventType: 'in-person',
+    eventType: 'physical',
     address: '',
     city: '',
     state: '',

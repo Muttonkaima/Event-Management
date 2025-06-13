@@ -105,7 +105,7 @@ export function Step3Branding() {
       reader.readAsDataURL(file);
 
       const url = await uploadFile(file);
-      actions.updateBranding({ bannerUrl: url });
+      actions.updateBranding({bannerUrl: url });
     } catch (error) {
       console.error('Banner upload failed:', error);
     }

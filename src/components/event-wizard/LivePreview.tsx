@@ -41,7 +41,7 @@ const getLocationText = (event: any) => {
     return `${location} + Virtual: ${meeting}`;
   }
   
-  if (event.eventType === 'in-person' && (event.address || event.city)) {
+  if (event.eventType === 'physical' && (event.address || event.city)) {
     const parts = [];
     if (event.address) parts.push(event.address);
     if (event.city) parts.push(event.city);
@@ -57,13 +57,13 @@ export function LivePreview() {
   const { state } = useEventWizard();
   const { template, event, branding, sessions } = state;
   const [showFullPreview, setShowFullPreview] = useState(false);
-
   const themeGradient = branding.themeGradient || '';
   const sidebarGradient = branding.sidebarGradient || '';
   const fontClass = branding.fontStyle || '';
   const dateTimeText = formatDateTime(event.startDate, event.endDate, event.startTime, event.endTime);
   const locationText = getLocationText(event);
 
+  console.log("branding", branding);
   return (
     <div className="sticky top-8">
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -89,7 +89,7 @@ export function LivePreview() {
             <div className="relative w-full h-48 overflow-hidden">
             {branding.visibility.showBanner && (
               <Image 
-                src={branding.bannerUrl || event.templateImage || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
+                src={branding.bannerUrl || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
                 alt={event.name}
                 className="w-full h-full object-cover"
                 width={800}
@@ -145,7 +145,7 @@ export function LivePreview() {
                     <span>{dateTimeText}</span>
                   </div>
                   <span className="bg-primary px-2 py-1 rounded text-xs font-medium">
-                    {event.eventType === 'in-person' ? 'In-person' : 
+                    {event.eventType === 'physical' ? 'physical' : 
                      event.eventType === 'virtual' ? 'Virtual' : 'Hybrid'}
                   </span>
                 </div>

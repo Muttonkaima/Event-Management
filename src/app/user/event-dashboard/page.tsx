@@ -42,7 +42,7 @@ interface EventData {
       showRegistration: boolean;
     };
     logoUrl?: string;
-    bannerUrl?: string;
+   bannerUrl?: string;
   };
   sessions: Array<{
     id: number;
@@ -295,7 +295,7 @@ export default function Dashboard() {
                     </p>
                   </div>
 
-                  {branding.visibility.showLocation && event.eventType === 'in-person' && (
+                  {branding.visibility.showLocation && event.eventType === 'physical' && (
                     <div className="mb-4">
                       <h4 className="font-medium text-gray-700 mb-1">Location</h4>
                       <p className="text-gray-600">
@@ -554,7 +554,7 @@ export default function Dashboard() {
                             colorTheme={selectedTheme}
                             fontStyle={selectedFont}
                             logoUrl={branding.logoUrl}
-                            bannerUrl={branding.bannerUrl}
+                           bannerUrl={branding.bannerUrl}
                           />
                         </div>
                       ))

@@ -183,8 +183,11 @@ export function Step5Registration() {
 
   const toggleAttendeeLimit = (checked: boolean) => {
     setLimitAttendees(checked);
+    actions.updateRegistration({limitAttendees: checked});
     if (!checked) {
-      actions.updateRegistration({ maxAttendees: undefined });
+      actions.updateRegistration({ 
+        maxAttendees: undefined,
+       });
     }
   };
 

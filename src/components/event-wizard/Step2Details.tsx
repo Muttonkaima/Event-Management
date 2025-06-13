@@ -12,8 +12,8 @@ export function Step2Details() {
   const { state, actions } = useEventWizard();
   const { event } = state;
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const [selectedState, setSelectedState] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('IN');
+  const [selectedState, setSelectedState] = useState('Karnataka');
   const [states, setStates] = useState<any[]>([]);
   const [cities, setCities] = useState<any[]>([]);
   const countries = Country.getAllCountries();
@@ -112,29 +112,25 @@ export function Step2Details() {
     }
 
     // Location validation
-    if (!event.address?.trim()) {
-      newErrors.address = 'Venue name or address is required';
-    }
-    if (!selectedCountry) {
-      newErrors.country = 'Country is required';
-    }
-    if (!selectedState) {
-      newErrors.state = 'State/Province is required';
-    }
-    if (!event.city?.trim()) {
-      newErrors.city = 'City is required';
-    }
     if (!event.timezone) {
       newErrors.timezone = 'Timezone is required';
     }
-    if (event.eventType === 'in-person' || event.eventType === 'hybrid') {
+
+    if (event.eventType === 'physical' || event.eventType === 'hybrid') {
       if (!event.address.trim()) {
-        newErrors.address = 'Address is required for in-person/hybrid events';
+        newErrors.address = 'Address is required for physical/hybrid events';
       }
       if (!event.city.trim()) {
-        newErrors.city = 'City is required for in-person/hybrid events';
+        newErrors.city = 'City is required for physical/hybrid events';
+      }
+      if (!selectedCountry) {
+        newErrors.country = 'Country is required';
+      }
+      if (!selectedState) {
+        newErrors.state = 'State/Province is required';
       }
     }
+
     if (event.eventType === 'virtual' || event.eventType === 'hybrid') {
       if (!event.meetingLink?.trim()) {
         newErrors.meetingLink = 'Meeting link is required for virtual/hybrid events';
@@ -162,7 +158,7 @@ export function Step2Details() {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
-
+  console.log(event.eventType);
   return (
     <div className="fade-in">
       <div className="mb-6">
@@ -267,14 +263,14 @@ export function Step2Details() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="in-person">Physical Location</SelectItem>
+              <SelectItem value="physical">Physical Location</SelectItem>
               <SelectItem value="virtual">Virtual Event</SelectItem>
               <SelectItem value="hybrid">Hybrid Event</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {(event.eventType === 'in-person' || event.eventType === 'hybrid') && (
+        {(event.eventType === 'physical' || event.eventType === 'hybrid') && (
           <div className="space-y-4">
             <div>
               <Label className="text-gray-900">Address</Label>

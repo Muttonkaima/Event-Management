@@ -10,7 +10,7 @@ export const events = pgTable("events", {
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
   timezone: text("timezone").notNull(),
-  eventType: text("event_type").notNull(), // 'in-person', 'virtual', 'hybrid'
+  eventType: text("event_type").notNull(), // 'physical', 'virtual', 'hybrid'
   
   // Location fields
   address: text("address"),
@@ -22,9 +22,12 @@ export const events = pgTable("events", {
   
   // Branding
   logoUrl: text("logo_url"),
-  bannerUrl: text("banner_url"),
+ bannerUrl: text("banner_url"),
   colorTheme: text("color_theme").default("professional"),
   fontStyle: text("font_style").default("modern"),
+  branding_color_palette_id: text("branding_color_palette_id"),
+  branding_font_family_id: text("branding_font_family_id"),
+  
   
   // Element visibility
   visibility: json("visibility").default({
@@ -40,6 +43,7 @@ export const events = pgTable("events", {
   // Registration settings
   registrationOpen: timestamp("registration_open"),
   registrationClose: timestamp("registration_close"),
+  limitAttendees: boolean("limit_attendees").default(false),
   maxAttendees: integer("max_attendees"),
   
   // Email content
@@ -98,7 +102,7 @@ export type InsertRegistrationField = z.infer<typeof insertRegistrationFieldSche
 
 // Wizard data types
 export type EventTemplate = 'professional' | 'workshop' | 'social' | 'webinar';
-export type EventType = 'in-person' | 'virtual' | 'hybrid';
+export type EventType = 'physical' | 'virtual' | 'hybrid';
 export type ColorTheme = 'professional' | 'ocean' | 'sunset' | 'forest';
 export type FontStyle = 'modern' | 'classic' | 'minimal' | 'creative' | 'elegant';
 
@@ -123,7 +127,6 @@ export interface Ticket {
 export interface EventWizardData {
   currentStep: number;
   template: EventTemplate;
-  templateImage: string;
   event: {
     name: string;
     description: string;
@@ -139,11 +142,13 @@ export interface EventWizardData {
     country: string;
     zipCode: string;
     meetingLink: string;
-    templateImage: string;
+
   };
   branding: {
     logoUrl?: string;
-    bannerUrl?: string;
+   bannerUrl?: string;
+    branding_color_palette_id?: string;
+    branding_font_family_id?: string;
     colorTheme: ColorTheme;
     fontStyle: FontStyle;
     themeGradient?: string;
@@ -165,6 +170,7 @@ export interface EventWizardData {
     registrationOpen: string;
     registrationClose: string;
     updateDeadline?: string;
+    limitAttendees: boolean;
     maxAttendees?: number;
     tickets: Ticket[];
     confirmationEmail: string;

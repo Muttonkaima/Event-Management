@@ -37,10 +37,12 @@ export function Step1Template() {
     const selectedTemplate = templates.find(t => t._id === templateId);
     if (selectedTemplate) {
       actions.setTemplate(selectedTemplate);
-      actions.updateEvent({ templateImage: selectedTemplate.image });
       // Update branding with template's colors and font
       const colors = selectedTemplate.branding_color_palette_id?.colors?.[0] || {};
       actions.updateBranding({
+        branding_color_palette_id: selectedTemplate.branding_color_palette_id?._id,
+        branding_font_family_id: selectedTemplate.branding_font_family_id?._id,
+       bannerUrl: selectedTemplate.image,
         colorTheme: selectedTemplate.branding_color_palette_id?.name || '',
         themeGradient: colors.bgColor || '',
         sidebarGradient: colors.sidebarColor || '',

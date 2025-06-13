@@ -45,7 +45,7 @@ const getLocationText = (event: any) => {
     return `${location} + Virtual: ${meeting}`;
   }
 
-  if (event.eventType === 'in-person' && (event.address || event.city)) {
+  if (event.eventType === 'physical' && (event.address || event.city)) {
     const parts = [];
     if (event.address) parts.push(event.address);
     if (event.city) parts.push(event.city);
@@ -87,7 +87,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
             <div className="absolute inset-0">
             {branding.visibility.showBanner && (
               <Image 
-                src={branding.bannerUrl || event.templateImage || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
+                src={branding.bannerUrl || 'https://placehold.co/800x400/2563eb/ffffff?text=Event+Banner'} 
                 alt={event.name}
                 className="w-full h-full object-cover"
                 width={800}
@@ -128,7 +128,7 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
             <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
               <div className="flex items-center space-x-2 mb-2">
                 <span className="px-3 py-1 bg-primary text-white text-sm rounded-full">
-                  {event.eventType === 'in-person' ? 'In-person' :
+                  {event.eventType === 'physical' ? 'physical' :
                     event.eventType === 'virtual' ? 'Virtual' : 'Hybrid'}
                 </span>
               </div>

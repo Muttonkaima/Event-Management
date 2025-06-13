@@ -15,7 +15,7 @@ interface TicketModalProps {
   colorTheme: any;
   fontStyle: any;
   logoUrl?: string;
-  bannerUrl?: string;
+ bannerUrl?: string;
 }
 
 const TicketModal: React.FC<TicketModalProps> = ({
@@ -27,7 +27,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
   colorTheme,
   fontStyle,
   logoUrl,
-  bannerUrl,
+ bannerUrl,
 }) => {
   const ticketRef = useRef<HTMLDivElement>(null);
 
