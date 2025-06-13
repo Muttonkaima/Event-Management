@@ -18,8 +18,8 @@ export function Step1Template() {
       setLoading(true);
       setError(null);
       try {
-        const data = await getEventTemplates();
-        setTemplates(data);
+        const templates = await getEventTemplates();
+        setTemplates(templates.data);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch templates');
       } finally {
