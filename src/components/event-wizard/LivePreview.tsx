@@ -5,52 +5,6 @@ import { useState } from 'react';
 import { FullPreviewModal } from './FullPreviewModal';
 import Image from 'next/image';
 
-const getThemeGradient = (colorTheme: string) => {
-  switch (colorTheme) {
-    case 'professional':
-      return 'from-indigo-900 to-purple-300';
-    case 'ocean':
-      return 'from-cyan-900 to-blue-300';
-    case 'sunset':
-      return 'from-orange-900 to-red-300';
-    case 'forest':
-      return 'from-green-900 to-emerald-300';
-    default:
-      return 'from-indigo-500 to-purple-600';
-  }
-};
-
-const getSidebarGradient = (colorTheme: string) => {
-  switch (colorTheme) {
-    case 'professional':
-      return 'bg-indigo-900';
-    case 'ocean':
-      return 'bg-blue-900';
-    case 'sunset':
-      return 'bg-red-900';
-    case 'forest':
-      return 'bg-emerald-900';
-    default:
-      return 'bg-indigo-900';
-  }
-};
-
-const getFontStyle = (fontStyle: string) => {
-  switch (fontStyle) {
-    case 'modern':
-      return 'font-sans';
-    case 'classic':
-      return 'font-serif';
-    case 'minimal':
-      return 'font-light tracking-wide';
-    case 'creative':
-      return 'font-mono';
-    case 'elegant':
-      return 'font-serif font-light';
-    default:
-      return 'font-sans';
-  }
-};
 
 const formatDateTime = (startDate: string, endDate: string, startTime: string, endTime: string) => {
   if (!startDate || !endDate) {
@@ -104,9 +58,9 @@ export function LivePreview() {
   const { template, event, branding, sessions } = state;
   const [showFullPreview, setShowFullPreview] = useState(false);
 
-  const themeGradient = getThemeGradient(branding.colorTheme);
-  const sidebarGradient = getSidebarGradient(branding.colorTheme);
-  const fontClass = getFontStyle(branding.fontStyle);
+  const themeGradient = branding.themeGradient || '';
+  const sidebarGradient = branding.sidebarGradient || '';
+  const fontClass = branding.fontStyle || '';
   const dateTimeText = formatDateTime(event.startDate, event.endDate, event.startTime, event.endTime);
   const locationText = getLocationText(event);
 

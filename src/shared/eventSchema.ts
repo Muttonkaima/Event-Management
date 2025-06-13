@@ -146,6 +146,9 @@ export interface EventWizardData {
     bannerUrl?: string;
     colorTheme: ColorTheme;
     fontStyle: FontStyle;
+    themeGradient?: string;
+    sidebarGradient?: string;
+    buttonGradient?: string;
     visibility: {
       showLogo: boolean;
       showBanner: boolean;
@@ -156,6 +159,7 @@ export interface EventWizardData {
       showRegistration: boolean;
     };
   };
+
   sessions: SessionData[];
   registration: {
     registrationOpen: string;
