@@ -134,12 +134,7 @@ export function LivePreview() {
             </div>
             
             {/* Content */}
-            <div className={`p-6 bg-gradient-to-r ${themeGradient}`}>
-              {/* Logo */}
-              
-               
-              
-              
+            <div className={`p-6 ${themeGradient}`}>
               <div className="mb-4">
                 <h2 className="text-xl font-bold mb-2">
                   {event.name || 'Your Event Name'}

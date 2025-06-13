@@ -41,6 +41,7 @@ export function Step1Template() {
       // Update branding with template's colors and font
       const colors = selectedTemplate.branding_color_palette_id?.colors?.[0] || {};
       actions.updateBranding({
+        colorTheme: selectedTemplate.branding_color_palette_id?.name || '',
         themeGradient: colors.bgColor || '',
         sidebarGradient: colors.sidebarColor || '',
         buttonGradient: colors.buttonColor || '',
