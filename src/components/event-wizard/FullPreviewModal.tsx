@@ -180,7 +180,11 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
 
                 {branding.visibility.showLocation && (
                   <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-3 text-white">Location</h3>
+                    {event.eventType === 'virtual' ? (
+                       <h3 className="text-lg font-semibold mb-3 text-white">Meeting Link</h3>
+                      ) : (
+                        <h3 className="text-lg font-semibold mb-3 text-white">Location</h3>
+                      )}
                     <div className="flex items-start">
                       <MapPin className="w-5 h-5 text-white mr-3 mt-1" />
                       <span className="text-white">{locationText}</span>
@@ -237,12 +241,12 @@ export function FullPreviewModal({ open, onClose }: FullPreviewModalProps) {
                 <div className="rounded-lg p-6 sticky top-24">
                   <div className="space-y-4 mb-6 text-sm">
                     <div className="flex items-center text-white">
-                      <Calendar className="w-10 h-10 text-white mr-3" />
+                      <Calendar className="w-5 h-5 text-white mr-3" />
                       <span>{dateTimeText}</span>
                     </div>
 
                     <div className="flex items-center text-white">
-                      <MapPin className="w-14 h-14 text-white mr-3" />
+                      <MapPin className="w-5 h-5 text-white mr-3" />
                       <span>{locationText}</span>
                     </div>
 

@@ -8,7 +8,7 @@ import { getEventTemplates } from '@/services/organization/eventService';
 
 export function Step1Template() {
   const { state, actions } = useEventWizard();
-  const { template } = state;
+  const { templateID, template } = state;
   const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,13 +36,13 @@ export function Step1Template() {
   const handleTemplateSelect = (templateId: string) => {
     const selectedTemplate = templates.find(t => t._id === templateId);
     if (selectedTemplate) {
-      actions.setTemplate(selectedTemplate);
-      // Update branding with template's colors and font
+      actions.setTemplateID(selectedTemplate._id);
       const colors = selectedTemplate.branding_color_palette_id?.colors?.[0] || {};
+      actions.setTemplate(selectedTemplate.event_template_design_name);
       actions.updateBranding({
-        branding_color_palette_id: selectedTemplate.branding_color_palette_id?._id,
-        branding_font_family_id: selectedTemplate.branding_font_family_id?._id,
-       bannerUrl: selectedTemplate.image,
+        colorPaletteID: selectedTemplate.branding_color_palette_id?._id,
+        fontstyleID: selectedTemplate.branding_font_family_id?._id,
+        bannerUrl: selectedTemplate.image,
         colorTheme: selectedTemplate.branding_color_palette_id?.name || '',
         themeGradient: colors.bgColor || '',
         sidebarGradient: colors.sidebarColor || '',
@@ -69,15 +69,14 @@ export function Step1Template() {
             <div
               key={tmpl._id}
               className={`template-card bg-white rounded-xl border-2 overflow-hidden cursor-pointer transition-all duration-200 flex flex-col h-full ${
-                template === tmpl._id
+                templateID === tmpl._id
                   ? 'border-black border-3'
                   : 'border-gray-200 hover:border-primary hover:shadow-md'
               }`}
               onClick={() => handleTemplateSelect(tmpl._id)}
             >
-              {/* Image Section - Top 60% */}
               <div className={`h-0 pb-[60%] relative bg-gradient-to-r ${tmpl.branding_color_palette_id?.colors?.[0] || ''} rounded-t-lg overflow-hidden`}>
-                {template === tmpl._id && (
+                {templateID === tmpl._id && (
                   <div className="absolute top-2 right-2 w-6 h-6 bg-black rounded-full flex items-center justify-center z-1">
                     <Check className="w-4 h-4 text-white" />
                   </div>
@@ -104,7 +103,7 @@ export function Step1Template() {
                 </div>
 
                 <div className="mt-auto">
-                  {template === tmpl._id ? (
+                  {templateID === tmpl._id ? (
                     <div className="text-sm font-medium text-gray-900">
                       Currently selected
                     </div>

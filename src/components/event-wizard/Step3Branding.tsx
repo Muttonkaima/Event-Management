@@ -54,6 +54,7 @@ export function Step3Branding() {
   const handleColorThemeSelect = (theme: any) => {
     const colors = theme.colors?.[0] || [];
     actions.updateBranding({ 
+      colorPaletteID: theme._id,
       colorTheme: theme.name || '',
       themeGradient: colors.bgColor || '',
       sidebarGradient: colors.sidebarColor || '',
@@ -63,6 +64,7 @@ export function Step3Branding() {
 
   const handleFontStyleSelect = (font: any) => {
     actions.updateBranding({ 
+      fontstyleID: font._id,
       fontStyle: font.font_family
        });
   };
@@ -192,7 +194,7 @@ export function Step3Branding() {
               <div
                 key={theme._id}
                 className={`color-theme-option cursor-pointer p-4 border-2 rounded-lg transition-all ${
-                  branding.colorTheme === theme.name ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
+                  branding.colorPaletteID === theme._id ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
                 }`}
                 onClick={() => handleColorThemeSelect(theme)}
               >
@@ -221,7 +223,7 @@ export function Step3Branding() {
               <div
                 key={font._id}
                 className={`font-option cursor-pointer p-4 border-2 rounded-lg transition-all ${
-                  branding.fontStyle === font.font_family ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
+                  branding.fontstyleID === font._id ? 'border-black' : 'border-gray-200 hover:bg-gray-50'
                 }`}
                 onClick={() => handleFontStyleSelect(font)}
               >

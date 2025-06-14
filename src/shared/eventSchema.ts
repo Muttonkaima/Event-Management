@@ -6,6 +6,7 @@ export const events = pgTable("events", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
+  templateID: text("template_id").notNull(),
   template: text("template").notNull(),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
@@ -22,11 +23,11 @@ export const events = pgTable("events", {
   
   // Branding
   logoUrl: text("logo_url"),
- bannerUrl: text("banner_url"),
+  bannerUrl: text("banner_url"),
   colorTheme: text("color_theme").default("professional"),
   fontStyle: text("font_style").default("modern"),
-  branding_color_palette_id: text("branding_color_palette_id"),
-  branding_font_family_id: text("branding_font_family_id"),
+  colorPaletteID: text("color_palette_id"),
+  fontstyleID: text("fontstyle_id"),
   
   
   // Element visibility
@@ -101,7 +102,6 @@ export type RegistrationField = typeof registrationFields.$inferSelect;
 export type InsertRegistrationField = z.infer<typeof insertRegistrationFieldSchema>;
 
 // Wizard data types
-export type EventTemplate = 'professional' | 'workshop' | 'social' | 'webinar';
 export type EventType = 'physical' | 'virtual' | 'hybrid';
 export type ColorTheme = 'professional' | 'ocean' | 'sunset' | 'forest';
 export type FontStyle = 'modern' | 'classic' | 'minimal' | 'creative' | 'elegant';
@@ -126,7 +126,8 @@ export interface Ticket {
 
 export interface EventWizardData {
   currentStep: number;
-  template: EventTemplate;
+  template: string;
+  templateID: string;
   event: {
     name: string;
     description: string;
@@ -146,9 +147,9 @@ export interface EventWizardData {
   };
   branding: {
     logoUrl?: string;
-   bannerUrl?: string;
-    branding_color_palette_id?: string;
-    branding_font_family_id?: string;
+    bannerUrl?: string;
+    colorPaletteID?: string;
+    fontstyleID?: string;
     colorTheme: ColorTheme;
     fontStyle: FontStyle;
     themeGradient?: string;

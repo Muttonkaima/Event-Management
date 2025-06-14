@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, ReactNode } from 'react';
-import { EventWizardData, EventTemplate, SessionData } from '@/shared/eventSchema';
+import { EventWizardData, SessionData } from '@/shared/eventSchema';
 
 // Initial state
 const initialState: EventWizardData = {
@@ -62,7 +62,8 @@ const initialState: EventWizardData = {
 // Action types
 type EventWizardAction =
   | { type: 'SET_STEP'; payload: number }
-  | { type: 'SET_TEMPLATE'; payload: EventTemplate }
+  | { type: 'SET_TEMPLATE'; payload: string }
+  | { type: 'SET_TEMPLATE_ID'; payload: string }
   | { type: 'UPDATE_EVENT'; payload: Partial<EventWizardData['event']> }
   | { type: 'UPDATE_BRANDING'; payload: Partial<EventWizardData['branding']> }
   | { type: 'UPDATE_VISIBILITY'; payload: Partial<EventWizardData['branding']['visibility']> }
@@ -84,6 +85,8 @@ function eventWizardReducer(state: EventWizardData, action: EventWizardAction): 
     case 'SET_TEMPLATE':
       return { ...state, template: action.payload };
     
+    case 'SET_TEMPLATE_ID':
+      return { ...state, templateID: action.payload };
     case 'UPDATE_EVENT':
       return {
         ...state,
@@ -174,7 +177,8 @@ interface EventWizardContextType {
   dispatch: React.Dispatch<EventWizardAction>;
   actions: {
     setStep: (step: number) => void;
-    setTemplate: (template: EventTemplate) => void;
+    setTemplate: (template: string) => void;
+    setTemplateID: (templateID: string) => void;
     updateEvent: (data: Partial<EventWizardData['event']>) => void;
     updateBranding: (data: Partial<EventWizardData['branding']>) => void;
     updateVisibility: (data: Partial<EventWizardData['branding']['visibility']>) => void;
@@ -201,7 +205,8 @@ export function EventWizardProvider({ children }: EventWizardProviderProps) {
 
   const actions = {
     setStep: (step: number) => dispatch({ type: 'SET_STEP', payload: step }),
-    setTemplate: (template: EventTemplate) => dispatch({ type: 'SET_TEMPLATE', payload: template }),
+    setTemplate: (template: string) => dispatch({ type: 'SET_TEMPLATE', payload: template }),
+    setTemplateID: (templateID: string) => dispatch({ type: 'SET_TEMPLATE_ID', payload: templateID }),
     updateEvent: (data: Partial<EventWizardData['event']>) => dispatch({ type: 'UPDATE_EVENT', payload: data }),
     updateBranding: (data: Partial<EventWizardData['branding']>) => dispatch({ type: 'UPDATE_BRANDING', payload: data }),
     updateVisibility: (data: Partial<EventWizardData['branding']['visibility']>) => dispatch({ type: 'UPDATE_VISIBILITY', payload: data }),

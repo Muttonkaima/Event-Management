@@ -164,7 +164,11 @@ export function LivePreview() {
                   <div className="flex items-start space-x-2">
                     <MapPin className="w-4 h-4 text-primary mt-1" />
                     <div>
-                      <p className="text-sm font-medium">Location</p>
+                    {event.eventType === 'virtual' ? (
+                       <p className="text-lg font-semibold mb-3 text-white">Meeting Link</p>
+                      ) : (
+                        <p className="text-lg font-semibold mb-3 text-white">Location</p>
+                      )}
                       <p className="text-sm opacity-75">{locationText}</p>
                     </div>
                   </div>
