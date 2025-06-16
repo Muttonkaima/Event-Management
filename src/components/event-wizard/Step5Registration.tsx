@@ -99,6 +99,7 @@ export function Step5Registration() {
     URL.revokeObjectURL(url);
   };
 
+  
   const handleComplete = async () => {
     if (validateForm()) {
       // Save tickets to registration
@@ -226,7 +227,7 @@ export function Step5Registration() {
       try {
         await createEvent(formData);
         alert('🎉 Event setup completed and sent to server! Your event data has been downloaded.');
-        router.push('/events');
+        // router.push('/events');
       } catch (err: any) {
         alert('Event data download succeeded, but sending to server failed: ' + (err?.message || err));
       }

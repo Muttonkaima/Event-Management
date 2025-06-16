@@ -66,23 +66,39 @@ export function del(url: string, options: RequestOptions = {}) {
 /**
  * Upload service to send image(s) + text data as multipart/form-data
  * @param url - API endpoint (relative to base URL)
- * @param data - object containing File(s) + other text fields
+ * @param data - FormData object or plain object to be converted
  */
-export async function upload(url: string, data: Record<string, any>) {
+export async function upload(url: string, data: Record<string, any> | FormData) {
   try {
-    const formData = new FormData();
+    let formData: FormData;
 
-    for (const key in data) {
-      if (Array.isArray(data[key])) {
-        data[key].forEach((item: File | string) => formData.append(key, item));
-      } else {
-        formData.append(key, data[key]);
+    if (data instanceof FormData) {
+      // Already FormData (skip conversion)
+      formData = data;
+    } else {
+      // Convert plain object to FormData
+      formData = new FormData();
+      for (const key in data) {
+        const value = data[key];
+        if (Array.isArray(value)) {
+          value.forEach((item) => formData.append(key, item));
+        } else {
+          formData.append(key, value);
+        }
       }
+    }
+
+    // ✅ Get token from localStorage (if available)
+    let token: string | null = null;
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("token");
+      if (token) token = token.trim().replace(/^"|"$/g, "");
     }
 
     const res = await axiosInstance.post(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
 
@@ -93,5 +109,7 @@ export async function upload(url: string, data: Record<string, any>) {
     throw new Error(message);
   }
 }
+
+
 
 export { request };

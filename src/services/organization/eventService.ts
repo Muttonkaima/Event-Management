@@ -1,4 +1,4 @@
-import { get, post } from '@/services/controllerServices';
+import { get, post, upload } from '@/services/controllerServices';
 
 export async function getEventTemplates() {
   try {
@@ -33,7 +33,7 @@ export async function getFontStyles() {
 
 export async function createEvent(data: any) {
   try {
-    const response = await post('/organization/create-event', data);
+    const response = await upload('/organization/create-event', data);
     console.log('create event response----',response)
     return response; // returns the array of templates
   } catch (err: any) {
