@@ -52,10 +52,21 @@ export default async function EventOverview({ params }: PageProps) {
 
   // Sessions: from event.sessions_id (array of session objects) or []
   const sessions = event.sessions_id || [];
-
+  const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL;
   // Banner and logo images
-  const bannerImage = event.branding_id?.branding_banner || event.event_template_design_id?.image || event.branding_id?.branding_logo;
-  const logoImage = event.branding_id?.branding_logo || event.event_template_design_id?.image;
+  const bannerImage = event.branding_id?.branding_banner
+  ? `${ASSETS_URL}${event.branding_id.branding_banner}`
+  : event.event_template_design_id?.image
+    ? `${ASSETS_URL}${event.event_template_design_id.image}`
+    : event.branding_id?.branding_logo
+      ? `${ASSETS_URL}${event.branding_id.branding_logo}`
+      : '';
+
+const logoImage = event.branding_id?.branding_logo
+  ? `${ASSETS_URL}${event.branding_id.branding_logo}`
+  : event.event_template_design_id?.image
+    ? `${ASSETS_URL}${event.event_template_design_id.image}`
+    : '';
 
   // Registration progress: attendee count over limit
   const attendeeCount = Array.isArray(event.registration?.attendees) ? event.registration.attendees.length : 0;
@@ -177,7 +188,7 @@ export default async function EventOverview({ params }: PageProps) {
         
         <div className="relative container mx-auto px-4 h-full flex items-end pb-8">
           <div className="flex flex-col md:flex-row items-start md:items-end gap-6 w-full">
-            <div className="relative mt-16 w-32 h-32 md:w-36 md:h-36 rounded-2xl border-4 border-background bg-card shadow-xl overflow-hidden">
+            <div className="relative mt-16 w-32 h-32 md:w-36 md:h-36 rounded-2xl border-4 border-background bg-card shadow-xl overflow-hidden hidden md:block">
               {logoImage ? (
                 <Image
                   src={logoImage}
@@ -189,7 +200,7 @@ export default async function EventOverview({ params }: PageProps) {
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
                   <span className="text-4xl font-bold text-white/80">
-                    {event.name.charAt(0).toUpperCase()}
+                    {event.event_name.charAt(0).toUpperCase()}
                   </span>
                 </div>
               )}
@@ -222,7 +233,7 @@ export default async function EventOverview({ params }: PageProps) {
               </div>
               
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-                {event.name}
+                {event.event_name}
               </h1>
               
               {event.description && (
@@ -315,17 +326,17 @@ export default async function EventOverview({ params }: PageProps) {
               {sessions.length > 0 ? (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {sessions.slice(0, 3).map((session: any) => (
-                    <Card key={session.id} className="overflow-hidden shadow-lg bg-transparent rounded-2xl">
+                    <Card key={session._id} className="overflow-hidden shadow-lg bg-transparent rounded-2xl">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-start">
                           <div>
-                            <CardTitle className="text-lg text-gray-900">{session.title}</CardTitle> <br />
+                            <CardTitle className="text-lg text-gray-900">{session.session_title}</CardTitle> <br />
                             <p className="text-sm text-gray-700">
-                             Start time: {session.startTime} <br />
+                             Start time: {session.session_start_time} <br />
                              Duration: {session.duration} minutes
                             </p>
                             <p className="text-sm text-gray-700 line-clamp-2">
-                          {session.description || 'No description available'}
+                          {session.session_description || 'No description available'}
                         </p>
                           </div>
                           <Badge variant="outline" className="text-gray-500">
@@ -335,13 +346,13 @@ export default async function EventOverview({ params }: PageProps) {
                       </CardHeader>
                       <CardContent>
                         
-                        {session.speaker && (
+                        {session.speaker_name && (
                           <div className="mt-3 flex items-center">
                             <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-medium">
-                              {session.speaker.split(' ').filter(Boolean).map((n: string) => n[0]).join('')}
+                              {session.speaker_name.split(' ').filter(Boolean).map((n: string) => n[0]).join('')}
                             </div>
                             <div className="ml-2">
-                              <p className="text-sm font-bold text-gray-700">{session.speaker}</p>
+                              <p className="text-sm font-bold text-gray-700">{session.speaker_name}</p>
                             </div>
                           </div>
                         )}
@@ -377,7 +388,7 @@ export default async function EventOverview({ params }: PageProps) {
                     Quickly access important event management tools
                   </p>
                 </div>
-                <Link href={`/event-overview/${event.id}?tab=tools`}>
+                <Link href={`/event-overview/${event._id}?tab=tools`}>
                   <Button variant="ghost" size="sm" className="text-primary">
                     View all tools
                     <ArrowRight className="ml-1 h-4 w-4" />
