@@ -1,4 +1,6 @@
 import { useEventWizard } from '@/contexts/EventWizardContext';
+import { createEvent } from '@/services/organization/eventService';
+import { urlToFile } from '@/utils/urlToFile';
 import { ArrowLeft, Check, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +23,7 @@ type Ticket = {
 export function Step5Registration() {
   const router = useRouter();
   const { state, actions } = useEventWizard();
-  const { registration } = state;
+  const { registration, branding, event, template } = state;
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [limitAttendees, setLimitAttendees] = useState(!!registration.maxAttendees);
   const [tickets, setTickets] = useState<Ticket[]>(
@@ -97,7 +99,7 @@ export function Step5Registration() {
     URL.revokeObjectURL(url);
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (validateForm()) {
       // Save tickets to registration
       actions.updateRegistration({ tickets });
@@ -140,10 +142,94 @@ export function Step5Registration() {
       
       // Download the JSON file
       downloadJSON(eventData, filename);
-      
-      // Show success message and redirect
-      alert('🎉 Event setup completed successfully! Your event data has been downloaded.');
-      router.push('/events');
+
+      // Prepare FormData for API
+      const formData = new FormData();
+
+      // 1. Branding images: fetch files from URLs if present
+      try {
+        if (state.branding?.logoUrl) {
+          const logoFile = await urlToFile(state.branding.logoUrl, 'branding_logo' + (state.branding.logoUrl.split('.').pop() ? ('.' + state.branding.logoUrl.split('.').pop()) : ''));
+          formData.append('branding_logo', logoFile);
+        }
+      } catch (err) {
+        console.warn('Could not fetch logo file from URL:', err);
+      }
+      try {
+        if (state.branding?.bannerUrl) {
+          const bannerFile = await urlToFile(state.branding.bannerUrl, 'branding_banner' + (state.branding.bannerUrl.split('.').pop() ? ('.' + state.branding.bannerUrl.split('.').pop()) : ''));
+          formData.append('branding_banner', bannerFile);
+        }
+      } catch (err) {
+        console.warn('Could not fetch banner file from URL:', err);
+      }
+
+      // 2. Template ID
+      formData.append('template', state.templateID || '');
+
+      // 3. Event JSON (map state.event to required keys)
+      formData.append('event', JSON.stringify({
+        name: event.name,
+        description: event.description,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        timezone: event.timezone,
+        eventType: event.eventType,
+        address: event.address,
+        city: event.city,
+        state: event.state,
+        country: event.country,
+        zipCode: event.zipCode,
+        meetingLink: event.meetingLink || ''
+      }));
+
+      // 4. Branding JSON (map to required keys)
+      formData.append('branding', JSON.stringify({
+        colorTheme: branding.colorPaletteID || branding.colorTheme,
+        fontStyle: branding.fontstyleID || branding.fontStyle,
+        visibility: branding.visibility
+      }));
+
+      // 5. Sessions JSON
+      formData.append('sessions', JSON.stringify(state.sessions?.map(s => ({
+        title: s.title,
+        speaker: s.speaker,
+        startTime: s.startTime,
+        duration: s.duration,
+        description: s.description,
+        tags: s.tags
+      })) || []));
+
+      // 6. Registration JSON (map to required keys)
+      formData.append('registration', JSON.stringify({
+        registrationOpen: registration.registrationOpen,
+        registrationClose: registration.registrationClose,
+        updateDeadline: registration.updateDeadline,
+        confirmationEmail: registration.confirmationEmail,
+        termsConditions: registration.termsConditions,
+        maxAttendees: registration.maxAttendees,
+        attendee_limit_enabled: registration.limitAttendees || false,
+        tickets: (registration.tickets || []).map((t: any) => ({
+          name: t.name,
+          type: t.type,
+          ...(t.type === 'paid' ? { price: t.price, currency: t.currency } : {})
+        }))
+      }));
+
+      // 7. Tickets JSON (if you want to send tickets separately)
+      formData.append('tickets', JSON.stringify((registration.tickets || []).map((t: any) => ({
+        name: t.name,
+        type: t.type,
+        ...(t.type === 'paid' ? { price: t.price, currency: t.currency } : {})
+      }))));
+
+      try {
+        await createEvent(formData);
+        alert('🎉 Event setup completed and sent to server! Your event data has been downloaded.');
+        router.push('/events');
+      } catch (err: any) {
+        alert('Event data download succeeded, but sending to server failed: ' + (err?.message || err));
+      }
     }
   };
 

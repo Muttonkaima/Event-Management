@@ -1,4 +1,4 @@
-import { get } from '@/services/controllerServices';
+import { get, post } from '@/services/controllerServices';
 
 export async function getEventTemplates() {
   try {
@@ -28,5 +28,15 @@ export async function getFontStyles() {
     return response; // returns the array of templates
   } catch (err: any) {
     throw new Error(err.message || 'Failed to fetch font styles');
+  }
+}
+
+export async function createEvent(data: any) {
+  try {
+    const response = await post('/organization/create-event', data);
+    console.log('create event response----',response)
+    return response; // returns the array of templates
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to create event');
   }
 }

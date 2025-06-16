@@ -1,0 +1,92 @@
+{
+    "currentStep": 5,
+    "template": "Social Gathering",
+    "templateImage": "/images/image1.jpg",
+    "event": {
+      "name": "SJBIT Cultural Event",
+      "description": "All branches perform",
+      "startDate": "2025-06-17T10:00",
+      "endDate": "2025-06-18T10:00",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "timezone": "UTC",
+      "eventType": "physical",
+      "address": "Uttarhalli main road, Kengeri",
+      "city": "Bangalore Urban",
+      "state": "Karnataka",
+      "country": "India",
+      "zipCode": "560060",
+      "meetingLink": "",
+      "templateImage": "/images/image1.jpg"
+    },
+    "branding": {
+      "colorTheme": "sunset",
+      "fontStyle": "font-serif",
+      "visibility": {
+        "showLogo": true,
+        "showBanner": true,
+        "showDescription": true,
+        "showSchedule": true,
+        "showSpeakers": true,
+        "showLocation": true,
+        "showRegistration": true
+      },
+      "colorPaletteID": "684c040bd5e3216569beba4e",
+      "fontstyleID": "684be5f8d5e3216569beba48",
+      "bannerUrl": "/uploads/upload-1750052522960.png",
+      "themeGradient": "from-orange-900 to-red-300",
+      "sidebarGradient": "bg-red-900",
+      "buttonGradient": "bg-yellow-500",
+      "logoUrl": "/uploads/upload-1750052469487.png"
+    },
+    "sessions": [
+      {
+        "title": "welcome song",
+        "speaker": "Modi",
+        "startTime": "10:00",
+        "duration": 30,
+        "description": "Modi welcomes guest",
+        "tags": [
+          "keynote",
+          "panel"
+        ],
+        "id": 1750052551742
+      },
+      {
+        "title": "Speech about event",
+        "speaker": "Rahul gandhi",
+        "startTime": "10:30",
+        "duration": 30,
+        "description": "Rahul speaks about the evnt",
+        "tags": [
+          "workshop",
+          "networking"
+        ],
+        "id": 1750052597809
+      }
+    ],
+    "registration": {
+      "registrationOpen": "2025-06-16T17:00",
+      "registrationClose": "2025-06-16T23:43",
+      "confirmationEmail": "Thank you for registering for our event. We look forward to seeing you!",
+      "termsConditions": "By registering for this event, you agree to our terms and conditions.",
+      "updateDeadline": "2025-06-17T08:00",
+      "limitAttendees": true,
+      "maxAttendees": 99,
+      "tickets": [
+        {
+          "id": "1750052644879",
+          "name": "General",
+          "type": "free"
+        },
+        {
+          "id": "1750052649672",
+          "name": "VIP",
+          "type": "paid",
+          "price": 100,
+          "currency": "INR"
+        }
+      ]
+    },
+    "templateID": "684be89a7b248b523518bee9"
+  }
