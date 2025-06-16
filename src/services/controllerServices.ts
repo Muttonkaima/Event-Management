@@ -26,6 +26,8 @@ async function request(
     let token: string | null = null;
     if (typeof window !== 'undefined') {
       token = localStorage.getItem('token');
+
+      console.log('token from controleer----',token)
       if (token) token = token.trim().replace(/^"|"$/g, ''); // Remove whitespace and wrapping quotes
     }
     const config: AxiosRequestConfig = {

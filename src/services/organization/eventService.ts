@@ -50,3 +50,13 @@ export async function getAllEvents() {
     throw new Error(err.message || 'Failed to get events');
   }
 }
+
+export async function getEventById(id: string) {
+  try {
+    const response = await get(`/organization/get-event-by-id/${id}`);
+    console.log('get event by id response----',response)
+    return response; // returns the array of templates
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get event by id');
+  }
+}

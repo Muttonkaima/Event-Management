@@ -10,19 +10,13 @@ import ToolCard from "@/components/event-dashboard/tool-card";
 import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
 import { notFound } from 'next/navigation';
-import { adaptEvents, Event } from '@/app/events/events';
-import rawEvents from '@/data/events.json';
+import { getEventById } from '@/services/organization/eventService';
 import Image from 'next/image';
 import AnalyticsClientWrapper from '@/components/event-dashboard/analytics-client-wrapper';
 import { PlusCircle } from 'lucide-react';
 import ShareLinkButton from '@/components/event-dashboard/shareButton';
 
-export async function generateStaticParams() {
-  const eventsData: Event[] = adaptEvents(rawEvents);
-  return eventsData.map((event: Event) => ({
-    id: event.id,
-  }));
-}
+
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -45,26 +39,30 @@ const staggerContainer = {
 };
 
 export default async function EventOverview({ params }: PageProps) {
+
   // Await the params promise
   const { id } = await params;
 
-  // Find the event with the matching ID
-  const eventsData: Event[] = adaptEvents(rawEvents);
-  const event = eventsData.find((e) => e.id === id);
-
-  if (!event) {
+  // Fetch event from API
+  const response = await getEventById(id);
+  if (!response?.success || !response.data) {
     notFound();
   }
+  const event = response.data;
 
-  // Initialize sessions with empty array if undefined
-  const sessions = event.sessions || [];
+  // Sessions: from event.sessions_id (array of session objects) or []
+  const sessions = event.sessions_id || [];
 
-  // Get banner or template image
-  const bannerImage = event.branding?.bannerUrl || event.image || event.branding?.logoUrl;
-  const logoImage = event.branding?.logoUrl || event.image;
-  
-  // Calculate registration progress
-  const registrationProgress = Math.min(Math.round((event.attendees / (event.registration?.maxAttendees || 100)) * 100), 100);
+  // Banner and logo images
+  const bannerImage = event.branding_id?.branding_banner || event.event_template_design_id?.image || event.branding_id?.branding_logo;
+  const logoImage = event.branding_id?.branding_logo || event.event_template_design_id?.image;
+
+  // Registration progress: attendee count over limit
+  const attendeeCount = Array.isArray(event.registration?.attendees) ? event.registration.attendees.length : 0;
+  const registrationProgress = Math.min(
+    Math.round((attendeeCount / (event.attendee_limit || 100)) * 100),
+    100
+  );
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -159,7 +157,7 @@ export default async function EventOverview({ params }: PageProps) {
   ];
 
   return (
-    <OverviewLayout title={event.name}>
+    <OverviewLayout title={event.event_name}>
     <div className="min-h-screen bg-transparent">
       {/* Hero Section */}
       <div className="relative h-72 overflow-hidden rounded-2xl">
@@ -202,21 +200,21 @@ export default async function EventOverview({ params }: PageProps) {
                 <div className="w-fit">
                   <Badge className={cn(
                     "px-3 py-1 text-xs md:text-sm md:py-1.5 font-medium whitespace-nowrap",
-                    getStatusBadgeVariant(event.status)
+                    getStatusBadgeVariant(event.status || 'upcoming')
                   )}>
-                    {getStatusText(event.status)}
+                    {getStatusText(event.status || 'upcoming')}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-white flex-wrap">
                   <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-md">
                     <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span className="whitespace-nowrap text-xs sm:text-sm">{formatDate(event.date.start)}</span>
+                    <span className="whitespace-nowrap text-xs sm:text-sm">{formatDate(event.start_datetime)}</span>
                   </div>
-                  {event.location && (
+                  {event.address && (
                     <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-md">
                       <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
                       <span className="text-xs sm:text-sm line-clamp-1">
-                        {event.location.name}, {event.location.city}
+                        {event.address}, {event.state}
                       </span>
                     </div>
                   )}
@@ -316,7 +314,7 @@ export default async function EventOverview({ params }: PageProps) {
               </div>
               {sessions.length > 0 ? (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {sessions.slice(0, 3).map((session) => (
+                  {sessions.slice(0, 3).map((session: any) => (
                     <Card key={session.id} className="overflow-hidden shadow-lg bg-transparent rounded-2xl">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-start">

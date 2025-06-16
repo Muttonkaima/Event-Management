@@ -1,23 +1,20 @@
 import { Metadata, ResolvingMetadata } from 'next';
-import { adaptEvents, Event } from '@/app/events/events';
-import rawEvents from '@/data/events.json';
+import { getEventById } from '@/services/organization/eventService';
 
 export async function generateMetadata(
   { params }: { params: { id: string } },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  // Find the event with the matching ID
-  const eventsData: Event[] = adaptEvents(rawEvents);
-  const event = eventsData.find((e) => e.id === params.id);
-
-  if (!event) {
+  // Fetch event from API
+  const response = await getEventById(params.id);
+  if (!response?.success || !response.data) {
     return {
       title: 'Event Not Found',
     };
   }
-
+  const event = response.data;
   return {
-    title: `${event.name} | Event Overview`,
+    title: `${event.event_name} | Event Overview`,
     description: event.description,
   };
 }
