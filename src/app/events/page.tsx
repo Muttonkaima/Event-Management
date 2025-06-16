@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { FiSearch, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
 import Link from 'next/link';
-import { adaptEvents, Event } from './events';
-import rawEvents from '@/data/events.json';
+import { Event } from './events';
+import { adaptEventsFromDB } from './eventsAdapter';
+import { getAllEvents } from '@/services/organization/eventService';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import Image from 'next/image';
 type ViewMode = 'grid' | 'list';
@@ -18,9 +19,30 @@ export default function EventsPage() {
   const [dateFilter, setDateFilter] = useState('All Dates');
   const [locationFilter, setLocationFilter] = useState('All Locations');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [eventsData, setEventsData] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Adapt events.json to Event[]
-  const eventsData: Event[] = adaptEvents(rawEvents);
+  // Fetch events from backend on mount
+  React.useEffect(() => {
+    async function fetchEvents() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await getAllEvents();
+        console.log('Raw getAllEvents response:', res);
+        const apiEvents = res?.data || [];
+        const adapted = adaptEventsFromDB(apiEvents);
+        console.log('Adapted events:', adapted);
+        setEventsData(adapted);
+      } catch (err: any) {
+        setError(err?.message || 'Failed to fetch events');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEvents();
+  }, []);
 
   // Get unique categories, locations for filters
   const categories = ['All Categories', ...new Set(eventsData.map((event: Event) => event.category))];
@@ -50,6 +72,24 @@ export default function EventsPage() {
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
+  if (loading) {
+    return (
+      <DashboardLayout title="Events">
+        <div className="flex justify-center items-center min-h-[300px]">
+          <span className="text-gray-600 text-lg">Loading events...</span>
+        </div>
+      </DashboardLayout>
+    );
+  }
+  if (error) {
+    return (
+      <DashboardLayout title="Events">
+        <div className="flex justify-center items-center min-h-[300px]">
+          <span className="text-red-500 text-lg">{error}</span>
+        </div>
+      </DashboardLayout>
+    );
+  }
   return (
     <DashboardLayout title="Events">
       <div className="container mx-auto px-2 py-2">
@@ -119,7 +159,7 @@ export default function EventsPage() {
               </div>
             </div>
 
-            <div className="relative">
+            {/* <div className="relative">
               <select
                 className="appearance-none pl-3 pr-8 py-2 text-gray-700 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                 value={dateFilter}
@@ -132,7 +172,7 @@ export default function EventsPage() {
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                 <FiChevronDown className="h-4 w-4 text-gray-700" />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -149,30 +189,30 @@ export default function EventsPage() {
                 className="block bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300"
               >
                 <div className="relative h-48">
-  <Image
-    src={event.image}
-    alt={event.name}
-    className="w-full h-full object-cover"
-    width={48}
-    height={48}
-  />
-  {event.branding?.visibility?.showLogo && event.branding?.logoUrl && (
-    <div className="absolute top-3 left-3 bg-white rounded-full p-1 shadow-md">
-      <Image src={event.branding.logoUrl} alt={event.name + ' logo'} width={48} height={48} className="rounded-full object-cover" />
-    </div>
-  )}
-  <div className="absolute top-3 right-3">
-    <span className={`px-3 py-1 rounded-full text-xs font-medium ${event.status === 'upcoming' ? 'bg-green-100 text-green-800' :
-      event.status === 'ongoing' ? 'bg-blue-100 text-blue-800' :
-        'bg-gray-100 text-gray-800'
-      }`}>
-      {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-    </span>
-  </div>
-</div>
-<div className="p-5">
-  <div className="flex justify-between items-start mb-2">
-    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{event.name}</h3>
+                  <Image
+                    src={event.image}
+                    alt={event.name}
+                    className="w-full h-full object-cover"
+                    width={48}
+                    height={48}
+                  />
+                  {event.branding?.visibility?.showLogo && event.branding?.logoUrl && (
+                    <div className="absolute top-3 left-3 bg-white rounded-full p-1 shadow-md">
+                      <Image src={event.branding.logoUrl} alt={event.name + ' logo'} width={48} height={48} className="rounded-full object-cover" />
+                    </div>
+                  )}
+                  <div className="absolute top-3 right-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${event.status === 'upcoming' ? 'bg-green-100 text-green-800' :
+                      event.status === 'ongoing' ? 'bg-blue-100 text-blue-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                      {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{event.name}</h3>
                   </div>
 
                   {event.branding?.visibility?.showDescription !== false && (
@@ -252,8 +292,8 @@ export default function EventsPage() {
                       )}
                       <div className="absolute top-2 right-2">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${event.status === 'upcoming' ? 'bg-green-100 text-green-800' :
-                            event.status === 'ongoing' ? 'bg-blue-100 text-blue-800' :
-                              'bg-gray-100 text-gray-800'
+                          event.status === 'ongoing' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800'
                           }`}>
                           {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
                         </span>

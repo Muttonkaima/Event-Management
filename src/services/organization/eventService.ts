@@ -40,3 +40,13 @@ export async function createEvent(data: any) {
     throw new Error(err.message || 'Failed to create event');
   }
 }
+
+export async function getAllEvents() {
+  try {
+    const response = await get('/organization/get-all-events');
+    console.log('get all events response----',response)
+    return response; // returns the array of templates
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get events');
+  }
+}
