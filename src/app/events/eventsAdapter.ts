@@ -39,7 +39,7 @@ export function adaptEventsFromDB(raw: any[]): Event[] {
       organizer: {
         name: 'Organizer', // Placeholder, update if organizer info available
         email: '',
-        avatar: branding.branding_logo || '',
+        avatar: `${ASSETS_URL}${branding.branding_logo}` || `${ASSETS_URL}${branding.branding_banner}` || '',
       },
       attendees: e.attendee_limit || 0,
       category: e.event_type || 'Other',
