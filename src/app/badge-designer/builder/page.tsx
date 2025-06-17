@@ -15,52 +15,128 @@ import { useToast } from '@/hooks/use-toast';
 export default function BadgeDesigner() {
   const [elements, setElements] = useState<BadgeElement[]>([
     {
-      id: 'element-1',
-      type: 'attendee-name',
-      x: 75,
-      y: 20,
-      width: 200,
-      height: 40,
-      content: 'Mithun Gowda H',
-      style: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        color: '#000000',
-        backgroundColor: 'transparent',
+      "id": "element-1750166580357",
+      "type": "qr-code",
+      "x": 400,
+      "y": 200,
+      "width": 89,
+      "height": 89,
+      "content": "QR",
+      "style": {
+        "fontSize": 20,
+        "fontWeight": "bold",
+        "textAlign": "center",
+        "color": "#000000",
+        "backgroundColor": "#F3F4F6",
+        "borderRadius": 4
       }
     },
     {
-      id: 'element-2',
-      type: 'qr-code',
-      x: 20,
-      y: 70,
-      width: 80,
-      height: 80,
-      content: 'QR',
-      style: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        color: '#000000',
-        backgroundColor: '#F3F4F6',
-        borderRadius: 4,
+      "id": "element-1750166661091",
+      "type": "event-logo",
+      "x": 12,
+      "y": 15.612503051757812,
+      "width": 60,
+      "height": 60,
+      "content": "",
+      "style": {
+        "backgroundColor": "#F3F4F6",
+        "borderRadius": 4,
+        "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSg1mYu4_3BOKxIdmpEbF7-9-jet9_RqOIWO1Pln_3tazUyIQh3L_5SNQ8aslOiax90b_4&usqp=CAU"
       }
     },
     {
-      id: 'element-3',
-      type: 'attendee-role',
-      x: 250,
-      y: 70,
-      width: 80,
-      height: 50,
-      content: 'VIP Attendee',
-      style: {
-        fontSize: 14,
-        fontWeight: 'medium',
-        textAlign: 'right',
-        color: '#2563EB',
-        backgroundColor: 'transparent',
+      "id": "element-1750166688734",
+      "type": "attendee-name",
+      "x": 140,
+      "y": 18.612503051757812,
+      "width": 200,
+      "height": 40,
+      "content": "SJBIT CULTURAL EVENT",
+      "style": {
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "textAlign": "center",
+        "color": "#000000",
+        "backgroundColor": "transparent"
+      }
+    },
+    {
+      "id": "element-1750166742091",
+      "type": "event-location",
+      "x": 175,
+      "y": 52.61250305175781,
+      "width": 150,
+      "height": 30,
+      "content": "Uttarahalli Main Road, Kengeri",
+      "style": {
+        "fontSize": 11,
+        "fontWeight": "normal",
+        "textAlign": "left",
+        "color": "#6B7280",
+        "backgroundColor": "transparent"
+      }
+    },
+    {
+      "id": "element-1750166781573",
+      "type": "attendee-photo",
+      "x": 16,
+      "y": 112.61250305175781,
+      "width": 80,
+      "height": 80,
+      "content": "",
+      "style": {
+        "backgroundColor": "#F3F4F6",
+        "borderRadius": 4,
+        "imageUrl": "/uploads/upload-1750166892392.jpg"
+      }
+    },
+    {
+      "id": "element-1750166796945",
+      "type": "attendee-name",
+      "x": 146,
+      "y": 110.61250305175781,
+      "width": 200,
+      "height": 40,
+      "content": "Mithun Gowda H",
+      "style": {
+        "fontSize": 18,
+        "fontWeight": "bold",
+        "textAlign": "center",
+        "color": "#000000",
+        "backgroundColor": "transparent"
+      }
+    },
+    {
+      "id": "element-1750166814444",
+      "type": "attendee-role",
+      "x": 149,
+      "y": 152.6125030517578,
+      "width": 120,
+      "height": 30,
+      "content": "Student",
+      "style": {
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "textAlign": "left",
+        "color": "#2563EB",
+        "backgroundColor": "transparent"
+      }
+    },
+    {
+      "id": "element-1750166847055",
+      "type": "event-date",
+      "x": 149,
+      "y": 187.6125030517578,
+      "width": 150,
+      "height": 30,
+      "content": "20 June, 2025",
+      "style": {
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "textAlign": "left",
+        "color": "#000000",
+        "backgroundColor": "transparent"
       }
     }
   ]);
