@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Form, FormField, FieldType } from '@/shared/formSchema';
+import { Form, FormField, FieldType, ValidationOptions } from '@/shared/formSchema';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 
 interface FormBuilderState {
@@ -82,24 +82,34 @@ export const useFormBuilderStore = create<FormBuilderState & FormBuilderActions>
       order: get().fields.length + 1,
     };
 
-    const isTextOrTextarea = ['text', 'textarea', 'number', 'phone'].includes(fieldType);
+    const isTextOrTextarea = ['text', 'textarea', 'number'].includes(fieldType);
     const isFile = fieldType === 'file';
+
+    // Generate initial validation object
+    let validation: ValidationOptions | undefined;
     
+    if (isTextOrTextarea) {
+      const initialPattern = '^[a-zA-Z\\s0-9]*$';
+      validation = {
+        allowText: true,
+        allowNumbers: true,
+        allowSpecialChars: false,
+        pattern: initialPattern
+      };
+    } else if (isFile) {
+      validation = {
+        fileTypes: [],
+        maxFileSize: undefined
+      };
+    }
+
     const field: FormField = {
       ...baseField,
       type: fieldType,
       ...(fieldType === 'select' || fieldType === 'radio' 
         ? { options: ['Option 1', 'Option 2'] } 
         : {}),
-      validation: isTextOrTextarea ? {
-        allowText: true,
-        allowNumbers: true,
-        allowSpecialChars: false,
-        pattern: ''
-      } : isFile ? {
-        fileTypes: [],
-        maxFileSize: undefined
-      } : undefined
+      validation: validation ? { ...validation } : undefined
     };
 
     set((state) => ({

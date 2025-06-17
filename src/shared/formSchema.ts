@@ -6,9 +6,9 @@ export interface ValidationOptions {
   allowText?: boolean;
   allowNumbers?: boolean;
   allowSpecialChars?: boolean;
-  pattern?: string;
   fileTypes?: string[];
   maxFileSize?: number; // in KB
+  pattern?: string;
 }
 
 export interface FormField {

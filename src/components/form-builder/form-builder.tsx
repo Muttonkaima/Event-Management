@@ -28,14 +28,31 @@ export default function FormBuilder() {
       const formJSON = {
         title: form.title,
         description: form.description,
-        fields: fields.map(f => ({
-          type: f.type,
-          label: f.label,
-          placeholder: f.placeholder,
-          helpText: f.helpText,
-          required: f.required,
-          options: f.options,
-        }))
+        fields: fields.map(f => {
+          const fieldData: any = {
+            type: f.type,
+            label: f.label,
+            placeholder: f.placeholder,
+            helpText: f.helpText,
+            required: f.required,
+            options: f.options
+          };
+
+          // For file fields, include accept attribute instead of pattern
+          if (f.type === 'file' && f.validation?.fileTypes && f.validation.fileTypes.length > 0) {
+            fieldData.validation = {
+              accept: f.validation.fileTypes.join(',')
+            };
+          } 
+          // For other field types that support pattern validation
+          else if (['text', 'number', 'textarea'].includes(f.type) && f.validation?.pattern) {
+            fieldData.validation = {
+              pattern: f.validation.pattern
+            };
+          }
+          
+          return fieldData;
+        })
       };
       downloadJSON(formJSON, `${(form.title||'form').replace(/\s+/g,'_').toLowerCase()}.json`);
     } catch (error) {

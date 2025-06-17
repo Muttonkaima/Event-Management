@@ -30,90 +30,44 @@ export default function PropertiesPanel() {
     updateOption
   } = useFormBuilderStore();
 
-  const selectedField = getSelectedField();
-  const isSelectOrRadio = selectedField?.type === 'select' || selectedField?.type === 'radio';
-  const isCheckbox = selectedField?.type === 'checkbox';
-  const isTextOrTextarea = selectedField && (
-    selectedField.type === 'text' || 
-    selectedField.type === 'textarea' || 
-    selectedField.type === 'number'
+  const selectedField = useFormBuilderStore((state) =>
+    state.fields.find((field) => field.id === state.selectedFieldId)
   );
-  const isFile = selectedField?.type === 'file';
-  const showValidation = selectedField && !['select', 'radio', 'checkbox', 'date', 'email'].includes(selectedField.type);
 
-  // Initialize validation state with defaults
+  // Calculate derived values without conditional hooks
+  const fieldType = selectedField?.type;
+  const isTextOrTextarea = fieldType === 'text' || fieldType === 'textarea' || fieldType === 'number';
+  const isFile = fieldType === 'file';
+  const showValidation = selectedField && !['select', 'radio', 'checkbox', 'date', 'email'].includes(fieldType || '');
+
+  // Initialize validation state with default values
   const [validation, setValidation] = useState<ValidationState>({
-    minLength: undefined,
-    maxLength: undefined,
     allowText: true,
     allowNumbers: true,
     allowSpecialChars: false,
+    minLength: undefined,
+    maxLength: undefined,
     fileTypes: [],
     maxFileSize: undefined,
     pattern: ''
   });
 
-  // Combined effect for handling validation and field updates
+  // Update validation state when selected field changes
   useEffect(() => {
-    if (!selectedField) {
-      setValidation({
-        minLength: undefined,
-        maxLength: undefined,
-        allowText: true,
-        allowNumbers: true,
-        allowSpecialChars: false,
-        fileTypes: [],
-        maxFileSize: undefined,
-        pattern: ''
-      });
-      return;
-    }
-
-    // Update local validation state when selected field changes
+    if (!selectedField) return;
+    
     const fieldValidation = selectedField.validation || {};
-    setValidation(prev => ({
-      ...prev,
-      ...fieldValidation,
+    setValidation({
+      allowText: fieldValidation.allowText ?? true,
+      allowNumbers: fieldValidation.allowNumbers ?? true,
+      allowSpecialChars: fieldValidation.allowSpecialChars ?? false,
+      minLength: fieldValidation.minLength,
+      maxLength: fieldValidation.maxLength,
       fileTypes: fieldValidation.fileTypes || [],
+      maxFileSize: fieldValidation.maxFileSize,
       pattern: fieldValidation.pattern || ''
-    }));
-
-    // Skip pattern generation if not needed
-    if (!showValidation) return;
-    
-    let pattern = '';
-    
-    if (isTextOrTextarea) {
-      // Build regex pattern based on selected options
-      const parts = [];
-      if (fieldValidation.allowText ?? true) parts.push('a-zA-Z\\s');
-      if (fieldValidation.allowNumbers ?? true) parts.push('0-9');
-      if (fieldValidation.allowSpecialChars) {
-        // Special characters that need to be escaped in regex
-        parts.push('!@#$%^&*()_+\\-=\\[\\]{};:\\' + "'" + '\\"\\\\|,.<>/?`~');
-      }
-      
-      if (parts.length > 0) {
-        pattern = `^[${parts.join('')}]+$`;
-      }
-      
-      const min = fieldValidation.minLength;
-      const max = fieldValidation.maxLength;
-      
-      if (min !== undefined || max !== undefined) {
-        const minStr = min?.toString() || '0';
-        const maxStr = max?.toString() || '';
-        pattern = `^[${parts.join('')}]{${minStr},${maxStr}}$`;
-      }
-    }
-    
-    // Only update if there are actual changes to avoid infinite loops
-    if (pattern !== fieldValidation.pattern) {
-      updateField(selectedField.id, { 
-        validation: { ...fieldValidation, pattern } 
-      });
-    }
-  }, [selectedField?.id, showValidation, isTextOrTextarea]);
+    });
+  }, [selectedField?.id]);
 
   if (!selectedField) {
     return (
@@ -129,24 +83,52 @@ export default function PropertiesPanel() {
       </div>
     );
   }
-
+  
   const handleValidationChange = (updates: Partial<ValidationState>) => {
-    setValidation(prev => ({
-      ...prev,
+    const updated = {
+      ...validation,
       ...updates
-    }));
-    
-    // Only update the field if we have a selected field and the updates are valid
-    if (selectedField) {
-      const fieldValidation = selectedField.validation || {};
-      const newValidation = { ...fieldValidation, ...updates };
-      
-      // Only update if there are actual changes to avoid infinite loops
-      if (JSON.stringify(fieldValidation) !== JSON.stringify(newValidation)) {
-        updateField(selectedField.id, { validation: newValidation });
+    };
+  
+    // Generate the new pattern right here
+    const generatePattern = (val: typeof validation) => {
+      if (!isTextOrTextarea) return '';
+  
+      const parts = [];
+      if (val.allowText) parts.push('a-zA-Z\\s');
+      if (val.allowNumbers) parts.push('0-9');
+      if (val.allowSpecialChars) {
+        parts.push('!@#$%^&*()_+\\-=\\[\\]{};:\\' + "'" + '\\"\\\\|,.<>/?`~');
       }
+  
+      if (parts.length === 0) return '';
+  
+      if (val.minLength || val.maxLength) {
+        return `^[${parts.join('')}]{${val.minLength || 0},${val.maxLength || ''}}$`;
+      }
+      return `^[${parts.join('')}]*$`;
+    };
+  
+    const newPattern = generatePattern(updated);
+  
+    // Update state
+    setValidation({
+      ...updated,
+      pattern: newPattern
+    });
+  
+    // Also update the field in the form store
+    if (selectedField) {
+      updateField(selectedField.id, {
+        validation: {
+          ...selectedField.validation,
+          ...updated,
+          pattern: newPattern
+        }
+      });
     }
   };
+  
   
   const handleFileTypeChange = (type: string, checked: boolean) => {
     const currentTypes = validation.fileTypes || [];
@@ -278,7 +260,7 @@ export default function PropertiesPanel() {
               )}
               
               {isFile && (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div>
                     <Label className="text-xs text-gray-500">Max File Size (KB)</Label>
                     <Input 
@@ -288,7 +270,8 @@ export default function PropertiesPanel() {
                       onChange={(e) => handleValidationChange({ 
                         maxFileSize: e.target.value ? parseInt(e.target.value) : undefined 
                       })}
-                      className="h-8 text-sm"
+                      className="h-8 text-sm mt-1"
+                      placeholder="e.g., 1024 (for 1MB)"
                     />
                   </div>
                   
@@ -310,6 +293,16 @@ export default function PropertiesPanel() {
                         </div>
                       ))}
                     </div>
+                    
+                    {/* Show the accept attribute preview */}
+                    {validation.fileTypes && validation.fileTypes.length > 0 && (
+                      <div className="mt-3 p-2 bg-gray-50 rounded border border-gray-200">
+                        <div className="text-xs text-gray-500 mb-1">Will be saved as:</div>
+                        <code className="text-xs break-all text-gray-500">
+                          accept="{validation.fileTypes.join(',')}"
+                        </code>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -385,3 +378,4 @@ export default function PropertiesPanel() {
     </div>
   );
 }
+
