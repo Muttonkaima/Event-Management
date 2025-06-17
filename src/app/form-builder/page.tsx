@@ -9,6 +9,8 @@ import FormCard from "@/components/form-builder/form-card";
 import FormPreview from "@/components/form-builder/form-preview";
 import { getAllRegistrationForms, deleteRegistrationForm } from "@/services/organization/eventService";
 import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
+import { useSearchParams } from 'next/navigation';
 
 interface FormData {
   _id: string;
@@ -29,6 +31,21 @@ export default function Dashboard() {
   const [selectedForm, setSelectedForm] = useState<any | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  
+    useEffect(() => {
+      if (searchParams.get('created') === '1') {
+        toast({
+          title: 'Success',
+          description: 'Badge template created successfully',
+          variant: 'default'
+        });
+        // Clean up the URL
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete('created');
+        window.history.replaceState({}, '', newUrl.toString());
+      }
+    }, [searchParams, toast]);
 
   useEffect(() => {
     const fetchForms = async () => {
@@ -92,6 +109,7 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout title="Forms">
+      <Toaster />
       <div className="max-w-6xl p-3">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>

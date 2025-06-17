@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { createBadge } from '@/services/organization/eventService';
+import { urlToFile } from '@/utils/urlToFile';
 import { ElementsSidebar } from '@/components/badge-designer/elements-sidebar';
 import { BadgeCanvas } from '@/components/badge-designer/badge-canvas';
 import { PropertiesPanel } from '@/components/badge-designer/properties-panel';
@@ -23,12 +26,9 @@ export default function BadgeDesigner() {
       "height": 89,
       "content": "QR",
       "style": {
-        "fontSize": 20,
-        "fontWeight": "bold",
-        "textAlign": "center",
-        "color": "#000000",
         "backgroundColor": "#F3F4F6",
-        "borderRadius": 4
+        "borderRadius": 4,
+        "imageUrl": "/images/qrcode.png"
       }
     },
     {
@@ -149,7 +149,7 @@ export default function BadgeDesigner() {
   const [badgeName, setBadgeName] = useState('My Badge');
   const [badgeDescription, setBadgeDescription] = useState('My Badge Description');
   const [formErrors, setFormErrors] = useState<{name?: string; description?: string}>({});
-
+  const router = useRouter();
   const { toast } = useToast();
 
   const selectedElement = elements.find(el => el.id === selectedElementId) || null;
@@ -168,33 +168,138 @@ export default function BadgeDesigner() {
       if (!validateForm()) {
         throw new Error('Validation failed');
       }
+
+      // Create form data
+      const formData = new FormData();
       
-      const badgeData = {
-        name: badgeName.trim(),
-        description: badgeDescription.trim(),
-        elements,
-        backgroundColor,
-        width,
-        height,
-        exportedAt: new Date().toISOString(),
-      };
-      
-      const blob = new Blob([JSON.stringify(badgeData, null, 2)], { 
-        type: 'application/json' 
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `badge-${badgeName.trim().toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
+      // Find all elements with images
+      const imageElements = elements.filter(el => 
+        ['attendee-photo', 'event-logo', 'qr-code'].includes(el.type) && 
+        el.style?.imageUrl
+      );
+      console.log("images in badge",imageElements);
+      // Generate a unique ID for this save operation to use in filenames
+      const saveId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+      let imageCounter = 0;
+
+      // Process and add images to form data using urlToFile utility
+      for (const element of imageElements) {
+        try {
+          const imgUrl = element.style?.imageUrl;
+          // Skip if no image URL or if it's a data URL
+          if (!imgUrl || imgUrl.startsWith('data:')) continue;
+          
+          // If url looks like a filename already, skip fetch but still keep the name
+          if (!/^https?:\/\//i.test(imgUrl) && !imgUrl.startsWith('/')) {
+            continue;
+          }
+
+          let filename: string;
+          let fetchUrl = imgUrl;
+          
+          // If relative path (e.g. /uploads/foo.png) make it absolute using current origin
+          if (!/^https?:\/\//i.test(imgUrl) && imgUrl.startsWith('/')) {
+            fetchUrl = window.location.origin + imgUrl;
+          }
+
+          try {
+            const urlObj = new URL(fetchUrl);
+            const pathnameName = urlObj.pathname.split('/').pop();
+            const extension = pathnameName?.includes('.') ? pathnameName.split('.').pop() : 'png';
+            filename = `badge-img-${saveId}-${imageCounter}.${extension || 'png'}`;
+            imageCounter++;
+          } catch {
+            filename = `badge-img-${saveId}-${imageCounter}.png`;
+            imageCounter++;
+          }
+          
+          // Convert URL to File object
+          const file = await urlToFile(fetchUrl, filename);
+          formData.append('images', file);
+          // Update the element's imageUrl to use the new filename
+          if (element.style) {
+            element.style.imageUrl = file.name;
+          }
+        } catch (error) {
+          console.error('Error processing image:', error);
+          continue;
+        }
+      }
+
+      // Prepare elements data (remove id and handle width for text elements)
+      const elementsForExport = elements.map(({ id, ...rest }) => ({
+        ...rest,
+        width: ['attendee-name', 'event-location', 'attendee-role', 'event-date'].includes(rest.type)
+          ? 'max-content'
+          : rest.width.toString()
+      }));
+
+      // Prepare elements data
+      const elementsData = elementsForExport.map(({ style, ...el }) => ({
+        ...el,
+        style: style ? JSON.parse(JSON.stringify(style)) : {}
+      }));
+
+      // Add fields directly to formData
+      formData.append('name', badgeName.trim());
+      formData.append('description', badgeDescription.trim());
+      formData.append('elements', JSON.stringify(elementsData));
+      formData.append('backgroundColor', backgroundColor);
+      formData.append('width', width.toString());
+      formData.append('height', height.toString());
+      formData.append('exportedAt', new Date().toISOString());
+
+      try {
+        console.log(
+          'Badge FormData contents:',
+          [...formData.entries()].map(([k, v]) => [k, v instanceof File ? v.name : v])
+        );
+        // Save to server
+        await createBadge(formData);
+        
+        // Create badge data object for JSON export
+        const badgeData = {
+          name: badgeName.trim(),
+          description: badgeDescription.trim(),
+          elements: elementsForExport,
+          backgroundColor,
+          width,
+          height,
+          exportedAt: new Date().toISOString(),
+        };
+        
+        // Download the JSON file for backup
+        const blob = new Blob([JSON.stringify(badgeData, null, 2)], { 
+          type: 'application/json' 
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `badge-${badgeName.trim().toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        return { success: true };
+      } catch (error) {
+        console.error('Error saving badge:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
-      toast({ title: 'Badge exported successfully!' });
+      toast({ 
+        title: 'Success',
+        description: 'Badge template created successfully',
+        variant: 'default'
+      });
+      router.push('/badge-designer');
     },
     onError: (error) => {
       if (error.message !== 'Validation failed') {
-        toast({ title: 'Failed to export badge', variant: 'destructive' });
+        toast({ 
+          title: 'Failed to save badge', 
+          description: error.message || 'An error occurred while saving the badge.',
+          variant: 'destructive' 
+        });
       }
     },
   });

@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Plus, FileText, X as XIcon, Edit3, Trash2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import badgeData from "@/data/organizer/badge.json";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +16,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { FiAward, FiSearch } from "react-icons/fi";
+import { Toaster } from "@/components/ui/toaster";
 
 function renderBadgeElement(element: any) {
   // Dynamically render badge elements based on their type and properties
@@ -177,6 +180,23 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void }> = ({ badge, onP
 export default function Dashboard() {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (searchParams.get('created') === '1') {
+      toast({
+        title: 'Success',
+        description: 'Badge template created successfully',
+        variant: 'default'
+      });
+      // Clean up the URL
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('created');
+      window.history.replaceState({}, '', newUrl.toString());
+    }
+  }, [searchParams, toast]);
+
   const handleNewBadge = () => {
     window.location.href = "/badge-designer/builder";
   };
@@ -189,6 +209,7 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout title="Badges">
+      <Toaster />
       <div className="max-w-6xl p-3">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>

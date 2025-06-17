@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
 import { downloadJSON } from "./utils";
 import { createRegistrationForm } from "@/services/organization/eventService";
+import { useRouter } from "next/navigation";
 
 // Dynamically import DndProvider with no SSR
 const DndProvider = dynamic(
@@ -23,6 +24,7 @@ export default function FormBuilder() {
   const { toast } = useToast();
   const { form, fields, saveForm, isSaving, savedFormId } = useFormBuilderStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const router = useRouter();
 
   const handleSave = async () => {
     try {
@@ -71,7 +73,7 @@ export default function FormBuilder() {
       });
       
       // Navigate to form builder page
-      window.location.href = "/form-builder";
+      router.push('/form-builder');
       
     } catch (error) {
       console.error('Error saving form:', error);

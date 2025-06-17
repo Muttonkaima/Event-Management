@@ -208,6 +208,10 @@ export default function Dashboard() {
     if (searchParams.get('created')) {
       toast({ title: 'Email template created successfully' });
     }
+    // Clean up the URL
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.delete('created');
+    window.history.replaceState({}, '', newUrl.toString());
   }, [searchParams]);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");

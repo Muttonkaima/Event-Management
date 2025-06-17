@@ -213,47 +213,54 @@ export function PropertiesPanel({
                 {/* QR Code Properties */}
                 {isQRElement && (
                   <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="qr-url" className="text-sm font-medium text-gray-900 mb-2">QR Code URL</Label>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-900 mb-2">QR Code URL</Label>
+                    <div className="flex space-x-2">
                       <Input
                         id="qr-url"
                         type="url"
-                        placeholder="https://example.com"
-                        value={selectedElement.content || ''}
-                        onChange={(e) => updateElementProperty({ content: e.target.value })}
+                        placeholder="https://example.com/image.jpg"
+                        value={selectedElement.style?.imageUrl || ''}
+                        onChange={(e) => updateElementStyle({ imageUrl: e.target.value })}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={openFilePicker}
+                        disabled={isUploading}
+                        className="border border-gray-300 text-xs h-9 whitespace-nowrap disabled:opacity-60 text-gray-700"
+                      >
+                        {isUploading ? 'Uploading…' : 'Upload'}
+                      </Button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        ref={fileInputRef}
+                        onChange={handleImageUpload}
                       />
                     </div>
+                  </div>
 
-                    <div>
-                      <Label className="text-sm font-medium text-gray-900 mb-2">QR Code Size</Label>
-                      <div className="flex items-center space-x-3 mt-2">
-                        <Slider
-                          value={[selectedElement.width || 100]}
-                          onValueChange={([value]) => onElementUpdate(selectedElement.id, { 
-                            width: value,
-                            height: value // Keep it square
-                          })}
-                          min={50}
-                          max={200}
-                          step={1}
-                          className="flex-1"
-                        />
-                        <span className="text-sm text-gray-600 w-12">
-                          {selectedElement.width || 100}px
-                        </span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-gray-900 mb-2">QR Code Color</Label>
-                      <div className="flex items-center space-x-3 mt-2">
-                        <ColorPicker
-                          value={selectedElement.style?.color || '#000000'}
-                          onChange={(value: string) => updateElementStyle({ color: value })}
-                        />
-                      </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-900 mb-2">Border Radius</Label>
+                    <div className="flex items-center space-x-3 mt-2">
+                      <Slider
+                        value={[selectedElement.style?.borderRadius || 0]}
+                        onValueChange={([value]) => updateElementStyle({ borderRadius: value })}
+                        min={0}
+                        max={50}
+                        step={1}
+                        className="flex-1"
+                      />
+                      <span className="text-sm text-gray-600 w-12">
+                        {selectedElement.style?.borderRadius || 0}px
+                      </span>
                     </div>
                   </div>
+                </div>
                 )}
 
                 {/* Image Properties */}
