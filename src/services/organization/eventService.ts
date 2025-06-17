@@ -102,4 +102,25 @@ export async function createRegistrationForm(data: any) {
     throw new Error(err.message || 'Failed to create registration form');
   }
 }
-  
+
+export async function getAllRegistrationForms() {
+  try {
+    const response = await get('/organization/get-all-registration-forms');
+    console.log('get all registration forms response----',response)
+    return response; 
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get registration forms');
+  }
+}
+
+export async function deleteRegistrationForm(id: string) {
+  try {
+    const response = await del('/organization/delete-registration-form', {
+      body: { id },
+    });
+    console.log('delete registration form response ----', response);
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to delete registration form');
+  }
+}

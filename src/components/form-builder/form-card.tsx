@@ -8,9 +8,10 @@ import { Edit3, Trash2 } from "lucide-react";
 interface FormCardProps {
   form: any;
   onPreview: () => void;
+  onDelete?: (id: string) => void;
 }
 
-export default function FormCard({ form, onPreview }: FormCardProps) {
+export default function FormCard({ form, onPreview, onDelete }: FormCardProps) {
   // The form.id is now always available for use in keys, navigation, etc.
   return (
     <div
@@ -37,7 +38,9 @@ export default function FormCard({ form, onPreview }: FormCardProps) {
           tabIndex={-1}
           onClick={e => {
             e.stopPropagation();
-            alert('Delete functionality is coming soon');
+            if (onDelete) {
+              onDelete(form.id);
+            }
           }}
         >
           <Trash2 className="h-4 w-4" />

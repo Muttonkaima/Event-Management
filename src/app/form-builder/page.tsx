@@ -1,30 +1,92 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, Loader2 } from "lucide-react";
 import { FiSearch } from "react-icons/fi";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import FormCard from "@/components/form-builder/form-card";
 import FormPreview from "@/components/form-builder/form-preview";
-import formData from "@/data/organizer/form.json";
+import { getAllRegistrationForms, deleteRegistrationForm } from "@/services/organization/eventService";
+import { useToast } from "@/hooks/use-toast";
+
+interface FormData {
+  _id: string;
+  registration_form_name: string;
+  registration_form_description: string;
+  fields: any[];
+  is_active: boolean;
+  is_deleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
 
 export default function Dashboard() {
-  // Ensure formData is an array
-  const forms = Array.isArray(formData) ? formData : [formData];
+  const [forms, setForms] = useState<FormData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [selectedForm, setSelectedForm] = useState<any | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchForms = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getAllRegistrationForms();
+        if (response.success && Array.isArray(response.data)) {
+          setForms(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching forms:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load forms. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchForms();
+  }, []);
 
   const handleNewForm = () => {
     window.location.href = '/form-builder/builder';
   };
 
+  const handleDeleteForm = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this form? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const response = await deleteRegistrationForm(id);
+      if (response.success) {
+        // Remove the deleted form from the state
+        setForms(forms.filter(form => form._id !== id));
+        toast({
+          title: "Success",
+          description: "Form deleted successfully",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting form:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete form. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   // forms is now always an array (see above)
   const filteredForms = useMemo(() => {
     if (!searchQuery) return forms;
-    return forms.filter((form: any) =>
-      form.title.toLowerCase().includes(searchQuery.toLowerCase())
+    return forms.filter((form: FormData) =>
+      form.registration_form_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery, forms]);
 
@@ -55,7 +117,12 @@ export default function Dashboard() {
             />
           </div>
         </div>
-        {filteredForms.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p>Loading forms...</p>
+          </div>
+        ) : filteredForms.length === 0 ? (
           <div className="text-center py-16 border-2 border-dashed rounded-lg flex flex-col items-center justify-center min-h-[400px] bg-card text-gray-500">
             <FileText className="h-20 w-20 text-muted-foreground/50 mb-6" />
             <h3 className="text-2xl font-semibold mb-2">No Forms Found</h3>
@@ -72,12 +139,24 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredForms.map((form: any) => (
               <FormCard
-                key={form.id}
-                form={form}
+                key={form._id}
+                form={{
+                  id: form._id,
+                  title: form.registration_form_name,
+                  description: form.registration_form_description,
+                  fields: form.fields || [],
+                  createdAt: new Date(form.createdAt).toLocaleDateString(),
+                }}
                 onPreview={() => {
-                  setSelectedForm(form);
+                  setSelectedForm({
+                    ...form,
+                    title: form.registration_form_name,
+                    description: form.registration_form_description,
+                    fields: form.fields || []
+                  });
                   setOpen(true);
                 }}
+                onDelete={handleDeleteForm}
               />
             ))}
           </div>

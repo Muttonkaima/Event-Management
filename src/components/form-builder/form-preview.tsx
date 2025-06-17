@@ -79,11 +79,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
       case 'radio':
         return (
           <div className="space-y-2">
-            <div className="text-sm font-medium text-gray-900">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </div>
-            <RadioGroup required={field.required} className="space-y-2">
+            <RadioGroup required={field.required} className="flex space-x-2">
               {field.options?.map((option, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <RadioGroupItem value={option} id={`preview-${field.id}-${index}`} />
