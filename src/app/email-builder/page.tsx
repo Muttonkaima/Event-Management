@@ -6,7 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Plus, FileText, Edit3, Trash2, Smartphone, Tablet, Monitor, Palette, X as XIcon } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import emailTemplateFromFile from "@/data/organizer/email.json"; // Import the multiple templates from email.json
+import { getAllEmailTemplates, deleteEmailTemplate } from "@/services/organization/eventService";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -21,10 +21,8 @@ import { FiSearch } from "react-icons/fi";
 
 import { Toaster } from "@/components/ui/toaster";
 
-// Ensure templates is always an array
-const templates = Array.isArray(emailTemplateFromFile) ? emailTemplateFromFile : [emailTemplateFromFile];
-
 function renderBlock(block: any) {
+  const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL;
   const { type, properties } = block;
   switch (type) {
     case "header":
@@ -72,7 +70,7 @@ function renderBlock(block: any) {
           }}
         >
           <img
-            src={properties.imageUrl}
+            src={ASSETS_URL + properties.imageUrl}
             alt="Email block"
             style={{
               maxWidth: "100%",
@@ -117,10 +115,11 @@ const EmailTemplateCard: React.FC<{
   template: any;
   onPreview: () => void;
   onEdit: () => void;
-  onDelete: () => void;
-}> = ({ template, onPreview, onEdit, onDelete }) => {
-  const firstImageBlock = template.blocks.find((b: any) => b.type === 'image');
-  const previewImage = template.previewImageUrl || firstImageBlock?.properties.imageUrl;
+  handleTemplateDelete: (id: string) => void;
+}> = ({ template, onPreview, onEdit, handleTemplateDelete }) => {
+  const firstImageBlock = template.email_fields?.find((b: any) => b.type === 'image');
+  const previewImage = firstImageBlock?.properties?.imageUrl;
+  const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL;
   return (
     <>
     <div
@@ -132,7 +131,7 @@ const EmailTemplateCard: React.FC<{
         <div className="aspect-[16/9] bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden flex items-center justify-center rounded-t-xl">
           {previewImage ? (
             <img
-              src={previewImage}
+              src={ASSETS_URL + previewImage}
               alt={template.name}
               className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105 group-hover:brightness-95"
               draggable={false}
@@ -159,11 +158,12 @@ const EmailTemplateCard: React.FC<{
             </button>
             <button
               className="h-8 w-8 flex items-center justify-center rounded-full bg-white/80 shadow hover:bg-red-50 text-red-600 border border-red-100"
-              title="Delete"
+              title="Delete template"
+              aria-label="Delete template"
               tabIndex={-1}
-              onClick={e => {
+              onClick={(e) => {
                 e.stopPropagation();
-                alert('Delete functionality is coming soon');
+                handleTemplateDelete(template._id);
               }}
             >
               <Trash2 className="h-4 w-4" />
@@ -174,10 +174,10 @@ const EmailTemplateCard: React.FC<{
       {/* Card Content */}
       <div className="flex-1 flex flex-col px-5 py-4 gap-2">
         <div className="flex items-center gap-2 mb-1">
-          <h3 className="font-semibold text-base text-gray-900 truncate flex-1">{template.name}</h3>
+          <h3 className="font-semibold text-base text-gray-900 truncate flex-1">{template.email_template_name}</h3>
           {/* Block count chip */}
           <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium shadow-sm border border-blue-200">
-            {template.blocks.length} blocks
+            {template.email_fields?.length || 0} blocks
           </span>
         </div>
       </div>
@@ -187,6 +187,22 @@ const EmailTemplateCard: React.FC<{
 };
 
 export default function Dashboard() {
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getAllEmailTemplates();
+        setTemplates(res.data || []);
+      } catch (err) {
+        console.error('Failed to fetch templates', err);
+        toast({ title: 'Failed to load templates' });
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
   const searchParams = useSearchParams();
   useEffect(() => {
     if (searchParams.get('created')) {
@@ -195,14 +211,14 @@ export default function Dashboard() {
   }, [searchParams]);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Set to true if you want to simulate loading
+  const isLoading = loading;
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>("desktop");
 
   // Filtered templates for search
   const filteredTemplates = useMemo(() => {
     if (!searchQuery) return templates;
     return templates.filter((template: any) =>
-      template.name.toLowerCase().includes(searchQuery.toLowerCase())
+      (template.email_template_name || '').toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery, templates]);
 
@@ -210,10 +226,24 @@ export default function Dashboard() {
     window.location.href = "/email-builder/builder";
   };
 
+  const handleDeleteTemplate = async (id: string) => {
+    if (confirm('Are you sure you want to delete this template?')) {
+      try {
+        await deleteEmailTemplate(id);
+        toast({ title: 'Template deleted successfully' });
+        // Refresh the templates list
+        const res = await getAllEmailTemplates();
+        setTemplates(res.data || []);
+      } catch (err) {
+        console.error('Failed to delete template', err);
+        toast({ title: 'Failed to delete template' });
+      }
+    }
+  };
+
   return (
     <DashboardLayout title="Email Templates">
-      
-    <Toaster />
+      <Toaster />
       <div className="max-w-7xl mx-auto p-3">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -263,12 +293,12 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredTemplates.map((template: any) => (
               <EmailTemplateCard
-                key={template.id}
-                template={template}
-                onPreview={() => setOpenIdx(templates.findIndex(t => t.id === template.id))}
-                onEdit={() => alert('Edit functionality coming soon!')}
-                onDelete={() => alert('Delete functionality coming soon!')}
-              />
+              key={template._id}
+              template={template}
+              onPreview={() => setOpenIdx(templates.findIndex(t => t._id === template._id))}
+              onEdit={() => alert('Edit functionality coming soon!')}
+              handleTemplateDelete={handleDeleteTemplate}
+            />            
             ))}
           </div>
         ) : (
@@ -296,8 +326,7 @@ export default function Dashboard() {
                   <div className="flex items-center gap-3 flex-grow">
                     <DialogHeaderUI>
                       <DialogTitleUI className="text-xl font-semibold truncate pr-8 text-gray-900">
-                        {filteredTemplates[openIdx].name}
-                        <span className="ml-2 text-xs text-gray-400">{filteredTemplates[openIdx].id}</span>
+                        {filteredTemplates[openIdx].email_template_name}
                       </DialogTitleUI>
                     </DialogHeaderUI>
                   </div>
@@ -341,7 +370,7 @@ export default function Dashboard() {
                       .join(" ")}
                   >
                     <div className={previewDevice !== "desktop" ? "overflow-y-auto h-full" : ""}>
-                      {filteredTemplates[openIdx].blocks.map(renderBlock)}
+                      {filteredTemplates[openIdx].email_fields.map(renderBlock)}
                     </div>
                   </div>
                 </ScrollArea>

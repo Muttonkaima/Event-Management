@@ -40,6 +40,11 @@ export function EmailBuilderClient() {
   } = useEmailBuilder();
 
   const handleSaveTemplate = async () => {
+    if (!emailSubject.trim() || !previewText.trim()) {
+      toast({ title: "Please fill in title and description" });
+      return;
+    }
+    setIsSaving(true);
     setIsSaving(true);
     exportTemplate();
 
@@ -48,6 +53,10 @@ export function EmailBuilderClient() {
     const formData = new FormData();
     formData.append("title", emailSubject);
     formData.append("description", previewText);
+
+    // Generate a unique ID for this save operation to use in filenames
+    const saveId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    let imageCounter = 0;
 
     // Convert image URLs to actual files and update clonedBlocks
     for (const block of clonedBlocks) {
@@ -70,19 +79,28 @@ export function EmailBuilderClient() {
           try {
             const urlObj = new URL(fetchUrl);
             const pathnameName = urlObj.pathname.split('/').pop();
-            filename = pathnameName && pathnameName.includes('.') ? `${block.id}-${pathnameName}` : `${block.id}.png`;
+            const extension = pathnameName?.includes('.') ? pathnameName.split('.').pop() : 'png';
+            filename = `img-${saveId}-${imageCounter}.${extension || 'png'}`;
+            imageCounter++;
           } catch {
-            filename = `${block.id}.png`;
+            filename = `img-${saveId}-${imageCounter}.png`;
+            imageCounter++;
           }
+          
           const file = await urlToFile(fetchUrl, filename);
-          formData.append("images", file); // accumulate under same key
-          block.properties.imageUrl = file.name; // update reference
+          formData.append("images", file);
+          // Store the final filename in the block properties
+          block.properties.imageUrl = file.name;
         } catch (err) {
           console.error("Failed to convert URL to file", err);
         }
       }
     }
 
+    // Remove internal ids so backend (Mongo) can assign its own
+    clonedBlocks.forEach((b: any) => {
+      if (b && 'id' in b) delete b.id;
+    });
     formData.append("blocks", JSON.stringify(clonedBlocks));
 
     console.log(

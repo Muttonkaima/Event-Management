@@ -1,4 +1,4 @@
-import { get, post, upload } from '@/services/controllerServices';
+import { get, post, upload, del } from '@/services/controllerServices';
 
 export async function getEventTemplates() {
   try {
@@ -78,5 +78,17 @@ export async function getAllEmailTemplates() {
     return response; // returns the array of templates
   } catch (err: any) {
     throw new Error(err.message || 'Failed to get email templates');
+  }
+}
+
+export async function deleteEmailTemplate(id: string) {
+  try {
+    const response = await del('/organization/delete-email-template', {
+      body: { id },
+    });
+    console.log('delete email template response ----', response);
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to delete email template');
   }
 }
