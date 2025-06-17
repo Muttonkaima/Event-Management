@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, FileText, X as XIcon, Edit3, Trash2, Loader2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useToast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,10 @@ import {
 import { FiAward, FiSearch } from "react-icons/fi";
 import { Toaster } from "@/components/ui/toaster";
 import { getAllBadges } from "@/services/organization/eventService";
+import { badges } from "@/shared/badgeSchema";
+import { deleteBadge } from "@/services/organization/eventService";
 const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL
+
 
 function renderBadgeElement(element: any) {
   // Dynamically render badge elements based on their type and properties
@@ -26,7 +29,7 @@ function renderBadgeElement(element: any) {
     position: "absolute",
     left: x,
     top: y,
-    width,
+    width: `${width}px`,
     height,
     ...style,
     display: "flex",
@@ -87,12 +90,37 @@ function renderBadgeElement(element: any) {
   }
 }
 
-const BadgeCard: React.FC<{ badge: any; onPreview: () => void }> = ({ badge, onPreview }) => {
+const BadgeCard: React.FC<{ badge: any; onPreview: () => void; onBadgeDeleted: () => void }> = ({ badge, onPreview, onBadgeDeleted }) => {
   // Find a preview image if available, else use logo or photo
   const previewImg = badge.elements.find((el: any) => el.type === "event-logo" || el.type === "attendee-photo");
   const imageUrl = previewImg?.style?.imageUrl || previewImg?.content || undefined;
   const previewUrl = ASSETS_URL + imageUrl;
   const exportDate = badge.exportedAt ? new Date(badge.exportedAt).toLocaleDateString() : "";
+
+    const handleDeleteBadge = async (id: string) => {
+      if (!window.confirm('Are you sure you want to delete this form? This action cannot be undone.')) {
+        return;
+      }
+  
+      try {
+        const response = await deleteBadge(id);
+        if (response.success) {
+          toast({
+            title: "Success",
+            description: "Badge deleted successfully",
+          });
+          onBadgeDeleted();
+        }
+      } catch (error) {
+        console.error('Error deleting badge:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete badge. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+
   return (
     <div
       className="relative group mt-6 rounded-2xl bg-gradient-to-br from-pink-100 via-white to-blue-100 shadow-lg border border-gray-100 border-b-5 border-b-black hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-visible cursor-pointer"
@@ -139,7 +167,7 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void }> = ({ badge, onP
                 tabIndex={-1}
                 onClick={e => {
                   e.stopPropagation();
-                  alert('Delete functionality is coming soon');
+                  handleDeleteBadge(badge._id);
                 }}
               >
                 <Trash2 className="h-4 w-4" />
@@ -242,32 +270,31 @@ export default function Dashboard() {
     window.location.href = "/badge-designer/builder";
   };
 
-  // Fetch badges on component mount
-  useEffect(() => {
-    const fetchBadges = async () => {
-      try {
-        const response = await getAllBadges();
-        if (response.success && Array.isArray(response.data)) {
-          setBadges(response.data);
-        } else {
-          toast({
-            title: 'Error',
-            description: 'Failed to load badges. Invalid data format.',
-            variant: 'destructive'
-          });
-        }
-      } catch (error: any) {
-        console.error('Error fetching badges:', error);
+  const fetchBadges = async () => {
+    try {
+      const response = await getAllBadges();
+      if (response.success && Array.isArray(response.data)) {
+        setBadges(response.data);
+      } else {
         toast({
           title: 'Error',
-          description: error.message || 'Failed to load badges. Please try again later.',
+          description: 'Failed to load badges. Invalid data format.',
           variant: 'destructive'
         });
-      } finally {
-        setIsLoading(false);
       }
-    };
-
+    } catch (error: any) {
+      console.error('Error fetching badges:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to load badges. Please try again later.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  // Fetch badges on component mount
+  useEffect(() => {
     fetchBadges();
   }, [toast]);
 
@@ -349,6 +376,7 @@ export default function Dashboard() {
                 key={badge._id}
                 badge={badge}
                 onPreview={() => setOpenIdx(badges.findIndex(b => b._id === badge._id))}
+                onBadgeDeleted={fetchBadges}
               />
             ))}
           </div>

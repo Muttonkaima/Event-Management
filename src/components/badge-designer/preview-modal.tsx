@@ -43,7 +43,7 @@ export function PreviewModal({
     };
 
     const renderContent = () => {
-      if (element.type === 'attendee-photo' || element.type === 'event-logo') {
+      if (element.type === 'attendee-photo' || element.type === 'event-logo' || element.type === 'qr-code') {
         if (style.imageUrl) {
           return (
             <Image 
@@ -62,14 +62,6 @@ export function PreviewModal({
             style={{ borderRadius: style.borderRadius ? `${style.borderRadius}px` : undefined }}
           >
             {element.type === 'attendee-photo' ? 'Photo' : 'Logo'}
-          </div>
-        );
-      }
-
-      if (element.type === 'qr-code') {
-        return (
-          <div className="w-full h-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xl font-mono">
-            QR
           </div>
         );
       }
