@@ -7,12 +7,15 @@ import { EmailPreviewModal } from "@/components/email/EmailPreviewModal";
 import { PropertiesPanel } from "@/components/email/PropertiesPanel";
 import { useEmailBuilder } from "@/hooks/use-email-builder";
 import { Eye, Save } from "lucide-react";
+import { createEmailTemplate } from "@/services/organization/eventService";
+import { urlToFile } from "@/utils/urlToFile";
 import { Button } from "@/components/ui/button";
 
 export function EmailBuilderClient() {
+  const [isSaving, setIsSaving] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [emailSubject, setEmailSubject] = useState('Your Email Subject');
-  const [previewText, setPreviewText] = useState('This is a preview of your email template');
+  const [emailSubject, setEmailSubject] = useState('Email Template');
+  const [previewText, setPreviewText] = useState('This is a description of your email template');
 
   // Debug logs
   console.log('Preview modal state:', isPreviewOpen);
@@ -30,6 +33,68 @@ export function EmailBuilderClient() {
     selectBlock,
     exportTemplate
   } = useEmailBuilder();
+
+  const handleSaveTemplate = async () => {
+    setIsSaving(true);
+    // Download locally
+    exportTemplate();
+
+    // Prepare data
+    const clonedBlocks = JSON.parse(JSON.stringify(blocks));
+    const formData = new FormData();
+    formData.append("title", emailSubject);
+    formData.append("description", previewText);
+
+    // Convert image URLs to actual files and update clonedBlocks
+    for (const block of clonedBlocks) {
+      if (block.type === "image" && block.properties?.imageUrl) {
+        const imgUrl: string = block.properties.imageUrl;
+        // If url looks like a filename already, skip fetch but still keep the name.
+        if (!/^https?:\/\//i.test(imgUrl) && !imgUrl.startsWith('/')) {
+          // Already a plain filename assigned earlier – nothing to append.
+          continue;
+        }
+
+        try {
+          let filename: string;
+          let fetchUrl = imgUrl;
+          // If relative path (e.g. /uploads/foo.png) make it absolute using current origin
+          if (!/^https?:\/\//i.test(imgUrl) && imgUrl.startsWith('/')) {
+            fetchUrl = window.location.origin + imgUrl;
+          }
+
+          try {
+            const urlObj = new URL(fetchUrl);
+            const pathnameName = urlObj.pathname.split('/').pop();
+            filename = pathnameName && pathnameName.includes('.') ? `${block.id}-${pathnameName}` : `${block.id}.png`;
+          } catch {
+            filename = `${block.id}.png`;
+          }
+          const file = await urlToFile(fetchUrl, filename);
+          formData.append("images", file); // accumulate under same key
+          block.properties.imageUrl = file.name; // update reference
+        } catch (err) {
+          console.error("Failed to convert URL to file", err);
+        }
+      }
+    }
+
+    formData.append("blocks", JSON.stringify(clonedBlocks));
+
+    console.log(
+      'FormData contents:',
+      [...formData.entries()].map(([k, v]) => [k, v instanceof File ? v.name : v])
+    );
+    try {
+      setIsSaving(true);
+      await createEmailTemplate(formData);
+      console.log("Email template saved to backend");
+    } catch (err) {
+      console.error("Failed to save email template", err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -59,10 +124,10 @@ export function EmailBuilderClient() {
             <Button
               size="sm"
               className="bg-gray-900 text-white hover:bg-gray-800 cursor-pointer"
-              onClick={exportTemplate}
+              onClick={handleSaveTemplate}
             >
               <Save className="w-4 h-4 mr-2" />
-              Save Template
+              {isSaving ? 'Saving…' : 'Save Template'}
             </Button>
           </div>
         </header>

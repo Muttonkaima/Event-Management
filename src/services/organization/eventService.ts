@@ -60,3 +60,13 @@ export async function getEventById(id: string) {
     throw new Error(err.message || 'Failed to get event by id');
   }
 }
+
+export async function createEmailTemplate(data: any) {
+  try {
+    const response = await upload('/organization/create-email-template', data);
+    console.log('create email template response----',response)
+    return response; // returns the array of templates
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to create email template');
+  }
+}
