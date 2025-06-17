@@ -10,6 +10,7 @@ import { Eye, Save } from "lucide-react";
 import { createEmailTemplate } from "@/services/organization/eventService";
 import { urlToFile } from "@/utils/urlToFile";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -18,8 +19,8 @@ export function EmailBuilderClient() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [emailSubject, setEmailSubject] = useState('Email Template');
-  const [previewText, setPreviewText] = useState('This is a description of your email template');
+  const [emailSubject, setEmailSubject] = useState('');
+  const [previewText, setPreviewText] = useState('');
 
   // Debug logs
   console.log('Preview modal state:', isPreviewOpen);
@@ -104,7 +105,7 @@ export function EmailBuilderClient() {
        <Toaster />
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center flex-shrink-0">
-          <div>
+        <div>
           <Button
               variant="ghost"
               size="sm"
@@ -113,13 +114,13 @@ export function EmailBuilderClient() {
             >
               Back to Email Templates
             </Button>
-          </div>
-          <div className="flex items-center gap-3">
+        </div>
+        <div className="flex items-center gap-3">
             
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-600 border-2 border-gray-200 hover:text-gray-800 hover:bg-gray-50 cursor-pointer"
+              className="text-gray-600 border-2 border-gray-200 hover:bg-gray-50 hover:text-gray-800 cursor-pointer"
               onClick={handlePreviewClick}
             >
               <Eye className="w-4 h-4 mr-2" />
@@ -141,6 +142,21 @@ export function EmailBuilderClient() {
         <EmailBlockSidebar onAddBlock={addBlock} />
         
         <div className="flex-1 overflow-hidden flex flex-col">
+          {/* Metadata Inputs */}
+          <div className="p-1 border-b bg-gray-50 flex gap-2 max-w-md w-full self-center">
+            <Input
+              placeholder="Enter Your Title"
+              value={emailSubject}
+              onChange={(e) => setEmailSubject(e.target.value)}
+              className="h-9 text-sm"
+            />
+            <Input
+              placeholder="Enter Your Description"
+              value={previewText}
+              onChange={(e) => setPreviewText(e.target.value)}
+              className="h-9 text-sm"
+            />
+          </div>
           <EmailPreview
             blocks={blocks}
             selectedBlockId={selectedBlockId}

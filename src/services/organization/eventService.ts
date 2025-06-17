@@ -70,3 +70,13 @@ export async function createEmailTemplate(data: any) {
     throw new Error(err.message || 'Failed to create email template');
   }
 }
+
+export async function getAllEmailTemplates() {
+  try {
+    const response = await get('/organization/get-all-email-templates');
+    console.log('get all email templates response----',response)
+    return response; // returns the array of templates
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get email templates');
+  }
+}
