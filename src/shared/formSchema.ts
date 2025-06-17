@@ -1,4 +1,15 @@
-export type FieldType = 'text' | 'email' | 'number' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'file' | 'date' | 'phone';
+export type FieldType = 'text' | 'email' | 'number' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'file' | 'date';
+
+export interface ValidationOptions {
+  minLength?: number;
+  maxLength?: number;
+  allowText?: boolean;
+  allowNumbers?: boolean;
+  allowSpecialChars?: boolean;
+  pattern?: string;
+  fileTypes?: string[];
+  maxFileSize?: number; // in KB
+}
 
 export interface FormField {
   id: string;
@@ -9,6 +20,7 @@ export interface FormField {
   helpText?: string;
   order: number;
   options?: string[]; // Only used for 'select' and 'radio' types
+  validation?: ValidationOptions;
 }
 
 // Type guard to check if a field has options

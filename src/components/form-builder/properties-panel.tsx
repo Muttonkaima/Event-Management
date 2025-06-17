@@ -5,6 +5,19 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { MousePointer, Trash2, Plus, X } from "lucide-react";
+import { useState, useEffect } from 'react';
+
+// Define validation state type
+type ValidationState = {
+  minLength?: number;
+  maxLength?: number;
+  allowText: boolean;
+  allowNumbers: boolean;
+  allowSpecialChars: boolean;
+  fileTypes: string[];
+  maxFileSize?: number;
+  pattern: string;
+};
 
 export default function PropertiesPanel() {
   const { 
@@ -18,6 +31,89 @@ export default function PropertiesPanel() {
   } = useFormBuilderStore();
 
   const selectedField = getSelectedField();
+  const isSelectOrRadio = selectedField?.type === 'select' || selectedField?.type === 'radio';
+  const isCheckbox = selectedField?.type === 'checkbox';
+  const isTextOrTextarea = selectedField && (
+    selectedField.type === 'text' || 
+    selectedField.type === 'textarea' || 
+    selectedField.type === 'number'
+  );
+  const isFile = selectedField?.type === 'file';
+  const showValidation = selectedField && !['select', 'radio', 'checkbox', 'date', 'email'].includes(selectedField.type);
+
+  // Initialize validation state with defaults
+  const [validation, setValidation] = useState<ValidationState>({
+    minLength: undefined,
+    maxLength: undefined,
+    allowText: true,
+    allowNumbers: true,
+    allowSpecialChars: false,
+    fileTypes: [],
+    maxFileSize: undefined,
+    pattern: ''
+  });
+
+  // Combined effect for handling validation and field updates
+  useEffect(() => {
+    if (!selectedField) {
+      setValidation({
+        minLength: undefined,
+        maxLength: undefined,
+        allowText: true,
+        allowNumbers: true,
+        allowSpecialChars: false,
+        fileTypes: [],
+        maxFileSize: undefined,
+        pattern: ''
+      });
+      return;
+    }
+
+    // Update local validation state when selected field changes
+    const fieldValidation = selectedField.validation || {};
+    setValidation(prev => ({
+      ...prev,
+      ...fieldValidation,
+      fileTypes: fieldValidation.fileTypes || [],
+      pattern: fieldValidation.pattern || ''
+    }));
+
+    // Skip pattern generation if not needed
+    if (!showValidation) return;
+    
+    let pattern = '';
+    
+    if (isTextOrTextarea) {
+      // Build regex pattern based on selected options
+      const parts = [];
+      if (fieldValidation.allowText ?? true) parts.push('a-zA-Z\\s');
+      if (fieldValidation.allowNumbers ?? true) parts.push('0-9');
+      if (fieldValidation.allowSpecialChars) {
+        // Special characters that need to be escaped in regex
+        parts.push('!@#$%^&*()_+\\-=\\[\\]{};:\\' + "'" + '\\"\\\\|,.<>/?`~');
+      }
+      
+      if (parts.length > 0) {
+        pattern = `^[${parts.join('')}]+$`;
+      }
+      
+      const min = fieldValidation.minLength;
+      const max = fieldValidation.maxLength;
+      
+      if (min !== undefined || max !== undefined) {
+        const minStr = min?.toString() || '0';
+        const maxStr = max?.toString() || '';
+        pattern = `^[${parts.join('')}]{${minStr},${maxStr}}$`;
+      }
+    }
+    
+    // Only update if there are actual changes to avoid infinite loops
+    if (pattern !== fieldValidation.pattern) {
+      updateField(selectedField.id, { 
+        validation: { ...fieldValidation, pattern } 
+      });
+    }
+  }, [selectedField?.id, showValidation, isTextOrTextarea]);
 
   if (!selectedField) {
     return (
@@ -33,6 +129,41 @@ export default function PropertiesPanel() {
       </div>
     );
   }
+
+  const handleValidationChange = (updates: Partial<ValidationState>) => {
+    setValidation(prev => ({
+      ...prev,
+      ...updates
+    }));
+    
+    // Only update the field if we have a selected field and the updates are valid
+    if (selectedField) {
+      const fieldValidation = selectedField.validation || {};
+      const newValidation = { ...fieldValidation, ...updates };
+      
+      // Only update if there are actual changes to avoid infinite loops
+      if (JSON.stringify(fieldValidation) !== JSON.stringify(newValidation)) {
+        updateField(selectedField.id, { validation: newValidation });
+      }
+    }
+  };
+  
+  const handleFileTypeChange = (type: string, checked: boolean) => {
+    const currentTypes = validation.fileTypes || [];
+    const newTypes = checked 
+      ? [...currentTypes, type]
+      : currentTypes.filter(t => t !== type);
+    
+    handleValidationChange({ fileTypes: newTypes });
+  };
+  
+  const fileTypes = [
+    { value: 'image/*', label: 'Images' },
+    { value: '.pdf', label: 'PDF' },
+    { value: '.doc,.docx', label: 'Word' },
+    { value: '.xls,.xlsx', label: 'Excel' },
+    { value: '.zip,.rar', label: 'Archive' },
+  ];
 
   return (
     <div className="w-80 bg-white border-l border-gray-200 max-h-[calc(100vh-64px)] overflow-y-auto flex-shrink-0">
@@ -83,6 +214,115 @@ export default function PropertiesPanel() {
             />
           </div>
 
+          {/* Validation Section */}
+          {showValidation && (
+            <div className="space-y-4 pt-4 border-t border-gray-200 mt-4">
+              <h4 className="text-sm font-medium text-gray-700">Validation Rules</h4>
+              
+              {isTextOrTextarea && (
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="allow-text" 
+                      checked={validation.allowText}
+                      onCheckedChange={checked => handleValidationChange({ allowText: checked })}
+                    />
+                    <Label htmlFor="allow-text" className="text-gray-500">Allow text</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="allow-numbers" 
+                      checked={validation.allowNumbers}
+                      onCheckedChange={checked => handleValidationChange({ allowNumbers: checked })}
+                    />
+                    <Label htmlFor="allow-numbers" className="text-gray-500">Allow numbers</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="allow-special" 
+                      checked={validation.allowSpecialChars}
+                      onCheckedChange={checked => handleValidationChange({ allowSpecialChars: checked })}
+                    />
+                    <Label htmlFor="allow-special" className="text-gray-500">Allow special characters</Label>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label className="text-xs text-gray-500">Min Length</Label>
+                      <Input 
+                        type="number" 
+                        min="0"
+                        value={validation.minLength || ''}
+                        onChange={(e) => handleValidationChange({ 
+                          minLength: e.target.value ? parseInt(e.target.value) : undefined 
+                        })}
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-gray-500">Max Length</Label>
+                      <Input 
+                        type="number" 
+                        min={validation.minLength || 0}
+                        value={validation.maxLength || ''}
+                        onChange={(e) => handleValidationChange({ 
+                          maxLength: e.target.value ? parseInt(e.target.value) : undefined 
+                        })}
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {isFile && (
+                <div className="space-y-3">
+                  <div>
+                    <Label className="text-xs text-gray-500">Max File Size (KB)</Label>
+                    <Input 
+                      type="number" 
+                      min="0"
+                      value={validation.maxFileSize || ''}
+                      onChange={(e) => handleValidationChange({ 
+                        maxFileSize: e.target.value ? parseInt(e.target.value) : undefined 
+                      })}
+                      className="h-8 text-sm"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label className="text-xs text-gray-500 mb-2 block">Allowed File Types</Label>
+                    <div className="space-y-2">
+                      {fileTypes.map((type) => (
+                        <div key={type.value} className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id={`file-type-${type.value}`}
+                            checked={validation.fileTypes?.includes(type.value) || false}
+                            onChange={(e) => handleFileTypeChange(type.value, e.target.checked)}
+                            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                          />
+                          <Label htmlFor={`file-type-${type.value}`} className="text-sm text-gray-500">
+                            {type.label}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {validation.pattern && (
+                <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-500 break-all">
+                  <div className="font-medium mb-1">Pattern:</div>
+                  <code>{validation.pattern}</code>
+                </div>
+              )}
+            </div>
+          )}
+          
           {/* Options (for select and radio fields) */}
           {(selectedField.type === 'select' || selectedField.type === 'radio') && selectedField.options && (
             <div>

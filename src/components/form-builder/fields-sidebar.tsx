@@ -27,7 +27,6 @@ const fieldTypes: FieldType[] = [
   { type: 'checkbox', label: 'Checkbox', icon: <CheckSquare className="w-4 h-4" /> },
   { type: 'file', label: 'File Upload', icon: <Upload className="w-4 h-4" /> },
   { type: 'date', label: 'Date', icon: <Calendar className="w-4 h-4" /> },
-  { type: 'phone', label: 'Phone', icon: <Phone className="w-4 h-4" /> },
 ];
 
 interface DraggableFieldProps {

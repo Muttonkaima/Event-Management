@@ -37,7 +37,6 @@ const getDefaultLabel = (type: string): string => {
     case 'checkbox': return 'Checkbox';
     case 'file': return 'File Upload';
     case 'date': return 'Date';
-    case 'phone': return 'Phone';
     default: return 'Field';
   }
 };
@@ -51,8 +50,7 @@ const getDefaultPlaceholder = (type: string): string => {
     'select': 'Select an option',
     'radio': 'Select an option',
     'file': 'Choose file',
-    'date': 'Select date',
-    'phone': 'Enter phone number'
+    'date': 'Select date'
   };
   return placeholders[type] || 'Enter value';
 };
@@ -84,12 +82,24 @@ export const useFormBuilderStore = create<FormBuilderState & FormBuilderActions>
       order: get().fields.length + 1,
     };
 
+    const isTextOrTextarea = ['text', 'textarea', 'number', 'phone'].includes(fieldType);
+    const isFile = fieldType === 'file';
+    
     const field: FormField = {
       ...baseField,
       type: fieldType,
       ...(fieldType === 'select' || fieldType === 'radio' 
         ? { options: ['Option 1', 'Option 2'] } 
-        : {})
+        : {}),
+      validation: isTextOrTextarea ? {
+        allowText: true,
+        allowNumbers: true,
+        allowSpecialChars: false,
+        pattern: ''
+      } : isFile ? {
+        fileTypes: [],
+        maxFileSize: undefined
+      } : undefined
     };
 
     set((state) => ({
