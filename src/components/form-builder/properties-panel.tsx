@@ -40,10 +40,10 @@ export default function PropertiesPanel() {
   const isFile = fieldType === 'file';
   const showValidation = selectedField && !['select', 'radio', 'checkbox', 'date', 'email'].includes(fieldType || '');
 
-  // Initialize validation state with default values
+  // Initialize validation state with default values (all false by default)
   const [validation, setValidation] = useState<ValidationState>({
-    allowText: true,
-    allowNumbers: true,
+    allowText: false,
+    allowNumbers: false,
     allowSpecialChars: false,
     minLength: undefined,
     maxLength: undefined,
@@ -58,8 +58,8 @@ export default function PropertiesPanel() {
     
     const fieldValidation = selectedField.validation || {};
     setValidation({
-      allowText: fieldValidation.allowText ?? true,
-      allowNumbers: fieldValidation.allowNumbers ?? true,
+      allowText: fieldValidation.allowText ?? false,
+      allowNumbers: fieldValidation.allowNumbers ?? false,
       allowSpecialChars: fieldValidation.allowSpecialChars ?? false,
       minLength: fieldValidation.minLength,
       maxLength: fieldValidation.maxLength,
@@ -95,11 +95,17 @@ export default function PropertiesPanel() {
       if (!isTextOrTextarea) return '';
   
       const parts = [];
-      if (val.allowText) parts.push('a-zA-Z\\s');
-      if (val.allowNumbers) parts.push('0-9');
+
+      if (selectedField.type !== 'number') {
+        if (val.allowText) parts.push('a-zA-Z\\s');
+        if (val.allowNumbers) parts.push('0-9');
+      
       if (val.allowSpecialChars) {
         parts.push('!@#$%^&*()_+\\-=\\[\\]{};:\\' + "'" + '\\"\\\\|,.<>/?`~');
       }
+    }else{
+      if (val.allowNumbers) parts.push('0-9');
+    }
   
       if (parts.length === 0) return '';
   
@@ -203,6 +209,7 @@ export default function PropertiesPanel() {
               
               {isTextOrTextarea && (
                 <div className="space-y-3">
+                  {selectedField.type !== 'number' && (
                   <div className="flex items-center space-x-2">
                     <Switch 
                       id="allow-text" 
@@ -211,6 +218,7 @@ export default function PropertiesPanel() {
                     />
                     <Label htmlFor="allow-text" className="text-gray-500">Allow text</Label>
                   </div>
+                  )}
                   
                   <div className="flex items-center space-x-2">
                     <Switch 
@@ -221,6 +229,7 @@ export default function PropertiesPanel() {
                     <Label htmlFor="allow-numbers" className="text-gray-500">Allow numbers</Label>
                   </div>
                   
+                  {selectedField.type !== 'number' && (
                   <div className="flex items-center space-x-2">
                     <Switch 
                       id="allow-special" 
@@ -229,6 +238,7 @@ export default function PropertiesPanel() {
                     />
                     <Label htmlFor="allow-special" className="text-gray-500">Allow special characters</Label>
                   </div>
+                  )}
                   
                   <div className="grid grid-cols-2 gap-2">
                     <div>

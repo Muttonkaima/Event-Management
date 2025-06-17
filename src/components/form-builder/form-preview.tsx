@@ -123,16 +123,6 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
           />
         );
 
-      case 'phone':
-        return (
-          <Input
-            type="tel"
-            placeholder={field.placeholder}
-            className={baseClasses}
-            required={field.required}
-          />
-        );
-
       default:
         return (
           <Input
