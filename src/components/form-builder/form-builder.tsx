@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
 import { downloadJSON } from "./utils";
+import { createRegistrationForm } from "@/services/organization/eventService";
 
 // Dynamically import DndProvider with no SSR
 const DndProvider = dynamic(
@@ -26,7 +27,7 @@ export default function FormBuilder() {
   const handleSave = async () => {
     try {
       const formJSON = {
-        title: form.title,
+        name: form.title,
         description: form.description,
         fields: fields.map(f => {
           const fieldData: any = {
@@ -35,7 +36,8 @@ export default function FormBuilder() {
             placeholder: f.placeholder,
             helpText: f.helpText,
             required: f.required,
-            options: f.options
+            options: f.options,
+            validation: f.validation
           };
 
           // For file fields, include accept attribute instead of pattern
@@ -55,11 +57,27 @@ export default function FormBuilder() {
           return fieldData;
         })
       };
+      
+      // Download JSON file
       downloadJSON(formJSON, `${(form.title||'form').replace(/\s+/g,'_').toLowerCase()}.json`);
+      
+      // Save form to server
+      await createRegistrationForm(formJSON);
+      
+      // Show success message
+      toast({
+        title: "Success",
+        description: "Form saved successfully!",
+      });
+      
+      // Navigate to form builder page
+      window.location.href = "/form-builder";
+      
     } catch (error) {
+      console.error('Error saving form:', error);
       toast({
         title: "Error",
-        description: "Failed to save form. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to save form. Please try again.",
         variant: "destructive",
       });
     }
