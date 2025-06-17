@@ -3,9 +3,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, X as XIcon, Edit3, Trash2 } from "lucide-react";
+import { Plus, FileText, X as XIcon, Edit3, Trash2, Loader2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import badgeData from "@/data/organizer/badge.json";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -17,6 +16,8 @@ import {
 } from "@/components/ui/dialog";
 import { FiAward, FiSearch } from "react-icons/fi";
 import { Toaster } from "@/components/ui/toaster";
+import { getAllBadges } from "@/services/organization/eventService";
+const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL
 
 function renderBadgeElement(element: any) {
   // Dynamically render badge elements based on their type and properties
@@ -53,7 +54,7 @@ function renderBadgeElement(element: any) {
       return (
         <img
           key={element.id}
-          src={style.imageUrl || content}
+          src={ASSETS_URL + style.imageUrl || content}
           alt="Attendee"
           style={{ ...baseStyle, objectFit: "cover", borderRadius: style.borderRadius || 8 }}
         />
@@ -62,7 +63,7 @@ function renderBadgeElement(element: any) {
       return (
         <img
           key={element.id}
-          src={style.imageUrl || content}
+          src={ASSETS_URL +style.imageUrl || content}
           alt="Event Logo"
           style={{ ...baseStyle, objectFit: "contain" }}
         />
@@ -70,9 +71,12 @@ function renderBadgeElement(element: any) {
     case "qr-code":
       // This can be replaced with a QR generator if needed
       return (
-        <div key={element.id} style={baseStyle}>
-          <span style={{ fontSize: style.fontSize || 20, color: style.color || "#000" }}>QR</span>
-        </div>
+        <img
+          key={element.id}
+          src={ASSETS_URL +style.imageUrl || content}
+          alt="QR Code"
+          style={{ ...baseStyle, objectFit: "contain" }}
+        />
       );
     default:
       return (
@@ -86,7 +90,8 @@ function renderBadgeElement(element: any) {
 const BadgeCard: React.FC<{ badge: any; onPreview: () => void }> = ({ badge, onPreview }) => {
   // Find a preview image if available, else use logo or photo
   const previewImg = badge.elements.find((el: any) => el.type === "event-logo" || el.type === "attendee-photo");
-  const previewUrl = previewImg?.style?.imageUrl || previewImg?.content || undefined;
+  const imageUrl = previewImg?.style?.imageUrl || previewImg?.content || undefined;
+  const previewUrl = ASSETS_URL + imageUrl;
   const exportDate = badge.exportedAt ? new Date(badge.exportedAt).toLocaleDateString() : "";
   return (
     <div
@@ -177,9 +182,45 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void }> = ({ badge, onP
   );
 };
 
+interface BadgeElement {
+  type: string;
+  x: number;
+  y: number;
+  width: string | number;
+  height: number;
+  content: string;
+  style: {
+    backgroundColor?: string;
+    borderRadius?: number;
+    imageUrl?: string;
+    fontSize?: number;
+    fontWeight?: string | number;
+    textAlign?: string;
+    color?: string;
+  };
+  _id: string;
+}
+
+interface BadgeTemplate {
+  _id: string;
+  badges_name: string;
+  badges_description: string;
+  elements: BadgeElement[];
+  backgroundColor: string;
+  width: number;
+  height: number;
+  is_active: boolean;
+  is_deleted: boolean;
+  created_at: string;
+  updated_at: string;
+  __v: number;
+}
+
 export default function Dashboard() {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [badges, setBadges] = useState<BadgeTemplate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const { toast } = useToast();
 
@@ -201,11 +242,41 @@ export default function Dashboard() {
     window.location.href = "/badge-designer/builder";
   };
 
-  // Ensure badges is always an array
-  const badges = useMemo(() => (Array.isArray(badgeData) ? badgeData : [badgeData]), []);
-  const filteredBadges = badges.filter(badge =>
-    badge.name.toLowerCase().includes(searchQuery.toLowerCase())
-  ); // Add search/filter logic if needed
+  // Fetch badges on component mount
+  useEffect(() => {
+    const fetchBadges = async () => {
+      try {
+        const response = await getAllBadges();
+        if (response.success && Array.isArray(response.data)) {
+          setBadges(response.data);
+        } else {
+          toast({
+            title: 'Error',
+            description: 'Failed to load badges. Invalid data format.',
+            variant: 'destructive'
+          });
+        }
+      } catch (error: any) {
+        console.error('Error fetching badges:', error);
+        toast({
+          title: 'Error',
+          description: error.message || 'Failed to load badges. Please try again later.',
+          variant: 'destructive'
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBadges();
+  }, [toast]);
+
+  // Filter badges based on search query
+  const filteredBadges = useMemo(() => {
+    return badges.filter(badge =>
+      badge.badges_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [badges, searchQuery]);
 
   return (
     <DashboardLayout title="Badges">
@@ -213,11 +284,25 @@ export default function Dashboard() {
       <div className="max-w-6xl p-3">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl text-gray-900 font-bold tracking-tight mb-1">Badge Templates</h1>
-            <p className="text-gray-500">Manage and create your badge templates with ease.</p>
+            <h1 className="text-2xl text-gray-900 font-bold tracking-tight mb-1">Badges</h1>
+            <p className="text-gray-500">Manage and create your badges with ease.</p>
           </div>
-          <Button onClick={handleNewBadge} size="lg" className="bg-black hover:bg-black/90 text-white cursor-pointer">
-            <Plus className="mr-1 h-5 w-5" /> Create New Badge Template
+          <Button
+            onClick={handleNewBadge}
+            size="lg"
+            className="bg-black hover:bg-black/90 text-white cursor-pointer"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              <>
+                <Plus className="mr-1 h-5 w-5" /> Create New Badge
+              </>
+            )}
           </Button>
         </div>
         {/* Search Bar */}
@@ -236,23 +321,35 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {filteredBadges.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+          </div>
+        ) : filteredBadges.length === 0 ? (
           <div className="text-center py-16 border-2 border-dashed rounded-lg flex flex-col items-center justify-center min-h-[400px] bg-card text-gray-500">
             <FileText className="h-20 w-20 text-muted-foreground/50 mb-6" />
-            <h3 className="text-2xl font-semibold mb-2">No Badges Found</h3>
+            <h3 className="text-2xl font-semibold mb-2">
+              {searchQuery ? 'No Matching Forms Found' : 'No Registration Forms'}
+            </h3>
             <p className="text-muted-foreground mb-6 max-w-md">
               {searchQuery
-                ? `Your search for "${searchQuery}" did not match any badges. Try a different term or clear the search.`
-                : "You haven't created any badges yet. Let's get started!"}
+                ? `Your search for "${searchQuery}" did not match any forms. Try a different term or clear the search.`
+                : "You haven't created any registration forms yet. Let's get started!"}
             </p>
-            <Button onClick={handleNewBadge} size="lg">
-              <Plus className="mr-2 h-5 w-5" /> Create Your First Badge
-            </Button>
+            {!isLoading && (
+              <Button onClick={handleNewBadge} size="lg">
+                <Plus className="mr-2 h-5 w-5" /> Create Your First Form
+              </Button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredBadges.map((badge) => (
-              <BadgeCard key={badge.id} badge={badge} onPreview={() => setOpenIdx(badges.findIndex(b => b.id === badge.id))} />
+              <BadgeCard
+                key={badge._id}
+                badge={badge}
+                onPreview={() => setOpenIdx(badges.findIndex(b => b._id === badge._id))}
+              />
             ))}
           </div>
         )}
@@ -265,8 +362,8 @@ export default function Dashboard() {
                 <div className="p-4 border-b flex justify-between items-center sticky top-0 bg-white z-10 gap-2">
                   <DialogHeaderUI>
                     <DialogTitleUI className="text-xl font-semibold truncate pr-8 text-gray-900">
-                      {filteredBadges[openIdx].name}
-                      <span className="ml-2 text-xs text-gray-400">{filteredBadges[openIdx].id}</span>
+                      {filteredBadges[openIdx].badges_name}
+                      <span className="ml-2 text-xs text-gray-400">{filteredBadges[openIdx]._id}</span>
                     </DialogTitleUI>
                   </DialogHeaderUI>
                   <DialogClose asChild>

@@ -140,7 +140,7 @@ export default function BadgeDesigner() {
       }
     }
   ]);
-  
+
   const [backgroundColor, setBackgroundColor] = useState('#FFFFFF');
   const [width, setWidth] = useState(500);
   const [height, setHeight] = useState(300);
@@ -148,7 +148,7 @@ export default function BadgeDesigner() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [badgeName, setBadgeName] = useState('My Badge');
   const [badgeDescription, setBadgeDescription] = useState('My Badge Description');
-  const [formErrors, setFormErrors] = useState<{name?: string; description?: string}>({});
+  const [formErrors, setFormErrors] = useState<{ name?: string; description?: string }>({});
   const router = useRouter();
   const { toast } = useToast();
 
@@ -156,7 +156,7 @@ export default function BadgeDesigner() {
 
 
   const validateForm = () => {
-    const errors: {name?: string; description?: string} = {};
+    const errors: { name?: string; description?: string } = {};
     if (!badgeName.trim()) errors.name = 'Badge name is required';
     if (!badgeDescription.trim()) errors.description = 'Description is required';
     setFormErrors(errors);
@@ -171,33 +171,31 @@ export default function BadgeDesigner() {
 
       // Create form data
       const formData = new FormData();
-      
+
       // Find all elements with images
-      const imageElements = elements.filter(el => 
-        ['attendee-photo', 'event-logo', 'qr-code'].includes(el.type) && 
+      const imageElements = elements.filter(el =>
+        ['attendee-photo', 'event-logo', 'qr-code'].includes(el.type) &&
         el.style?.imageUrl
       );
-      console.log("images in badge",imageElements);
-      // Generate a unique ID for this save operation to use in filenames
-      const saveId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+
+      console.log("images in badge", imageElements);
+
       let imageCounter = 0;
 
-      // Process and add images to form data using urlToFile utility
+      // Convert image URLs to actual files and update the elements
       for (const element of imageElements) {
-        try {
-          const imgUrl = element.style?.imageUrl;
-          // Skip if no image URL or if it's a data URL
-          if (!imgUrl || imgUrl.startsWith('data:')) continue;
-          
-          // If url looks like a filename already, skip fetch but still keep the name
-          if (!/^https?:\/\//i.test(imgUrl) && !imgUrl.startsWith('/')) {
-            continue;
-          }
+        const imgUrl = element.style?.imageUrl;
 
+        // Skip if no image URL or if it's already a plain filename (not a full/relative URL)
+        if (!imgUrl || (!/^https?:\/\//i.test(imgUrl) && !imgUrl.startsWith('/'))) {
+          continue;
+        }
+
+        try {
           let filename: string;
           let fetchUrl = imgUrl;
-          
-          // If relative path (e.g. /uploads/foo.png) make it absolute using current origin
+
+          // If it's a relative URL (starts with /), convert to absolute
           if (!/^https?:\/\//i.test(imgUrl) && imgUrl.startsWith('/')) {
             fetchUrl = window.location.origin + imgUrl;
           }
@@ -206,25 +204,26 @@ export default function BadgeDesigner() {
             const urlObj = new URL(fetchUrl);
             const pathnameName = urlObj.pathname.split('/').pop();
             const extension = pathnameName?.includes('.') ? pathnameName.split('.').pop() : 'png';
-            filename = `badge-img-${saveId}-${imageCounter}.${extension || 'png'}`;
+            filename = `badge-img-${imageCounter}.${extension || 'png'}`;
             imageCounter++;
           } catch {
-            filename = `badge-img-${saveId}-${imageCounter}.png`;
+            filename = `badge-img-${imageCounter}.png`;
             imageCounter++;
           }
-          
-          // Convert URL to File object
+
           const file = await urlToFile(fetchUrl, filename);
           formData.append('images', file);
-          // Update the element's imageUrl to use the new filename
+
           if (element.style) {
             element.style.imageUrl = file.name;
           }
+
         } catch (error) {
-          console.error('Error processing image:', error);
+          console.error("Error processing image:", error);
           continue;
         }
       }
+
 
       // Prepare elements data (remove id and handle width for text elements)
       const elementsForExport = elements.map(({ id, ...rest }) => ({
@@ -256,7 +255,7 @@ export default function BadgeDesigner() {
         );
         // Save to server
         await createBadge(formData);
-        
+
         // Create badge data object for JSON export
         const badgeData = {
           name: badgeName.trim(),
@@ -267,10 +266,10 @@ export default function BadgeDesigner() {
           height,
           exportedAt: new Date().toISOString(),
         };
-        
+
         // Download the JSON file for backup
-        const blob = new Blob([JSON.stringify(badgeData, null, 2)], { 
-          type: 'application/json' 
+        const blob = new Blob([JSON.stringify(badgeData, null, 2)], {
+          type: 'application/json'
         });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -278,7 +277,7 @@ export default function BadgeDesigner() {
         a.download = `badge-${badgeName.trim().toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.json`;
         a.click();
         URL.revokeObjectURL(url);
-        
+
         return { success: true };
       } catch (error) {
         console.error('Error saving badge:', error);
@@ -286,7 +285,7 @@ export default function BadgeDesigner() {
       }
     },
     onSuccess: () => {
-      toast({ 
+      toast({
         title: 'Success',
         description: 'Badge template created successfully',
         variant: 'default'
@@ -295,10 +294,10 @@ export default function BadgeDesigner() {
     },
     onError: (error) => {
       if (error.message !== 'Validation failed') {
-        toast({ 
-          title: 'Failed to save badge', 
+        toast({
+          title: 'Failed to save badge',
           description: error.message || 'An error occurred while saving the badge.',
-          variant: 'destructive' 
+          variant: 'destructive'
         });
       }
     },

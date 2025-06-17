@@ -134,3 +134,25 @@ export async function createBadge(data: any) {
     throw new Error(err.message || 'Failed to create badge');
   }
 }
+
+export async function getAllBadges() {
+  try {
+    const response = await get('/organization/get-all-badges');
+    console.log('get all badge response----',response)
+    return response; // returns the array of templates
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get badges');
+  }
+}
+
+export async function deleteBadge(id: string) {
+  try {
+    const response = await del('/organization/delete-badge', {
+      body: { id },
+    });
+    console.log('delete badge response ----', response);
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to delete badge');
+  }
+}
