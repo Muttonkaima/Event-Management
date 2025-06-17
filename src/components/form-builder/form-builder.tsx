@@ -41,7 +41,8 @@ export default function FormBuilder() {
           // For file fields, include accept attribute instead of pattern
           if (f.type === 'file' && f.validation?.fileTypes && f.validation.fileTypes.length > 0) {
             fieldData.validation = {
-              accept: f.validation.fileTypes.join(',')
+              accept: f.validation.fileTypes.join(','),
+              file_size: f.validation.maxFileSize
             };
           } 
           // For other field types that support pattern validation

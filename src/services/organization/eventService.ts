@@ -92,3 +92,14 @@ export async function deleteEmailTemplate(id: string) {
     throw new Error(err.message || 'Failed to delete email template');
   }
 }
+
+export async function createRegistrationForm(data: any) {
+  try {
+    const response = await post('/organization/create-registration-form', data);
+    console.log('create registration form response----',response)
+    return response; 
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to create registration form');
+  }
+}
+  

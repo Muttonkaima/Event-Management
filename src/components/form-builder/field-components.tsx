@@ -123,16 +123,6 @@ export default function FieldComponent({ field, isSelected, onSelect }: FieldCom
           />
         );
       
-      case 'phone':
-        return (
-          <Input
-            type="tel"
-            placeholder={field.placeholder}
-            disabled
-            className="w-full"
-          />
-        );
-      
       default:
         return (
           <Input
