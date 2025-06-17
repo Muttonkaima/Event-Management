@@ -1,4 +1,6 @@
 import { EmailBlock } from "@/shared/emailSchema";
+import { useState, useRef } from "react";
+import { useFileUpload } from "@/hooks/useFileUpload";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,6 +17,27 @@ interface PropertiesPanelProps {
 }
 
 export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock }: PropertiesPanelProps) {
+  // File uploader hook
+  const { uploadFile, isUploading } = useFileUpload();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Trigger hidden file input
+  const openFilePicker = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Handle actual upload then update block property
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedBlock) return;
+    try {
+      const url = await uploadFile(file);
+      onUpdateProperty(selectedBlock.id, "imageUrl", url);
+    } catch (err) {
+      console.error("Image upload failed", err);
+    }
+  };
+
   if (!selectedBlock) {
     return (
       <div className="w-80 bg-white border-l border-gray-200 h-full overflow-y-auto">
@@ -125,11 +148,21 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
                       placeholder="https://example.com/image.jpg"
                     />
                     <button
-                      className="px-3 text-xs font-medium border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors h-9 whitespace-nowrap"
-                      onClick={() => { }}
+                      type="button"
+                      className="px-3 text-xs font-medium border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors h-9 whitespace-nowrap disabled:opacity-60"
+                      onClick={openFilePicker}
+                      disabled={isUploading}
                     >
-                      Upload
+                      {isUploading ? 'Uploading...' : 'Upload'}
                     </button>
+                    {/* hidden file input */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      onChange={handleImageUpload}
+                      hidden
+                    />
                   </div>
                 </div>
                 {properties.imageUrl && (

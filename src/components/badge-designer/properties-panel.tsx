@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useFileUpload } from '@/hooks/useFileUpload';
 import { BadgeElement, BadgeTemplate, badgeTemplates } from '@/lib/badge-types';
 import { Eye, Trash2, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -52,7 +53,23 @@ export function PropertiesPanel({
     ).join(' ');
   };
 
+  const { uploadFile, isUploading } = useFileUpload();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const isImageElement = selectedElement?.type === 'attendee-photo' || selectedElement?.type === 'event-logo';
+
+  const openFilePicker = () => fileInputRef.current?.click();
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedElement) return;
+    try {
+      const url = await uploadFile(file);
+      updateElementStyle({ imageUrl: url });
+    } catch (err) {
+      console.error('Badge image upload failed', err);
+    }
+  };
   const isQRElement = selectedElement?.type === 'qr-code';
 
   return (
@@ -234,13 +251,33 @@ export function PropertiesPanel({
                   <div className="space-y-4">
                     <div>
                       <Label className="text-sm font-medium text-gray-900 mb-2">Image URL</Label>
-                      <Input
-                        id="image-url"
-                        type="url"
-                        placeholder="https://example.com/image.jpg"
-                        value={selectedElement.style?.imageUrl || ''}
-                        onChange={(e) => updateElementStyle({ imageUrl: e.target.value })}
-                      />
+                      <div className="flex space-x-2">
+                        <Input
+                          id="image-url"
+                          type="url"
+                          placeholder="https://example.com/image.jpg"
+                          value={selectedElement.style?.imageUrl || ''}
+                          onChange={(e) => updateElementStyle({ imageUrl: e.target.value })}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={openFilePicker}
+                          disabled={isUploading}
+                          className="border border-gray-300 text-xs h-9 whitespace-nowrap disabled:opacity-60 text-gray-700"
+                        >
+                          {isUploading ? 'Uploading…' : 'Upload'}
+                        </Button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          hidden
+                          ref={fileInputRef}
+                          onChange={handleImageUpload}
+                        />
+                      </div>
                     </div>
 
                     <div>
