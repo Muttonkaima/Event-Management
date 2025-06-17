@@ -51,7 +51,7 @@ export default function PropertiesPanel() {
           </div>
 
           {/* Placeholder */}
-          {selectedField.type !== 'checkbox' && (
+          {selectedField.type !== 'checkbox' && selectedField.type !== 'radio' && selectedField.type !== 'file' && selectedField.type !== 'date' && (
             <div>
               <Label className="text-sm font-medium text-gray-700">Placeholder</Label>
               <Input
@@ -83,12 +83,14 @@ export default function PropertiesPanel() {
             />
           </div>
 
-          {/* Options (for dropdown fields) */}
-          {selectedField.type === 'dropdown' && (
+          {/* Options (for select and radio fields) */}
+          {(selectedField.type === 'select' || selectedField.type === 'radio') && selectedField.options && (
             <div>
-              <Label className="text-sm font-medium text-gray-700 mb-3 block">Options</Label>
+              <Label className="text-sm font-medium text-gray-700 mb-3 block">
+                {selectedField.type === 'select' ? 'Dropdown Options' : 'Radio Button Options'}
+              </Label>
               <div className="space-y-2">
-                {selectedField.options?.map((option: string, index: number) => (
+                {selectedField.options.map((option: string, index: number) => (
                   <div key={index} className="flex items-center gap-2">
                     <Input
                       value={option}
@@ -108,6 +110,7 @@ export default function PropertiesPanel() {
                       size="sm"
                       className="text-gray-400 hover:text-red-500 p-1"
                       onClick={() => removeOption(selectedField.id, index)}
+                      disabled={!selectedField.options || selectedField.options.length <= 1}
                     >
                       <X className="w-4 h-4" />
                     </Button>

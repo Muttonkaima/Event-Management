@@ -7,7 +7,8 @@ import {
   CheckSquare, 
   Upload, 
   Calendar, 
-  Phone 
+  Phone,
+  Circle
 } from "lucide-react";
 
 interface FieldType {
@@ -17,11 +18,12 @@ interface FieldType {
 }
 
 const fieldTypes: FieldType[] = [
-  { type: 'text-input', label: 'Text Input', icon: <AlignLeft className="w-4 h-4" /> },
+  { type: 'text', label: 'Text Input', icon: <AlignLeft className="w-4 h-4" /> },
   { type: 'email', label: 'Email', icon: <Mail className="w-4 h-4" /> },
   { type: 'number', label: 'Number', icon: <Hash className="w-4 h-4" /> },
   { type: 'textarea', label: 'Text Area', icon: <AlignLeft className="w-4 h-4" /> },
-  { type: 'dropdown', label: 'Dropdown', icon: <ChevronDown className="w-4 h-4" /> },
+  { type: 'select', label: 'Dropdown', icon: <ChevronDown className="w-4 h-4" /> },
+  { type: 'radio', label: 'Radio Buttons', icon: <Circle className="w-4 h-4" /> },
   { type: 'checkbox', label: 'Checkbox', icon: <CheckSquare className="w-4 h-4" /> },
   { type: 'file', label: 'File Upload', icon: <Upload className="w-4 h-4" /> },
   { type: 'date', label: 'Date', icon: <Calendar className="w-4 h-4" /> },

@@ -2,10 +2,12 @@ import { FormField } from "@/shared/formSchema";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useFormBuilderStore } from "@/store/form-builder-store";
+import { Label } from "@/components/ui/label";
 
 interface FieldComponentProps {
   field: FormField;
@@ -23,7 +25,7 @@ export default function FieldComponent({ field, isSelected, onSelect }: FieldCom
 
   const renderFieldInput = () => {
     switch (field.type) {
-      case 'text-input':
+      case 'text':
         return (
           <Input
             placeholder={field.placeholder}
@@ -62,7 +64,7 @@ export default function FieldComponent({ field, isSelected, onSelect }: FieldCom
           />
         );
       
-      case 'dropdown':
+      case 'select':
         return (
           <Select disabled>
             <SelectTrigger className="w-full">
@@ -76,6 +78,22 @@ export default function FieldComponent({ field, isSelected, onSelect }: FieldCom
               ))}
             </SelectContent>
           </Select>
+        );
+      
+      case 'radio':
+        return (
+          <div className="space-y-2">
+            <RadioGroup disabled className="space-x-2 flex">
+              {field.options?.map((option, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option} id={`${field.id}-${index}`} className="w-3 h-3 text-gray-700" />
+                  <Label htmlFor={`${field.id}-${index}`} className="text-sm font-normal text-gray-700">
+                    {option}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
         );
       
       case 'checkbox':

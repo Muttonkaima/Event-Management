@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { FormField, Form } from '@/shared/formSchema';
+import { Form, FormField, FieldType } from '@/shared/formSchema';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 
 interface FormBuilderState {
@@ -25,28 +25,31 @@ interface FormBuilderActions {
   resetForm: () => void;
 }
 
+// Helper function to get default label based on field type
 const getDefaultLabel = (type: string): string => {
-  const labels: Record<string, string> = {
-    'text-input': 'Text Input',
-    'email': 'Email Address',
-    'number': 'Number',
-    'textarea': 'Text Area',
-    'dropdown': 'Dropdown',
-    'checkbox': 'Checkbox',
-    'file': 'File Upload',
-    'date': 'Date',
-    'phone': 'Phone Number'
-  };
-  return labels[type] || 'Field';
+  switch (type) {
+    case 'text': return 'Text Input';
+    case 'email': return 'Email';
+    case 'number': return 'Number';
+    case 'textarea': return 'Text Area';
+    case 'select': return 'Dropdown';
+    case 'radio': return 'Radio Buttons';
+    case 'checkbox': return 'Checkbox';
+    case 'file': return 'File Upload';
+    case 'date': return 'Date';
+    case 'phone': return 'Phone';
+    default: return 'Field';
+  }
 };
 
 const getDefaultPlaceholder = (type: string): string => {
   const placeholders: Record<string, string> = {
-    'text-input': 'Enter text here',
+    'text': 'Enter text here',
     'email': 'your@email.com',
     'number': 'Enter number',
     'textarea': 'Enter your message',
-    'dropdown': 'Select an option',
+    'select': 'Select an option',
+    'radio': 'Select an option',
     'file': 'Choose file',
     'date': 'Select date',
     'phone': 'Enter phone number'
@@ -70,31 +73,46 @@ export const useFormBuilderStore = create<FormBuilderState & FormBuilderActions>
     }));
   },
 
-  addField: (fieldType) => {
-    const newField: FormField = {
+  addField: (type: string) => {
+    const fieldType = type as FieldType;
+    const baseField: Omit<FormField, 'type' | 'options'> = {
       id: `field-${Date.now()}`,
-      type: fieldType as any,
-      label: getDefaultLabel(fieldType),
-      placeholder: getDefaultPlaceholder(fieldType),
+      label: getDefaultLabel(type),
+      placeholder: getDefaultPlaceholder(type),
       required: false,
       helpText: '',
-      options: fieldType === 'dropdown' ? ['Option 1', 'Option 2'] : undefined,
-      order: get().fields.length
+      order: get().fields.length + 1,
+    };
+
+    const field: FormField = {
+      ...baseField,
+      type: fieldType,
+      ...(fieldType === 'select' || fieldType === 'radio' 
+        ? { options: ['Option 1', 'Option 2'] } 
+        : {})
     };
 
     set((state) => ({
-      fields: [...state.fields, newField],
-      selectedFieldId: newField.id
+      fields: [...state.fields, field],
+      selectedFieldId: field.id
     }));
   },
 
-  updateField: (fieldId, updates) => {
-    set((state) => ({
-      fields: state.fields.map(field => 
-        field.id === fieldId ? { ...field, ...updates } : field
-      )
-    }));
-  },
+  updateField: (fieldId: string, updates: Partial<FormField>) =>
+    set((state) => {
+      const fields = state.fields.map((field) => {
+        if (field.id === fieldId) {
+          // If this is not a select/radio field, ensure we don't set options
+          if (field.type !== 'select' && field.type !== 'radio' && 'options' in updates) {
+            const { options, ...rest } = updates;
+            return { ...field, ...rest };
+          }
+          return { ...field, ...updates };
+        }
+        return field;
+      });
+      return { fields };
+    }),
 
   deleteField: (fieldId) => {
     set((state) => {

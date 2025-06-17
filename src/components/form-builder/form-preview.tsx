@@ -2,10 +2,12 @@ import { FormField, Form } from '@/shared/formSchema';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { X } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 interface FormPreviewProps {
   isOpen: boolean;
@@ -19,7 +21,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
     const baseClasses = "w-full";
 
     switch (field.type) {
-      case 'text-input':
+      case 'text':
         return (
           <Input
             placeholder={field.placeholder}
@@ -58,7 +60,7 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
           />
         );
 
-      case 'dropdown':
+      case 'select':
         return (
           <Select required={field.required}>
             <SelectTrigger className={baseClasses}>
@@ -74,6 +76,26 @@ export default function FormPreview({ isOpen, onClose, form, fields }: FormPrevi
           </Select>
         );
 
+      case 'radio':
+        return (
+          <div className="space-y-2">
+            <div className="text-sm font-medium text-gray-900">
+              {field.label}
+              {field.required && <span className="text-red-500 ml-1">*</span>}
+            </div>
+            <RadioGroup required={field.required} className="space-y-2">
+              {field.options?.map((option, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option} id={`preview-${field.id}-${index}`} />
+                  <Label htmlFor={`preview-${field.id}-${index}`} className="text-sm font-normal text-gray-700">
+                    {option}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        );
+      
       case 'checkbox':
         return (
           <div className="flex items-center gap-3">

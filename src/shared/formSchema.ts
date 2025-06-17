@@ -1,13 +1,20 @@
+export type FieldType = 'text' | 'email' | 'number' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'file' | 'date' | 'phone';
+
 export interface FormField {
   id: string;
-  type: 'text-input' | 'email' | 'number' | 'textarea' | 'dropdown' | 'checkbox' | 'file' | 'date' | 'phone';
+  type: FieldType;
   label: string;
   placeholder?: string;
   required: boolean;
   helpText?: string;
-  options?: string[];
   order: number;
+  options?: string[]; // Only used for 'select' and 'radio' types
 }
+
+// Type guard to check if a field has options
+const hasOptions = (field: FormField): field is FormField & { options: string[] } => {
+  return (field.type === 'select' || field.type === 'radio') && Array.isArray(field.options);
+};
 
 export interface Form {
   id?: number;
