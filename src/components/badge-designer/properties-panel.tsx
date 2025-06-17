@@ -15,6 +15,11 @@ interface PropertiesPanelProps {
   backgroundColor: string;
   width: number;
   height: number;
+  badgeName: string;
+  onBadgeNameChange: (name: string) => void;
+  badgeDescription: string;
+  onBadgeDescriptionChange: (description: string) => void;
+  formErrors: { name?: string; description?: string };
   onElementUpdate: (elementId: string, updates: Partial<BadgeElement & { width: number; height: number }>) => void;
   onElementDelete: (elementId: string) => void;
   onBackgroundColorChange: (color: string) => void;
@@ -26,6 +31,11 @@ export function PropertiesPanel({
   backgroundColor,
   width,
   height,
+  badgeName,
+  onBadgeNameChange,
+  badgeDescription,
+  onBadgeDescriptionChange,
+  formErrors,
   onElementUpdate,
   onElementDelete,
   onBackgroundColorChange,
@@ -394,13 +404,49 @@ export function PropertiesPanel({
           </TabsContent>
 
           <TabsContent value="badge" className="space-y-6">
-            <div>
-              <Label className="text-sm font-medium text-gray-900 mb-2">Badge Background Color</Label>
-              <div className="flex items-center space-x-3 mt-2">
-              <ColorPicker
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="badge-name" className="text-sm font-medium text-gray-900 mb-1">
+                  Badge Name <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="badge-name"
+                  type="text"
+                  value={badgeName}
+                  onChange={(e) => onBadgeNameChange(e.target.value)}
+                  className={`w-full ${formErrors.name ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="Enter badge name"
+                />
+                {formErrors.name && (
+                  <p className="mt-1 text-xs text-red-600">{formErrors.name}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="badge-description" className="text-sm font-medium text-gray-900 mb-1">
+                  Description <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="badge-description"
+                  type="text"
+                  value={badgeDescription}
+                  onChange={(e) => onBadgeDescriptionChange(e.target.value)}
+                  className={`w-full ${formErrors.description ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="Enter badge description"
+                />
+                {formErrors.description && (
+                  <p className="mt-1 text-xs text-red-600">{formErrors.description}</p>
+                )}
+              </div>
+
+              <div className="pt-2">
+                <Label className="text-sm font-medium text-gray-900 mb-2">Badge Background Color</Label>
+                <div className="flex items-center space-x-3 mt-2">
+                  <ColorPicker
                     value={backgroundColor}
                     onChange={(value: string) => onBackgroundColorChange(value)}
                   />
+                </div>
               </div>
             </div>
 

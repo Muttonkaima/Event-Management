@@ -146,16 +146,32 @@ export default function BadgeDesigner() {
   const [height, setHeight] = useState(300);
   const [selectedElementId, setSelectedElementId] = useState<string | null>('element-1');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [badgeName, setBadgeName] = useState('My Badge');
+  const [badgeDescription, setBadgeDescription] = useState('My Badge Description');
+  const [formErrors, setFormErrors] = useState<{name?: string; description?: string}>({});
 
   const { toast } = useToast();
 
   const selectedElement = elements.find(el => el.id === selectedElementId) || null;
 
 
+  const validateForm = () => {
+    const errors: {name?: string; description?: string} = {};
+    if (!badgeName.trim()) errors.name = 'Badge name is required';
+    if (!badgeDescription.trim()) errors.description = 'Description is required';
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const exportBadgeMutation = useMutation({
     mutationFn: async () => {
+      if (!validateForm()) {
+        throw new Error('Validation failed');
+      }
+      
       const badgeData = {
-        name: `Badge Export ${Date.now()}`,
+        name: badgeName.trim(),
+        description: badgeDescription.trim(),
         elements,
         backgroundColor,
         width,
@@ -169,15 +185,17 @@ export default function BadgeDesigner() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `badge-${Date.now()}.json`;
+      a.download = `badge-${badgeName.trim().toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.json`;
       a.click();
       URL.revokeObjectURL(url);
     },
     onSuccess: () => {
       toast({ title: 'Badge exported successfully!' });
     },
-    onError: () => {
-      toast({ title: 'Failed to export badge', variant: 'destructive' });
+    onError: (error) => {
+      if (error.message !== 'Validation failed') {
+        toast({ title: 'Failed to export badge', variant: 'destructive' });
+      }
     },
   });
 
@@ -237,7 +255,7 @@ export default function BadgeDesigner() {
         {/* Header */}
         <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center flex-shrink-0">
           <div>
-          <Button
+            <Button
               variant="ghost"
               size="sm"
               className="text-gray-600 border-2 border-gray-200 hover:bg-gray-50 hover:text-gray-800 cursor-pointer"
@@ -247,7 +265,6 @@ export default function BadgeDesigner() {
             </Button>
           </div>
           <div className="flex items-center gap-3">
-            
             <Button
               variant="ghost"
               size="sm"
@@ -269,6 +286,7 @@ export default function BadgeDesigner() {
           </div>
         </header>
 
+
         <div className="flex max-h-[calc(90vh)]">
           <ElementsSidebar />
           <BadgeCanvas
@@ -286,6 +304,11 @@ export default function BadgeDesigner() {
             backgroundColor={backgroundColor}
             width={width}
             height={height}
+            badgeName={badgeName}
+            onBadgeNameChange={setBadgeName}
+            badgeDescription={badgeDescription}
+            onBadgeDescriptionChange={setBadgeDescription}
+            formErrors={formErrors}
             onElementUpdate={handleElementUpdate}
             onElementDelete={handleElementDelete}
             onBackgroundColorChange={setBackgroundColor}

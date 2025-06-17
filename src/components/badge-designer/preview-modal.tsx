@@ -30,7 +30,9 @@ export function PreviewModal({
       position: 'absolute',
       left: `${element.x}px`,
       top: `${element.y}px`,
-      width: `${element.width}px`,
+      width: ['attendee-name', 'event-location', 'attendee-role'].includes(element.type)
+      ? 'fit-content'
+      : `${element.width}px`,
       height: `${element.height}px`,
       fontSize: style.fontSize ? `${style.fontSize}px` : undefined,
       fontWeight: style.fontWeight || 'normal',

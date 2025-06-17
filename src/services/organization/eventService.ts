@@ -124,3 +124,13 @@ export async function deleteRegistrationForm(id: string) {
     throw new Error(err.message || 'Failed to delete registration form');
   }
 }
+
+export async function createBadge(data: any) {
+  try {
+    const response = await upload('/organization/create-badge', data);
+    console.log('create badge response----',response)
+    return response; // returns the array of templates
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to create badge');
+  }
+}
