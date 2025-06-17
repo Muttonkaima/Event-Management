@@ -10,8 +10,12 @@ import { Eye, Save } from "lucide-react";
 import { createEmailTemplate } from "@/services/organization/eventService";
 import { urlToFile } from "@/utils/urlToFile";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 export function EmailBuilderClient() {
+  const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [emailSubject, setEmailSubject] = useState('Email Template');
@@ -36,7 +40,6 @@ export function EmailBuilderClient() {
 
   const handleSaveTemplate = async () => {
     setIsSaving(true);
-    // Download locally
     exportTemplate();
 
     // Prepare data
@@ -88,7 +91,7 @@ export function EmailBuilderClient() {
     try {
       setIsSaving(true);
       await createEmailTemplate(formData);
-      console.log("Email template saved to backend");
+      router.push("/email-builder?created=1");
     } catch (err) {
       console.error("Failed to save email template", err);
     } finally {
@@ -98,6 +101,7 @@ export function EmailBuilderClient() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+       <Toaster />
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center flex-shrink-0">
           <div>

@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Plus, FileText, Edit3, Trash2, Smartphone, Tablet, Monitor, Palette, X as XIcon } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -16,6 +18,8 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { FiSearch } from "react-icons/fi";
+
+import { Toaster } from "@/components/ui/toaster";
 
 // Ensure templates is always an array
 const templates = Array.isArray(emailTemplateFromFile) ? emailTemplateFromFile : [emailTemplateFromFile];
@@ -118,10 +122,12 @@ const EmailTemplateCard: React.FC<{
   const firstImageBlock = template.blocks.find((b: any) => b.type === 'image');
   const previewImage = template.previewImageUrl || firstImageBlock?.properties.imageUrl;
   return (
+    <>
     <div
       className="relative group rounded-xl bg-white/70 shadow-md border hover:shadow-sm hover:-translate-y-1 transition-all duration-300 overflow-visible cursor-pointer flex flex-col border-b-5 border-b-black"
       onClick={e => { e.stopPropagation(); onPreview(); }}
     >
+    
       <div className="relative">
         <div className="aspect-[16/9] bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden flex items-center justify-center rounded-t-xl">
           {previewImage ? (
@@ -176,10 +182,17 @@ const EmailTemplateCard: React.FC<{
         </div>
       </div>
     </div>
+    </>
   );
 };
 
 export default function Dashboard() {
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get('created')) {
+      toast({ title: 'Email template created successfully' });
+    }
+  }, [searchParams]);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false); // Set to true if you want to simulate loading
@@ -199,6 +212,8 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout title="Email Templates">
+      
+    <Toaster />
       <div className="max-w-7xl mx-auto p-3">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
