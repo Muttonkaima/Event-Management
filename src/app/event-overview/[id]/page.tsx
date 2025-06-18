@@ -15,7 +15,7 @@ import Image from 'next/image';
 import AnalyticsClientWrapper from '@/components/event-dashboard/analytics-client-wrapper';
 import { PlusCircle } from 'lucide-react';
 import ShareLinkButton from '@/components/event-dashboard/shareButton';
-
+import { Medal, Mail, FileText } from "lucide-react";
 
 
 interface PageProps {
@@ -361,7 +361,7 @@ const logoImage = event.branding_id?.branding_logo
                   ))}
                 </div>
               ) : (
-                <div className="rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
+                <div className="rounded-2xl border-2 border-dashed border-gray-700 dark:border-gray-700 p-12 text-center">
                   <div className="mx-auto h-12 w-12 text-gray-400" aria-hidden="true">
                     <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -377,6 +377,149 @@ const logoImage = event.branding_id?.branding_logo
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Event Resources */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Event Resources</h2>
+              </div>
+              <div className="grid gap-6 md:grid-cols-3">
+                {/* Badge Card */}
+                {event.badge_id[0] ? (
+                  <Card className="h-full flex flex-col transition-all hover:shadow-md group">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Image
+                            src="/images/badge-icon.svg"
+                            alt="Badge"
+                            width={16}
+                            height={16}
+                            className="text-primary"
+                          />
+                        </div>
+                        Badge
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <div className="space-y-1">
+                        <p className="text-sm text-gray-500">ID: {event.badge_id}</p>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full group-hover:bg-black group-hover:text-white transition-colors"
+                      >
+                        View Badge
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ) : (
+                  <div className="rounded-2xl border-2 border-dashed border-gray-700 p-6 text-center flex flex-col items-center justify-center h-full min-h-[180px]">
+                    <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                    <Medal size={20} className="text-gray-500" />
+                    </div>
+                    <p className="text-sm text-gray-900 mb-1">No badge selected</p>
+                    <p className="text-sm text-gray-700">Create badge to identify attendees</p>
+                    {/* <Button variant="outline" size="sm">
+                      Create Badge
+                    </Button> */}
+                  </div>
+                )}
+
+                {/* Form Card */}
+                {event.registration_form_id ? (
+                  <Card className="h-full flex flex-col transition-all hover:shadow-md group">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
+                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                          <Image
+                            src="/images/form-icon.svg"
+                            alt="Form"
+                            width={16}
+                            height={16}
+                            className="text-blue-500"
+                          />
+                        </div>
+                        Registration Form
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <div className="space-y-1">
+                        <p className="text-sm text-gray-500">ID: {event.registration_form_id}</p>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full group-hover:bg-black group-hover:text-white transition-colors"
+                      >
+                        View Form
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ) : (
+                  <div className="rounded-2xl border-2 border-dashed border-gray-700 p-6 text-center flex flex-col items-center justify-center h-full min-h-[180px]">
+                    <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                    <FileText size={20} className="text-gray-500" />
+                    </div>
+                    <p className="text-sm text-gray-900 mb-1">No form selected</p>
+                    <p className="text-sm text-gray-700">Create form to collect attendee information</p>
+                    {/* <Button variant="outline" size="sm">
+                      Create Form
+                    </Button> */}
+                  </div>
+                )}
+
+                {/* Email Template Card */}
+                {event.email_template_id ? (
+                  <Card className="h-full flex flex-col transition-all hover:shadow-md group">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
+                        <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                          <Image
+                            src="/images/email-icon.svg"
+                            alt="Email"
+                            width={16}
+                            height={16}
+                            className="text-green-500"
+                          />
+                        </div>
+                        Email Template
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <div className="space-y-1">
+                        <p className="text-sm text-gray-500">ID: {event.email_template_id}</p>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full group-hover:bg-black group-hover:text-white transition-colors"
+                      >
+                        View Template
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ) : (
+                  <div className="rounded-2xl border-2 border-dashed border-gray-700 p-6 text-center flex flex-col items-center justify-center h-full min-h-[180px]">
+                    <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                    <Mail size={20} className="text-gray-500" />
+                    </div>
+                    <p className="text-sm text-gray-900 mb-1">No template selected</p>
+                    <p className="text-sm text-gray-700">Create template to send emails to attendees</p>
+                    {/* <Button variant="outline" size="sm">
+                      Create Template
+                    </Button> */}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Quick Actions */}
