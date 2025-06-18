@@ -99,11 +99,21 @@ export default function Dashboard() {
     }
   };
 
-  // forms is now always an array (see above)
+  // Filter and sort forms by createdAt date (newest first)
   const filteredForms = useMemo(() => {
-    if (!searchQuery) return forms;
-    return forms.filter((form: FormData) =>
-      form.registration_form_name.toLowerCase().includes(searchQuery.toLowerCase())
+    // Create a copy of the forms array to avoid mutating the original
+    let result = [...forms];
+    
+    // Filter by search query if provided
+    if (searchQuery) {
+      result = result.filter((form: FormData) =>
+        form.registration_form_name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Sort by createdAt date (newest first)
+    return result.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }, [searchQuery, forms]);
 
