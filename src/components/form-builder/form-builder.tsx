@@ -6,13 +6,15 @@ import FormCanvas from "./form-canvas";
 import PropertiesPanel from "./properties-panel";
 import FormPreview from "./form-preview";
 import { Button } from "@/components/ui/button";
-import { Eye, Save, Home, ArrowBigLeft } from "lucide-react";
+import { Eye, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import dynamic from 'next/dynamic';
-import { downloadJSON } from "./utils";
-import { createRegistrationForm } from "@/services/organization/eventService";
-import { useRouter } from "next/navigation";
+import { 
+  createRegistrationForm, 
+  updateRegistrationForm 
+} from "@/services/organization/eventService";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // Dynamically import DndProvider with no SSR
 const DndProvider = dynamic(
@@ -22,13 +24,18 @@ const DndProvider = dynamic(
 
 export default function FormBuilder() {
   const { toast } = useToast();
-  const { form, fields, saveForm, isSaving, savedFormId } = useFormBuilderStore();
+  const { form, fields, isSaving } = useFormBuilderStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isEditMode = !!searchParams?.get('edit');
+  
+  // Get the form ID from the URL if in edit mode
+  const formId = searchParams?.get('edit') || '';
 
   const handleSave = async () => {
     try {
-      const formJSON = {
+      const formData = {
         name: form.title,
         description: form.description,
         fields: fields.map(f => {
@@ -60,16 +67,18 @@ export default function FormBuilder() {
         })
       };
       
-      // Download JSON file
-      downloadJSON(formJSON, `${(form.title||'form').replace(/\s+/g,'_').toLowerCase()}.json`);
-      
-      // Save form to server
-      await createRegistrationForm(formJSON);
+      if (isEditMode && formId) {
+        // Update existing form
+        await updateRegistrationForm(formId, formData);
+      } else {
+        // Create new form
+        await createRegistrationForm(formData);
+      }
       
       // Show success message
       toast({
         title: "Success",
-        description: "Form saved successfully!",
+        description: `Form ${isEditMode ? 'updated' : 'saved'} successfully!`,
       });
       
       // Navigate to form builder page
@@ -79,7 +88,7 @@ export default function FormBuilder() {
       console.error('Error saving form:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save form. Please try again.",
+        description: error instanceof Error ? error.message : `Failed to ${isEditMode ? 'update' : 'save'} form. Please try again.`,
         variant: "destructive",
       });
     }
@@ -132,7 +141,7 @@ export default function FormBuilder() {
               disabled={isSaving}
             >
               <Save className="w-4 h-4 mr-2" />
-              {isSaving ? "Saving..." : savedFormId ? "Update Form" : "Save Form"}
+              {isSaving ? "Saving..." : isEditMode ? "Update Form" : "Create Form"}
             </Button>
            
           </div>

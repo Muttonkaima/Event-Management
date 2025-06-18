@@ -23,6 +23,7 @@ interface FormBuilderActions {
   saveForm: () => Promise<void>;
   loadForm: (formId: number) => Promise<void>;
   resetForm: () => void;
+  setFields: (fields: FormField[]) => void;
 }
 
 // Helper function to get default label based on field type
@@ -262,5 +263,9 @@ export const useFormBuilderStore = create<FormBuilderState & FormBuilderActions>
       savedFormId: null,
       isSaving: false
     });
-  }
+  },
+
+  setFields: (fields) => {
+    set({ fields });
+  },
 }));
