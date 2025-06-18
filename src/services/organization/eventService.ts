@@ -83,9 +83,7 @@ export async function getAllEmailTemplates() {
 
 export async function deleteEmailTemplate(id: string) {
   try {
-    const response = await del('/organization/delete-email-template', {
-      body: { id },
-    });
+    const response = await del(`/organization/delete-email-template/${id}`);
     console.log('delete email template response ----', response);
     return response;
   } catch (err: any) {
@@ -115,9 +113,7 @@ export async function getAllRegistrationForms() {
 
 export async function deleteRegistrationForm(id: string) {
   try {
-    const response = await del('/organization/delete-registration-form', {
-      body: { id },
-    });
+    const response = await del(`/organization/delete-registration-form/${id}`);
     console.log('delete registration form response ----', response);
     return response;
   } catch (err: any) {
@@ -147,9 +143,7 @@ export async function getAllBadges() {
 
 export async function deleteBadge(id: string) {
   try {
-    const response = await del('/organization/delete-badge', {
-      body: { id },
-    });
+    const response = await del(`/organization/delete-badge/${id}`);
     console.log('delete badge response ----', response);
     return response;
   } catch (err: any) {
@@ -190,6 +184,26 @@ export async function getRegistrationFormById(id: string) {
 export async function updateRegistrationForm(id: string, data: any) {
   try {
     const response = await put(`/organization/update-registration-form/${id}`, data);
+    console.log('update form response ----', response);
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to update form');
+  }
+}
+
+export async function getEmailTemplateById(id: string) {
+  try {
+    const response = await get(`/organization/get-email-template-by-id/${id}`);
+    console.log('get form by id response----',response)
+    return response; // returns the form by id
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get form by id');
+  }
+}
+
+export async function updateEmailTemplate(id: string, data: any) {
+  try {
+    const response = await upload(`/organization/update-email-template/${id}`, data);
     console.log('update form response ----', response);
     return response;
   } catch (err: any) {

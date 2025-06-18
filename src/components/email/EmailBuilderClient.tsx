@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EmailBlockSidebar } from "@/components/email/EmailBlockSidebar";
 import { EmailPreview } from "@/components/email/EmailPreview";
 import { EmailPreviewModal } from "@/components/email/EmailPreviewModal";
 import { PropertiesPanel } from "@/components/email/PropertiesPanel";
 import { useEmailBuilder } from "@/hooks/use-email-builder";
 import { Eye, Save } from "lucide-react";
-import { createEmailTemplate } from "@/services/organization/eventService";
+import { createEmailTemplate, updateEmailTemplate } from "@/services/organization/eventService";
 import { urlToFile } from "@/utils/urlToFile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,12 +15,32 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 
-export function EmailBuilderClient() {
+interface EmailBuilderClientProps {
+  initialData?: {
+    blocks?: any[];
+    emailSubject?: string;
+    previewText?: string;
+  } | null;
+  templateId?: string;
+}
+
+export function EmailBuilderClient({ initialData, templateId }: EmailBuilderClientProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [emailSubject, setEmailSubject] = useState('');
-  const [previewText, setPreviewText] = useState('');
+  const [emailSubject, setEmailSubject] = useState(initialData?.emailSubject || '');
+  const [previewText, setPreviewText] = useState(initialData?.previewText || '');
+
+  // Update form fields when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      if (initialData.emailSubject) setEmailSubject(initialData.emailSubject);
+      if (initialData.previewText) setPreviewText(initialData.previewText);
+    }
+  }, [initialData]);
+  
+  // Make sure templateId is defined in the component scope
+  const currentTemplateId = templateId;
 
   // Debug logs
   console.log('Preview modal state:', isPreviewOpen);
@@ -36,8 +56,20 @@ export function EmailBuilderClient() {
     deleteBlock,
     updateBlockProperty,
     selectBlock,
-    exportTemplate
-  } = useEmailBuilder();
+    exportTemplate,
+    setBlocks
+  } = useEmailBuilder({
+    // Only pass initial blocks if we have them, otherwise let the hook use defaults
+    initialBlocks: initialData?.blocks
+  });
+
+  // Reset form fields when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData) {
+      if (initialData.emailSubject) setEmailSubject(initialData.emailSubject);
+      if (initialData.previewText) setPreviewText(initialData.previewText);
+    }
+  }, [initialData]);
 
   const handleSaveTemplate = async () => {
     if (!emailSubject.trim() || !previewText.trim()) {
@@ -46,8 +78,7 @@ export function EmailBuilderClient() {
     }
     setIsSaving(true);
     setIsSaving(true);
-    exportTemplate();
-
+    
     // Prepare data
     const clonedBlocks = JSON.parse(JSON.stringify(blocks));
     const formData = new FormData();
@@ -97,22 +128,42 @@ export function EmailBuilderClient() {
       }
     }
 
-    // Remove internal ids so backend (Mongo) can assign its own
-    clonedBlocks.forEach((b: any) => {
-      if (b && 'id' in b) delete b.id;
+    // Prepare blocks data for the backend
+    const blocksForBackend = clonedBlocks.map((block: any) => {
+      const { id, ...blockWithoutId } = block;
+      return blockWithoutId;
     });
-    formData.append("blocks", JSON.stringify(clonedBlocks));
+    formData.append("blocks", JSON.stringify(blocksForBackend));
 
     console.log(
       'FormData contents:',
       [...formData.entries()].map(([k, v]) => [k, v instanceof File ? v.name : v])
     );
     try {
-      setIsSaving(true);
-      await createEmailTemplate(formData);
+      if (currentTemplateId) {
+        // Update existing template
+        await updateEmailTemplate(currentTemplateId, formData);
+        toast({
+          title: 'Success',
+          description: 'Template updated successfully',
+        });
+      } else {
+        // Create new template
+        await createEmailTemplate(formData);
+        toast({
+          title: 'Success',
+          description: 'Template created successfully',
+        });
+      }
+      
       router.push("/email-builder?created=1");
     } catch (err) {
       console.error("Failed to save email template", err);
+      toast({
+        title: 'Error',
+        description: 'Failed to save template',
+        variant: 'destructive',
+      });
     } finally {
       setIsSaving(false);
     }

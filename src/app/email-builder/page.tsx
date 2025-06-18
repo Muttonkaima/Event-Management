@@ -20,6 +20,7 @@ import {
 import { FiSearch } from "react-icons/fi";
 
 import { Toaster } from "@/components/ui/toaster";
+import { useRouter } from "next/navigation";
 
 function renderBlock(block: any) {
   const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL;
@@ -120,6 +121,7 @@ const EmailTemplateCard: React.FC<{
   const firstImageBlock = template.email_fields?.find((b: any) => b.type === 'image');
   const previewImage = firstImageBlock?.properties?.imageUrl;
   const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL;
+  const router = useRouter();
   return (
     <>
     <div
@@ -151,7 +153,7 @@ const EmailTemplateCard: React.FC<{
               tabIndex={-1}
               onClick={e => {
                 e.stopPropagation();
-                alert('Editing functionality is coming soon');
+                router.push(`/email-builder/builder?edit=${template._id}`);
               }}
             >
               <Edit3 className="h-4 w-4" />
@@ -189,7 +191,7 @@ const EmailTemplateCard: React.FC<{
 export default function Dashboard() {
   const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
   useEffect(() => {
     (async () => {
       try {
@@ -383,7 +385,7 @@ export default function Dashboard() {
                 <div className="p-4 border-t flex justify-end gap-2 sticky bottom-0 bg-white z-10">
                   <Button
                     variant="outline"
-                    onClick={() => alert("Edit functionality coming soon!")}
+                    onClick={() => router.push(`/email-builder/builder?edit=${filteredTemplates[openIdx]._id}`)}
                     className="text-gray-900 border border-gray-300 cursor-pointer bg-white hover:bg-gray-50"
                   >
                     <Edit3 className="mr-2 h-4 w-4" /> Edit Template
