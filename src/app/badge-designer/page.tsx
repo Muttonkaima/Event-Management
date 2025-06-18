@@ -19,6 +19,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { getAllBadges } from "@/services/organization/eventService";
 import { badges } from "@/shared/badgeSchema";
 import { deleteBadge } from "@/services/organization/eventService";
+import { useRouter } from "next/navigation";
 const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL
 
 
@@ -96,7 +97,7 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void; onBadgeDeleted: (
   const imageUrl = previewImg?.style?.imageUrl || previewImg?.content || undefined;
   const previewUrl = ASSETS_URL + imageUrl;
   const exportDate = badge.exportedAt ? new Date(badge.exportedAt).toLocaleDateString() : "";
-
+  const router = useRouter();
     const handleDeleteBadge = async (id: string) => {
       if (!window.confirm('Are you sure you want to delete this form? This action cannot be undone.')) {
         return;
@@ -149,14 +150,14 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void; onBadgeDeleted: (
         <div className="flex flex-col gap-1 w-full">
           <h3 className="font-bold text-lg text-gray-900 truncate w-full mb-1">{badge.name}</h3>
           <div className="flex flex-wrap justify-center gap-2 mb-2">
-            <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-40">
+            <div className="absolute top-16 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-40">
               <button
                 className="h-8 w-8 flex items-center justify-center rounded-full bg-white/80 shadow hover:bg-blue-50 text-blue-600 border border-blue-100"
                 title="Edit"
                 tabIndex={-1}
                 onClick={e => {
                   e.stopPropagation();
-                  alert('Editing functionality is coming soon');
+                  router.push(`/badge-designer/builder?edit=${badge._id}`);
                 }}
               >
                 <Edit3 className="h-4 w-4" />

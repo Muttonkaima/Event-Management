@@ -14,6 +14,8 @@ import { BadgeElement, BadgeTemplate } from '@/lib/badge-types';
 import { Button } from '@/components/ui/button';
 import { Eye, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useSearchParams } from 'next/navigation';
+import { getBadgeById } from '@/services/organization/eventService';
 
 export default function BadgeDesigner() {
   const [elements, setElements] = useState<BadgeElement[]>([
@@ -141,16 +143,73 @@ export default function BadgeDesigner() {
     }
   ]);
 
-  const [backgroundColor, setBackgroundColor] = useState('#FFFFFF');
+  const [backgroundColor, setBackgroundColor] = useState('#ECFDF5');
   const [width, setWidth] = useState(500);
   const [height, setHeight] = useState(300);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>('element-1');
+
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [badgeName, setBadgeName] = useState('My Badge');
   const [badgeDescription, setBadgeDescription] = useState('My Badge Description');
+  const [isEditing, setIsEditing] = useState(false);
+  const [badgeId, setBadgeId] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<{ name?: string; description?: string }>({});
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
+
+  // Load badge data if in edit mode
+  useEffect(() => {
+    const loadBadge = async () => {
+      const editId = searchParams?.get('edit');
+      if (!editId) {
+        setSelectedElementId(elements[0]?.id || null);
+        return;
+      }
+
+      try {
+        const response = await getBadgeById(editId);
+        if (response.success && response.data) {
+          const badge = response.data;
+          setBadgeId(badge._id);
+          setIsEditing(true);
+          setBadgeName(badge.badges_name);
+          setBadgeDescription(badge.badges_description || '');
+          setBackgroundColor(badge.backgroundColor || '#ECFDF5');
+          setWidth(badge.width || 500);
+          setHeight(badge.height || 300);
+          
+          // Transform elements to include IDs and ensure proper types
+          const transformedElements = badge.elements.map((el: any) => ({
+            ...el,
+            id: el._id || `element-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            width: el.width === 'max-content' ? 200 : Number(el.width),
+            height: Number(el.height),
+            x: Number(el.x),
+            y: Number(el.y),
+            style: {
+              ...el.style,
+              fontSize: Number(el.style?.fontSize) || 14,
+            }
+          }));
+          
+          setElements(transformedElements);
+          if (transformedElements.length > 0) {
+            setSelectedElementId(transformedElements[0].id);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading badge:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load badge for editing',
+          variant: 'destructive',
+        });
+      }
+    };
+
+    loadBadge();
+  }, [searchParams, toast, elements, searchParams]);
 
   const selectedElement = elements.find(el => el.id === selectedElementId) || null;
 
@@ -247,6 +306,11 @@ export default function BadgeDesigner() {
       formData.append('width', width.toString());
       formData.append('height', height.toString());
       formData.append('exportedAt', new Date().toISOString());
+      
+      // If editing, include the badge ID
+      if (isEditing && badgeId) {
+        formData.append('_id', badgeId);
+      }
 
       try {
         console.log(
@@ -385,7 +449,9 @@ export default function BadgeDesigner() {
               disabled={exportBadgeMutation.isPending}
             >
               <Save className="w-4 h-4 mr-2" />
-              {exportBadgeMutation.isPending ? "Saving..." : "Export Badge"}
+              {exportBadgeMutation.isPending 
+                ? (isEditing ? 'Updating...' : 'Saving...') 
+                : (isEditing ? 'Update Badge' : 'Save Badge')}
             </Button>
           </div>
         </header>

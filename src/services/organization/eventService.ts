@@ -129,7 +129,7 @@ export async function createBadge(data: any) {
   try {
     const response = await upload('/organization/create-badge', data);
     console.log('create badge response----',response)
-    return response; // returns the array of templates
+    return response; // returns the badge
   } catch (err: any) {
     throw new Error(err.message || 'Failed to create badge');
   }
@@ -139,7 +139,7 @@ export async function getAllBadges() {
   try {
     const response = await get('/organization/get-all-badges');
     console.log('get all badge response----',response)
-    return response; // returns the array of templates
+    return response; // returns the array of badges
   } catch (err: any) {
     throw new Error(err.message || 'Failed to get badges');
   }
@@ -154,5 +154,15 @@ export async function deleteBadge(id: string) {
     return response;
   } catch (err: any) {
     throw new Error(err.message || 'Failed to delete badge');
+  }
+}
+
+export async function getBadgeById (id: string) {
+  try {
+    const response = await get(`/organization/get-badge-by-id/${id}`);
+    console.log('get badge by id response----',response)
+    return response; // returns the badge by id
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get badge by id');
   }
 }
