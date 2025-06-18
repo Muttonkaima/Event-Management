@@ -83,7 +83,7 @@ export async function getAllEmailTemplates() {
 
 export async function deleteEmailTemplate(id: string) {
   try {
-    const response = await del(`/organization/delete-email-template/${id}`);
+    const response = await del(`/organization/delete-email-template-by-id/${id}`);
     console.log('delete email template response ----', response);
     return response;
   } catch (err: any) {
@@ -113,7 +113,7 @@ export async function getAllRegistrationForms() {
 
 export async function deleteRegistrationForm(id: string) {
   try {
-    const response = await del(`/organization/delete-registration-form/${id}`);
+    const response = await del(`/organization/delete-registration-form-by-id/${id}`);
     console.log('delete registration form response ----', response);
     return response;
   } catch (err: any) {
@@ -143,7 +143,7 @@ export async function getAllBadges() {
 
 export async function deleteBadge(id: string) {
   try {
-    const response = await del(`/organization/delete-badge/${id}`);
+    const response = await del(`/organization/delete-badge-by-id/${id}`);
     console.log('delete badge response ----', response);
     return response;
   } catch (err: any) {
@@ -163,7 +163,7 @@ export async function getBadgeById (id: string) {
 
 export async function updateBadge(id: string, data: any) {
   try {
-    const response = await upload(`/organization/update-badge/${id}`, data);
+    const response = await upload(`/organization/update-badge-by-id/${id}`, data);
     console.log('update badge response ----', response);
     return response;
   } catch (err: any) {
@@ -203,7 +203,7 @@ export async function getEmailTemplateById(id: string) {
 
 export async function updateEmailTemplate(id: string, data: any) {
   try {
-    const response = await upload(`/organization/update-email-template/${id}`, data);
+    const response = await upload(`/organization/update-email-template-by-id/${id}`, data);
     console.log('update form response ----', response);
     return response;
   } catch (err: any) {
