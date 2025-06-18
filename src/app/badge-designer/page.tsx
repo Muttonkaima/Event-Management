@@ -148,7 +148,7 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void; onBadgeDeleted: (
       {/* Card Content */}
       <div className="pt-16 pb-4 px-5 flex flex-col items-center text-center bg-white/60 backdrop-blur-md rounded-2xl min-h-[220px]">
         <div className="flex flex-col gap-1 w-full">
-          <h3 className="font-bold text-lg text-gray-900 truncate w-full mb-1">{badge.name}</h3>
+          <h3 className="font-bold text-lg text-gray-900 truncate w-full mb-1">{badge.badges_name}</h3>
           <div className="flex flex-wrap justify-center gap-2 mb-2">
             <div className="absolute top-16 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-40">
               <button
@@ -252,7 +252,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const { toast } = useToast();
-
+  const router = useRouter();
   useEffect(() => {
     if (searchParams.get('created') === '1') {
       toast({
@@ -418,7 +418,7 @@ export default function Dashboard() {
                 <div className="p-4 border-t flex justify-end gap-2 sticky bottom-0 bg-white z-10">
                   <Button
                     variant="outline"
-                    onClick={() => alert("Edit functionality coming soon!")}
+                    onClick={() => router.push(`/badge-designer/builder?edit=${filteredBadges[openIdx]._id}`)}
                     className="text-gray-900 border border-gray-300 cursor-pointer bg-white hover:bg-gray-50"
                   >
                     <Edit3 className="mr-2 h-4 w-4" /> Edit Badge

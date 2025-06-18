@@ -181,18 +181,26 @@ export default function BadgeDesigner() {
           setHeight(badge.height || 300);
           
           // Transform elements to include IDs and ensure proper types
-          const transformedElements = badge.elements.map((el: any) => ({
-            ...el,
-            id: el._id || `element-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-            width: el.width === 'max-content' ? 200 : Number(el.width),
-            height: Number(el.height),
-            x: Number(el.x),
-            y: Number(el.y),
-            style: {
-              ...el.style,
-              fontSize: Number(el.style?.fontSize) || 14,
-            }
-          }));
+          const transformedElements = badge.elements.map((el: any) => {
+            const imageUrl = el.style?.imageUrl
+              ? `${ASSETS_URL}${el.style.imageUrl}`
+              : undefined;
+          
+            return {
+              ...el,
+              id: el._id || `element-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+              width: el.width === 'max-content' ? 200 : Number(el.width),
+              height: Number(el.height),
+              x: Number(el.x),
+              y: Number(el.y),
+              style: {
+                ...el.style,
+                fontSize: Number(el.style?.fontSize) || 14,
+                ...(imageUrl ? { imageUrl } : {})  // Append imageUrl only if it exists
+              }
+            };
+          });
+          
           
           setElements(transformedElements);
           if (transformedElements.length > 0) {
