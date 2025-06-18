@@ -209,7 +209,7 @@ export default function BadgeDesigner() {
     };
 
     loadBadge();
-  }, [searchParams, toast, elements, searchParams]);
+  }, [searchParams, toast, searchParams]);
 
   const selectedElement = elements.find(el => el.id === selectedElementId) || null;
 

@@ -1,4 +1,4 @@
-import { get, post, upload, del } from '@/services/controllerServices';
+import { get, post, upload, del, put } from '@/services/controllerServices';
 
 export async function getEventTemplates() {
   try {
@@ -164,5 +164,15 @@ export async function getBadgeById (id: string) {
     return response; // returns the badge by id
   } catch (err: any) {
     throw new Error(err.message || 'Failed to get badge by id');
+  }
+}
+
+export async function updateBadge(id: string, data: any) {
+  try {
+    const response = await put(`/organization/update-badge/${id}`, data);
+    console.log('update badge response ----', response);
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to update badge');
   }
 }
