@@ -176,3 +176,23 @@ export async function updateBadge(id: string, data: any) {
     throw new Error(err.message || 'Failed to update badge');
   }
 }
+
+export async function getRegistrationFormById(id: string) {
+  try {
+    const response = await get(`/organization/get-registration-form-by-id/${id}`);
+    console.log('get form by id response----',response)
+    return response; // returns the form by id
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get form by id');
+  }
+}
+
+export async function updateRegistrationForm(id: string, data: any) {
+  try {
+    const response = await put(`/organization/update-registration-form/${id}`, data);
+    console.log('update form response ----', response);
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to update form');
+  }
+}

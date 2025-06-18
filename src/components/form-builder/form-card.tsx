@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { FileText, ClipboardList } from "lucide-react";
 
 import { Edit3, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface FormCardProps {
   form: any;
@@ -12,6 +13,7 @@ interface FormCardProps {
 }
 
 export default function FormCard({ form, onPreview, onDelete }: FormCardProps) {
+  const router = useRouter();
   // The form.id is now always available for use in keys, navigation, etc.
   return (
     <div
@@ -27,7 +29,7 @@ export default function FormCard({ form, onPreview, onDelete }: FormCardProps) {
           tabIndex={-1}
           onClick={e => {
             e.stopPropagation();
-            alert('Editing functionality is coming soon');
+            router.push(`/form-builder/builder?edit=${form.id}`);
           }}
         >
           <Edit3 className="h-4 w-4" />
