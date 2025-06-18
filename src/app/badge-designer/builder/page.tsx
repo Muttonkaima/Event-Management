@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { createBadge } from '@/services/organization/eventService';
+import { createBadge, updateBadge } from '@/services/organization/eventService';
 import { urlToFile } from '@/utils/urlToFile';
 import { ElementsSidebar } from '@/components/badge-designer/elements-sidebar';
 import { BadgeCanvas } from '@/components/badge-designer/badge-canvas';
@@ -152,11 +152,12 @@ export default function BadgeDesigner() {
   const [badgeName, setBadgeName] = useState('My Badge');
   const [badgeDescription, setBadgeDescription] = useState('My Badge Description');
   const [isEditing, setIsEditing] = useState(false);
-  const [badgeId, setBadgeId] = useState<string | null>(null);
+  const [badgeId, setBadgeId] = useState<string>('');
   const [formErrors, setFormErrors] = useState<{ name?: string; description?: string }>({});
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
+  const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL;
 
   // Load badge data if in edit mode
   useEffect(() => {
@@ -255,9 +256,13 @@ export default function BadgeDesigner() {
           let fetchUrl = imgUrl;
 
           // If it's a relative URL (starts with /), convert to absolute
-          if (!/^https?:\/\//i.test(imgUrl) && imgUrl.startsWith('/')) {
-            fetchUrl = window.location.origin + imgUrl;
-          }
+          if (!/^https?:\/\//i.test(imgUrl)) {
+            if (imgUrl.startsWith('/assets')) {
+              fetchUrl = ASSETS_URL + imgUrl;
+            } else if (imgUrl.startsWith('/')) {
+              fetchUrl = window.location.origin + imgUrl;
+            }
+          }          
 
           try {
             const urlObj = new URL(fetchUrl);
@@ -318,7 +323,11 @@ export default function BadgeDesigner() {
           [...formData.entries()].map(([k, v]) => [k, v instanceof File ? v.name : v])
         );
         // Save to server
-        await createBadge(formData);
+        if (isEditing){
+          await updateBadge(badgeId, formData);
+        }else{
+          await createBadge(formData);
+        }
 
         // Create badge data object for JSON export
         const badgeData = {

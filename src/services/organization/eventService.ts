@@ -169,7 +169,7 @@ export async function getBadgeById (id: string) {
 
 export async function updateBadge(id: string, data: any) {
   try {
-    const response = await put(`/organization/update-badge/${id}`, data);
+    const response = await upload(`/organization/update-badge/${id}`, data);
     console.log('update badge response ----', response);
     return response;
   } catch (err: any) {
