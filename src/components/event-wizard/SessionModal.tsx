@@ -25,10 +25,17 @@ const sessionTags = [
 
 export function SessionModal({ open, onClose, editingIndex }: SessionModalProps) {
   const { state, actions } = useEventWizard();
+  // Helper function to get current datetime in local timezone for the input
+  const getCurrentLocalDatetime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return now.toISOString().slice(0, 16);
+  };
+
   const [formData, setFormData] = useState<Omit<SessionData, 'id'>>({
     title: '',
     speaker: '',
-    startTime: '09:00',
+    startTime: getCurrentLocalDatetime(),
     duration: 30,
     description: '',
     tags: []
@@ -39,10 +46,15 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
   useEffect(() => {
     if (editingIndex !== null && state.sessions[editingIndex]) {
       const session = state.sessions[editingIndex];
+      // Convert stored time to datetime-local format if needed
+      const startTime = session.startTime.includes('T') 
+        ? session.startTime 
+        : `${new Date().toISOString().split('T')[0]}T${session.startTime}`;
+      
       setFormData({
         title: session.title,
         speaker: session.speaker,
-        startTime: session.startTime,
+        startTime: startTime,
         duration: session.duration,
         description: session.description || '',
         tags: session.tags
@@ -51,7 +63,7 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
       setFormData({
         title: '',
         speaker: '',
-        startTime: '09:00',
+        startTime: getCurrentLocalDatetime(),
         duration: 30,
         description: '',
         tags: []
@@ -153,11 +165,12 @@ export function SessionModal({ open, onClose, editingIndex }: SessionModalProps)
             <div>
               <Label htmlFor="startTime" className="text-gray-900">Start Time *</Label>
               <Input
-                type="time"
+                type="datetime-local"
                 id="startTime"
                 value={formData.startTime}
                 onChange={(e) => handleInputChange('startTime', e.target.value)}
                 className={errors.startTime ? 'border-red-500' : ''}
+                min={new Date().toISOString().slice(0, 16)}
               />
               {errors.startTime && (
                 <p className="text-red-500 text-sm mt-1">{errors.startTime}</p>
