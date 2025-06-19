@@ -16,6 +16,7 @@ import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
 import Image from 'next/image';
 import ShareLinkButton from '@/components/event-dashboard/shareButton';
 import AnalyticsClientWrapper from '@/components/event-dashboard/analytics-client-wrapper';
+import EditEventModal from '@/components/event-dashboard/EditEventModal';
 
 export default function EventOverviewPage() {
   const searchParams = useSearchParams();
@@ -23,6 +24,7 @@ export default function EventOverviewPage() {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Fetch event data when component mounts
   useEffect(() => {
@@ -206,6 +208,11 @@ export default function EventOverviewPage() {
   return (
     <OverviewLayout title={event.event_name}>
       <div className="min-h-screen bg-transparent">
+        <EditEventModal
+          isOpen={isEditModalOpen}
+          onCloseAction={() => setIsEditModalOpen(false)}
+          event={event}
+        />
         {/* Hero Section */}
         <div className="relative h-72 overflow-hidden rounded-2xl">
           {bannerImage ? (
@@ -279,7 +286,10 @@ export default function EventOverviewPage() {
                 )}
 
                 <div className="mt-4 flex items-center gap-3 text-white">
-                  <Button className="cursor-pointer text-black bg-white hover:bg-black hover:text-white">
+                  <Button 
+                    className="cursor-pointer text-black bg-white hover:bg-black hover:text-white"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
                     <Settings2 className="mr-2 h-4 w-4" />
                     Edit Event
                   </Button>
