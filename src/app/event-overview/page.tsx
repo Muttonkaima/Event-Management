@@ -434,7 +434,7 @@ export default function EventOverviewPage() {
                 {event.ticket_ids?.length > 0 ? (
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     {event.ticket_ids.map((ticket: any) => (
-                      <Card key={ticket._id} className="overflow-hidden hover:shadow-md transition-shadow">
+                      <Card key={ticket._id} className="overflow-hidden shadow-lg transition-shadow rounded-2xl">
                         <CardHeader className="pb-2">
                           <div className="flex justify-between items-start">
                             <CardTitle className="text-lg text-gray-700">{ticket.ticket_name}</CardTitle>
@@ -491,7 +491,7 @@ export default function EventOverviewPage() {
                 <div className="grid gap-6 md:grid-cols-3">
                   {/* Badge Card */}
                   {event.badge_id ? (
-                    <Card className="h-full flex flex-col transition-all hover:shadow-md group">
+                    <Card className="h-full flex flex-col transition-all shadow-lg group rounded-2xl">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
                           <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
@@ -522,7 +522,7 @@ export default function EventOverviewPage() {
 
                   {/* Form Card */}
                   {event.registration_form_id ? (
-                    <Card className="h-full flex flex-col transition-all hover:shadow-md group">
+                    <Card className="h-full flex flex-col transition-all shadow-lg group rounded-2xl">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
                           <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
@@ -554,7 +554,7 @@ export default function EventOverviewPage() {
 
                   {/* Email Template Card */}
                   {event.email_template_id ? (
-                    <Card className="h-full flex flex-col transition-all hover:shadow-md group">
+                    <Card className="h-full flex flex-col transition-all shadow-lg group rounded-2xl">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
                           <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">

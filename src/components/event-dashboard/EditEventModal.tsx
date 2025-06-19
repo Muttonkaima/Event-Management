@@ -97,24 +97,6 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
     }
   };
 
-  const removeLogo = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setLogoFile(null);
-    setLogoPreview('');
-    if (logoInputRef.current) {
-      logoInputRef.current.value = '';
-    }
-  };
-
-  const removeBanner = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setBannerFile(null);
-    setBannerPreview('');
-    if (bannerInputRef.current) {
-      bannerInputRef.current.value = '';
-    }
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onCloseAction}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white">
@@ -387,75 +369,6 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
               </div>
             </div>
           )}
-          
-          {/* Sessions Section */}
-        <div className="space-y-4 border-b pb-6">
-          <h3 className="text-lg font-medium text-gray-900">Sessions</h3>
-          {event.sessions_id?.length > 0 ? (
-            <div className="space-y-3">
-              {event.sessions_id.map((session: any) => (
-                <div key={session._id} className="p-4 border rounded-lg bg-gray-50">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-medium text-gray-900">{session.session_title}</h4>
-                      <p className="text-sm text-gray-600 mt-1">{session.session_description}</p>
-                      <div className="flex items-center mt-2 text-sm text-gray-500">
-                        <Clock className="h-4 w-4 mr-1" />
-                        <span>{session.session_start_time} • {session.duration} min</span>
-                      </div>
-                      {session.speaker_name && (
-                        <div className="flex items-center mt-1 text-sm text-gray-500">
-                          <Users className="h-4 w-4 mr-1" />
-                          <span>{session.speaker_name}</span>
-                        </div>
-                      )}
-                      {session.tags?.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {session.tags.map((tag: string) => (
-                            <Badge key={tag} variant="outline" className="text-xs text-gray-500">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">No sessions added yet.</p>
-          )}
-        </div>
-
-        {/* Tickets Section */}
-        <div className="space-y-4 border-b pb-6">
-          <h3 className="text-lg font-medium text-gray-900">Tickets</h3>
-          {event.ticket_ids?.length > 0 ? (
-            <div className="space-y-3">
-              {event.ticket_ids.map((ticket: any) => (
-                <div key={ticket._id} className="p-4 border rounded-lg bg-gray-50">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-medium text-gray-900">{ticket.ticket_name}</h4>
-                        <Badge variant={ticket.ticket_type === 'free' ? 'outline' : 'default'} className="text-xs text-gray-500">
-                          {ticket.ticket_type === 'free' ? 'Free' : `$${ticket.price} ${ticket.currency}`}
-                        </Badge>
-                      </div>
-                      <div className="mt-1 text-sm text-gray-500">
-                        <Tag className="h-3 w-3 inline mr-1" />
-                        {ticket.quantity_available ? `${ticket.quantity_available} available` : 'Unlimited'}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">No tickets added yet.</p>
-          )}
-        </div>
 
         {/* Branding Visibility */}
         <div className="space-y-4 border-b pb-6">
