@@ -196,7 +196,7 @@ export function PropertiesPanel({ selectedBlock, onUpdateProperty, onDeleteBlock
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Button Link</label>
                   <Input
-                    value={properties.linkUrl || ''}
+                    value={properties.linkUrl || 'https://ellipsonic.com'}
                     onChange={(e) => handlePropertyChange('linkUrl', e.target.value)}
                     className="text-sm h-9"
                     placeholder="https://example.com"
