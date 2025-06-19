@@ -16,9 +16,8 @@ import {
 } from "@/components/ui/dialog";
 import { FiAward, FiSearch } from "react-icons/fi";
 import { Toaster } from "@/components/ui/toaster";
-import { getAllBadges } from "@/services/organization/eventService";
+import { getAllBadges, deleteBadge, updateEventResourcesById } from "@/services/organization/eventService";
 import { badges } from "@/shared/badgeSchema";
-import { deleteBadge } from "@/services/organization/eventService";
 import { useRouter } from "next/navigation";
 const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL
 
@@ -91,7 +90,7 @@ function renderBadgeElement(element: any) {
   }
 }
 
-const BadgeCard: React.FC<{ badge: any; onPreview: () => void; onBadgeDeleted: () => void }> = ({ badge, onPreview, onBadgeDeleted }) => {
+const BadgeCard: React.FC<{ badge: any; onPreview: () => void; onBadgeDeleted: () => void; onUse?: (id: string) => void }> = ({ badge, onPreview, onBadgeDeleted, onUse }) => {
   // Find a preview image if available, else use logo or photo
   const previewImg = badge.elements.find((el: any) => el.type === "event-logo" || el.type === "attendee-photo");
   const imageUrl = previewImg?.style?.imageUrl || previewImg?.content || undefined;
@@ -194,13 +193,12 @@ const BadgeCard: React.FC<{ badge: any; onPreview: () => void; onBadgeDeleted: (
         </div>
         {/* Actions: visible on hover/always on mobile */}
         <div className="flex gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 sm:opacity-100">
-
           <Button
             size="sm"
             className="bg-white hover:bg-black hover:text-white text-black cursor-pointer shadow-sm"
             onClick={e => {
               e.stopPropagation();
-              alert("Use functionality coming soon!");
+              if (onUse) onUse(badge._id);
             }}
           >
             <FiAward className="mr-2 h-4 w-4" /> Use Badge
@@ -269,6 +267,45 @@ export default function Dashboard() {
 
   const handleNewBadge = () => {
     window.location.href = "/badge-designer/builder";
+  };
+
+  const handleUseBadge = async (badgeId: string) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('eventId');
+    
+    if (!eventId) {
+      toast({
+        title: 'Error',
+        description: 'No event ID found. Please navigate from the event page.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      const response = await updateEventResourcesById(eventId, {
+        template_type: 'badge',
+        template_id: badgeId,
+      });
+      
+      if (response.success) {
+        toast({
+          title: 'Success',
+          description: 'Badge template has been linked to the event.',
+        });
+        
+        router.push(`/event-overview?id=${eventId}`);
+      } else {
+        throw new Error(response.message || 'Failed to update event resources');
+      }
+    } catch (error: any) {
+      console.error('Error updating event resources:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to link badge template to event',
+        variant: 'destructive',
+      });
+    }
   };
 
   const fetchBadges = async () => {
@@ -378,6 +415,7 @@ export default function Dashboard() {
                 badge={badge}
                 onPreview={() => setOpenIdx(badges.findIndex(b => b._id === badge._id))}
                 onBadgeDeleted={fetchBadges}
+                onUse={handleUseBadge}
               />
             ))}
           </div>
@@ -424,7 +462,7 @@ export default function Dashboard() {
                     <Edit3 className="mr-2 h-4 w-4" /> Edit Badge
                   </Button>
                   <Button
-                    onClick={() => alert("Use functionality coming soon!")}
+                    onClick={() => handleUseBadge(filteredBadges[openIdx]._id)}
                     className="bg-black hover:bg-black/90 text-white cursor-pointer"
                   >
                     <Plus className="mr-2 h-4 w-4" /> Use Badge

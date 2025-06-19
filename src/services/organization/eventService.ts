@@ -151,7 +151,7 @@ export async function deleteBadge(id: string) {
   }
 }
 
-export async function getBadgeById (id: string) {
+export async function getBadgeById(id: string) {
   try {
     const response = await get(`/organization/get-badge-by-id/${id}`);
     console.log('get badge by id response----',response)
@@ -210,3 +210,25 @@ export async function updateEmailTemplate(id: string, data: any) {
     throw new Error(err.message || 'Failed to update form');
   }
 }
+
+
+export async function updateEventById(id: string, data: any) {
+  try {
+    const response = await upload(`/organization/update-event-by-id/${id}`, data);
+    console.log('update event by id response ----', response);
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to update event');
+  }
+}
+
+export async function updateEventResourcesById(id: string, data: any) {
+  try {
+    const response = await put(`/organization/update-event-template-by-id/${id}`, data);
+    console.log('update event templates response ----', response);
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to update event templates');
+  }
+}
+

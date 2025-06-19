@@ -7,11 +7,11 @@ import { FiSearch } from "react-icons/fi";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import FormCard from "@/components/form-builder/form-card";
 import FormPreview from "@/components/form-builder/form-preview";
-import { getAllRegistrationForms, deleteRegistrationForm } from "@/services/organization/eventService";
+import { getAllRegistrationForms, deleteRegistrationForm, updateEventResourcesById } from "@/services/organization/eventService";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { useSearchParams } from 'next/navigation';
-
+import { useRouter } from "next/navigation";
 interface FormData {
   _id: string;
   registration_form_name: string;
@@ -32,6 +32,7 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const router = useRouter();
   
     useEffect(() => {
       if (searchParams.get('created') === '1') {
@@ -72,6 +73,45 @@ export default function Dashboard() {
 
   const handleNewForm = () => {
     window.location.href = '/form-builder/builder';
+  };
+
+  const handleUseForm = async (formId: string) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('eventId');
+    
+    if (!eventId) {
+      toast({
+        title: 'Error',
+        description: 'No event ID found. Please navigate from the event page.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      const response = await updateEventResourcesById(eventId, {
+        template_type: 'registration_form',
+        template_id: formId,
+      });
+      
+      if (response.success) {
+        toast({
+          title: 'Success',
+          description: 'Registration form has been linked to the event.',
+        });
+
+        router.push(`/event-overview?id=${eventId}`);
+      } else {
+        throw new Error(response.message || 'Failed to update event resources');
+      }
+    } catch (error: any) {
+      console.error('Error updating event resources:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to link form to event',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleDeleteForm = async (id: string) => {
@@ -185,6 +225,7 @@ export default function Dashboard() {
                   setOpen(true);
                 }}
                 onDelete={handleDeleteForm}
+                onUse={handleUseForm}
               />
             ))}
           </div>

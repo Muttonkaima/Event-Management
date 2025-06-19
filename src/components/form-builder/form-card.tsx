@@ -10,9 +10,10 @@ interface FormCardProps {
   form: any;
   onPreview: () => void;
   onDelete?: (id: string) => void;
+  onUse?: (id: string) => void;
 }
 
-export default function FormCard({ form, onPreview, onDelete }: FormCardProps) {
+export default function FormCard({ form, onPreview, onDelete, onUse }: FormCardProps) {
   const router = useRouter();
   // The form.id is now always available for use in keys, navigation, etc.
   return (
@@ -70,7 +71,12 @@ export default function FormCard({ form, onPreview, onDelete }: FormCardProps) {
           <Button
             size="sm"
             className="bg-white text-gray-900 hover:bg-black hover:text-white cursor-pointer shadow px-4 py-1"
-            onClick={() => alert('Use Form functionality is coming soon')}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onUse) {
+                onUse(form.id);
+              }
+            }}
           >
             <FileText className="mr-2 h-4 w-4" /> Use Form
           </Button>

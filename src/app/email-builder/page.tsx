@@ -4,9 +4,9 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, Edit3, Trash2, Smartphone, Tablet, Monitor, Palette, X as XIcon } from "lucide-react";
+import { Plus, FileText, Edit3, Trash2, Smartphone, Tablet, Monitor, Palette, X as XIcon, Mail } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { getAllEmailTemplates, deleteEmailTemplate } from "@/services/organization/eventService";
+import { getAllEmailTemplates, deleteEmailTemplate, updateEventResourcesById } from "@/services/organization/eventService";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -116,8 +116,10 @@ const EmailTemplateCard: React.FC<{
   template: any;
   onPreview: () => void;
   onEdit: () => void;
+  onUse?: (id: string) => void;
   handleTemplateDelete: (id: string) => void;
-}> = ({ template, onPreview, onEdit, handleTemplateDelete }) => {
+  handleUseTemplate: (id: string) => void;
+}> = ({ template, onPreview, onEdit, onUse, handleTemplateDelete, handleUseTemplate }) => {
   const firstImageBlock = template.email_fields?.find((b: any) => b.type === 'image');
   const previewImage = firstImageBlock?.properties?.imageUrl;
   const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL;
@@ -126,11 +128,12 @@ const EmailTemplateCard: React.FC<{
     <>
     <div
       className="relative group rounded-xl bg-white/70 shadow-md border hover:shadow-sm hover:-translate-y-1 transition-all duration-300 overflow-visible cursor-pointer flex flex-col border-b-5 border-b-black"
-      onClick={e => { e.stopPropagation(); onPreview(); }}
+      
     >
     
       <div className="relative">
-        <div className="aspect-[16/9] bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden flex items-center justify-center rounded-t-xl">
+        <div className="aspect-[16/9] bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden flex items-center justify-center rounded-t-xl"
+        onClick={e => { e.stopPropagation(); onPreview(); }}>
           {previewImage ? (
             <img
               src={ASSETS_URL + previewImage}
@@ -175,12 +178,15 @@ const EmailTemplateCard: React.FC<{
       </div>
       {/* Card Content */}
       <div className="flex-1 flex flex-col px-5 py-4 gap-2">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex flex-col items-center gap-2 mb-1">
           <h3 className="font-semibold text-base text-gray-900 truncate flex-1">{template.email_template_name}</h3>
-          {/* Block count chip */}
-          <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium shadow-sm border border-blue-200">
-            {template.email_fields?.length || 0} blocks
-          </span>
+          <Button
+                size = "sm"
+                onClick={() => handleUseTemplate(template._id)}
+                className="bg-white hover:bg-black hover:text-white text-black cursor-pointer shadow-sm"
+              >
+                <Mail className="mr-2 h-4 w-4" /> Use Template
+          </Button>
         </div>
       </div>
     </div>
@@ -230,6 +236,45 @@ export default function Dashboard() {
 
   const handleNewForm = () => {
     window.location.href = "/email-builder/builder";
+  };
+
+  const handleUseTemplate = async (templateId: string) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('eventId');
+    
+    if (!eventId) {
+      toast({
+        title: 'Error',
+        description: 'No event ID found. Please navigate from the event page.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      const response = await updateEventResourcesById(eventId, {
+        template_type: 'email',
+        template_id: templateId,
+      });
+      
+      if (response.success) {
+        toast({
+          title: 'Success',
+          description: 'Email template has been linked to the event.',
+        });
+        
+        router.push(`/event-overview?id=${eventId}`);
+      } else {
+        throw new Error(response.message || 'Failed to update event resources');
+      }
+    } catch (error: any) {
+      console.error('Error updating event resources:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to link email template to event',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleDeleteTemplate = async (id: string) => {
@@ -298,13 +343,18 @@ export default function Dashboard() {
         ) : filteredTemplates.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredTemplates.map((template: any) => (
+              <div className="relative group">
               <EmailTemplateCard
-              key={template._id}
-              template={template}
-              onPreview={() => setOpenIdx(templates.findIndex(t => t._id === template._id))}
-              onEdit={() => alert('Edit functionality coming soon!')}
-              handleTemplateDelete={handleDeleteTemplate}
-            />            
+                key={template._id}
+                template={template}
+                onPreview={() => setOpenIdx(templates.findIndex(t => t._id === template._id))}
+                onEdit={() => router.push(`/email-builder/builder?edit=${template._id}`)}
+                handleTemplateDelete={handleDeleteTemplate}
+                onUse={handleUseTemplate}
+                handleUseTemplate={handleUseTemplate}
+              />
+              
+            </div>            
             ))}
           </div>
         ) : (
@@ -391,7 +441,7 @@ export default function Dashboard() {
                     <Edit3 className="mr-2 h-4 w-4" /> Edit Template
                   </Button>
                   <Button
-                    onClick={() => alert("Use functionality coming soon!")}
+                    onClick={() => handleUseTemplate(filteredTemplates[openIdx]._id)}
                     className="bg-black hover:bg-black/90 text-white cursor-pointer"
                   >
                     <Plus className="mr-2 h-4 w-4" /> Use Template
