@@ -250,7 +250,7 @@ export default function EventOverviewPage() {
               </div>
 
               <div className="flex-1">
-                <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 mb-2">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 md:mb-3 mb-0">
                   <div className="w-fit">
                     <Badge className={cn(
                       "px-3 py-1 text-xs md:text-sm md:py-1.5 font-medium whitespace-nowrap",

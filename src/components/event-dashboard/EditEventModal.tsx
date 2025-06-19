@@ -1,6 +1,9 @@
 'use client';
 
-import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import { useState, useRef, ChangeEvent, useEffect, FormEvent } from 'react';
+import { updateEventById } from '@/services/organization/eventService';
+import { urlToFile } from '@/utils/urlToFile';
+import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Image as ImageIcon, Upload } from "lucide-react";
 import Image from 'next/image';
 import { Country, State, City } from 'country-state-city';
-import { Switch } from "@/components/ui/switch";
+import { useRouter } from 'next/navigation';
 
 interface EditEventModalProps {
   isOpen: boolean;
@@ -31,30 +34,15 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
   const [selectedCity, setSelectedCity] = useState(event.city || '');
   const [states, setStates] = useState<any[]>([]);
   const [cities, setCities] = useState<any[]>([]);
-  const [brandingVisibility, setBrandingVisibility] = useState({
-    showLogo: event.branding_id?.branding_visibility_id?.fields?.showLogo ?? true,
-    showBanner: event.branding_id?.branding_visibility_id?.fields?.showBanner ?? true,
-    showDescription: event.branding_id?.branding_visibility_id?.fields?.showDescription ?? true,
-    showSchedule: event.branding_id?.branding_visibility_id?.fields?.showSchedule ?? true,
-    showSpeakers: event.branding_id?.branding_visibility_id?.fields?.showSpeakers ?? true,
-    showLocation: event.branding_id?.branding_visibility_id?.fields?.showLocation ?? true,
-    showRegistration: event.branding_id?.branding_visibility_id?.fields?.showRegistration ?? true,
-  });
-  
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+
   const countries = Country.getAllCountries();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
   const isPhysical = eventType === 'physical' || eventType === 'hybrid';
   const isVirtual = eventType === 'virtual' || eventType === 'hybrid';
-
-  // Toggle branding visibility
-  const toggleBrandingVisibility = (key: keyof typeof brandingVisibility) => {
-    setBrandingVisibility(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
 
   // Load states when country changes
   useEffect(() => {
@@ -89,6 +77,107 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
       const file = e.target.files[0];
       setBannerFile(file);
       setBannerPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSave = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+
+    try {
+      const formData = new FormData();
+
+      // Add branding_id if it exists
+      if (event.branding_id?._id) {
+        formData.append('branding_id', event.branding_id._id);
+      }
+
+      // Handle logo file
+      if (logoFile) {
+        formData.append('branding_logo', logoFile);
+      } else if (event.branding_id?.branding_logo && !logoPreview) {
+        // If no new logo file but there's an existing one, convert URL to file
+        const logoFilename = event.branding_id.branding_logo.split('/').pop() || 'logo.png';
+        const logoFileObj = await urlToFile(
+          `${process.env.NEXT_PUBLIC_ASSETS_URL}${event.branding_id.branding_logo}`,
+          logoFilename
+        );
+        formData.append('branding_logo', logoFileObj);
+      }
+
+      // Handle banner file
+      if (bannerFile) {
+        formData.append('branding_banner', bannerFile);
+      } else if (event.branding_id?.branding_banner && !bannerPreview) {
+        // If no new banner file but there's an existing one, convert URL to file
+        const bannerFilename = event.branding_id.branding_banner.split('/').pop() || 'banner.png';
+        const bannerFileObj = await urlToFile(
+          `${process.env.NEXT_PUBLIC_ASSETS_URL}${event.branding_id.branding_banner}`,
+          bannerFilename
+        );
+        formData.append('branding_banner', bannerFileObj);
+      }
+
+      // Add registration data
+      const registrationStart = (document.getElementById('registrationStart') as HTMLInputElement)?.value;
+      const registrationEnd = (document.getElementById('registrationEnd') as HTMLInputElement)?.value;
+      const cancellationDeadline = (document.getElementById('cancellationDeadline') as HTMLInputElement)?.value;
+      const maxAttendees = (document.getElementById('attendeeLimit') as HTMLInputElement)?.value;
+      const termsAndConditions = (document.getElementById('terms') as HTMLTextAreaElement)?.value;
+
+      formData.append('registration', JSON.stringify({
+        registrationOpen: registrationStart,
+        registrationClose: registrationEnd,
+        updateDeadline: cancellationDeadline,
+        termsConditions: termsAndConditions,
+        maxAttendees: maxAttendees ? parseInt(maxAttendees) : null
+      }));
+
+      // Add event data
+      formData.append('event', JSON.stringify({
+        name: (document.getElementById('eventName') as HTMLInputElement)?.value || event.event_name,
+        description: (document.getElementById('eventDescription') as HTMLTextAreaElement)?.value || event.description,
+        startDate: (document.getElementById('startDate') as HTMLInputElement)?.value || event.start_datetime,
+        endDate: (document.getElementById('endDate') as HTMLInputElement)?.value || event.end_datetime,
+        timezone: (document.getElementById('timeZone') as HTMLInputElement)?.value || event.timezone,
+        eventType: eventType,
+        address: (document.getElementById('address') as HTMLInputElement)?.value || event.address,
+        city: selectedCity || event.city,
+        state: selectedState || event.state,
+        country: selectedCountry || event.country,
+        zipCode: (document.getElementById('zipCode') as HTMLInputElement)?.value || event.zipCode,
+        meetingLink: (document.getElementById('meetingLink') as HTMLInputElement)?.value || event.meeting_link || ''
+      }));
+
+      console.log(
+        'update event FormData contents:',
+        [...formData.entries()].map(([k, v]) => [k, v instanceof File ? v.name : v])
+      );
+      // Call the update API
+      await updateEventById(event._id, formData);
+
+      toast({
+        title: 'Success',
+        description: 'Event updated successfully',
+        variant: 'default',
+      });
+
+      // Close the modal first
+      onCloseAction();
+
+      // Then refresh the page after a short delay to ensure the modal is closed
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
+    } catch (error: any) {
+      console.error('Error updating event:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to update event',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -177,7 +266,7 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
             </label>
           </div>
         </div>
-        
+
         <div className="grid gap-6 py-4">
           {/* Basic Information */}
           <div className="space-y-4 border-b pb-6">
@@ -191,11 +280,11 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
                   className="w-full"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="eventType" className='text-gray-900'>Event Type</Label>
-                <Select 
-                  value={eventType} 
+                <Select
+                  value={eventType}
                   onValueChange={(value) => setEventType(value)}
                 >
                   <SelectTrigger>
@@ -212,8 +301,9 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
               <div className="space-y-2">
                 <Label className='text-gray-900'>Start Date & Time</Label>
                 <Input
+                  id="startDate"
                   type="datetime-local"
-                  defaultValue={event.start_datetime ? new Date(event.start_datetime).toISOString().slice(0, 16) : ''}
+                  defaultValue={event.start_datetime || ''}
                   className="w-full"
                 />
               </div>
@@ -221,8 +311,9 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
               <div className="space-y-2">
                 <Label className='text-gray-900'>End Date & Time</Label>
                 <Input
+                  id="endDate"
                   type="datetime-local"
-                  defaultValue={event.end_datetime ? new Date(event.end_datetime).toISOString().slice(0, 16) : ''}
+                  defaultValue={event.end_datetime || ''}
                   className="w-full"
                 />
               </div>
@@ -234,9 +325,11 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
                     <SelectValue placeholder="Select timezone" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="UTC">UTC</SelectItem>
-                    <SelectItem value="IST">IST (India Standard Time)</SelectItem>
-                    <SelectItem value="EST">EST (Eastern Time)</SelectItem>
+                    <SelectItem value="UTC">UTC (Coordinated Universal Time)</SelectItem>
+                    <SelectItem value="EST">EST (Eastern Standard Time)</SelectItem>
+                    <SelectItem value="PST">PST (Pacific Standard Time)</SelectItem>
+                    <SelectItem value="CST">CST (Central Standard Time)</SelectItem>
+                    <SelectItem value="MST">MST (Mountain Standard Time)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -253,9 +346,9 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description" className='text-gray-900'>Description</Label>
+              <Label htmlFor="eventDescription" className='text-gray-900'>Description</Label>
               <Textarea
-                id="description"
+                id="eventDescription"
                 defaultValue={event.description}
                 className="min-h-[100px]"
               />
@@ -274,11 +367,11 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
                     defaultValue={event.address || ''}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label className='text-gray-900'>Country</Label>
-                  <Select 
-                    value={selectedCountry} 
+                  <Select
+                    value={selectedCountry}
                     onValueChange={setSelectedCountry}
                   >
                     <SelectTrigger>
@@ -296,8 +389,8 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
 
                 <div className="space-y-2">
                   <Label className='text-gray-900'>State/Region</Label>
-                  <Select 
-                    value={selectedState} 
+                  <Select
+                    value={selectedState}
                     onValueChange={setSelectedState}
                     disabled={!selectedCountry}
                   >
@@ -316,7 +409,7 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
 
                 <div className="space-y-2">
                   <Label className='text-gray-900'>City</Label>
-                  <Select 
+                  <Select
                     value={selectedCity}
                     onValueChange={setSelectedCity}
                     disabled={!selectedState}
@@ -365,82 +458,7 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
             </div>
           )}
 
-        {/* Branding Visibility */}
-        <div className="space-y-4 border-b pb-6">
-          <h3 className="text-lg font-medium text-gray-900">Branding Visibility</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-gray-700">Show Logo</h4>
-              </div>
-              <Switch 
-                checked={brandingVisibility.showLogo} 
-                onCheckedChange={() => toggleBrandingVisibility('showLogo')} 
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-gray-700">Show Banner</h4>
-              </div>
-              <Switch 
-                checked={brandingVisibility.showBanner} 
-                onCheckedChange={() => toggleBrandingVisibility('showBanner')} 
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-gray-700">Show Description</h4>
-              </div>
-              <Switch 
-                checked={brandingVisibility.showDescription} 
-                onCheckedChange={() => toggleBrandingVisibility('showDescription')} 
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-gray-700">Show Schedule</h4>
-              </div>
-              <Switch 
-                checked={brandingVisibility.showSchedule} 
-                onCheckedChange={() => toggleBrandingVisibility('showSchedule')} 
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-gray-700">Show Speakers</h4>
-              </div>
-              <Switch 
-                checked={brandingVisibility.showSpeakers} 
-                onCheckedChange={() => toggleBrandingVisibility('showSpeakers')} 
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-gray-700">Show Location</h4>
-              </div>
-              <Switch 
-                checked={brandingVisibility.showLocation} 
-                onCheckedChange={() => toggleBrandingVisibility('showLocation')} 
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-gray-700">Show Registration</h4>
-              </div>
-              <Switch 
-                checked={brandingVisibility.showRegistration} 
-                onCheckedChange={() => toggleBrandingVisibility('showRegistration')} 
-              />
-            </div>
-          </div>
-        </div>
-        
+
           {/* Registration Settings */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900">Registration Settings</h3>
@@ -448,8 +466,9 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
               <div className="space-y-2">
                 <Label className='text-gray-900'>Registration Start</Label>
                 <Input
+                  id="registrationStart"
                   type="datetime-local"
-                  defaultValue={event.registration_start_datetime ? new Date(event.registration_start_datetime).toISOString().slice(0, 16) : ''}
+                  defaultValue={event.registration_start_datetime || ''}
                   className="w-full"
                 />
               </div>
@@ -457,8 +476,9 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
               <div className="space-y-2">
                 <Label className='text-gray-900'>Registration End</Label>
                 <Input
+                  id="registrationEnd"
                   type="datetime-local"
-                  defaultValue={event.registration_end_datetime ? new Date(event.registration_end_datetime).toISOString().slice(0, 16) : ''}
+                  defaultValue={event.registration_end_datetime || ''}
                   className="w-full"
                 />
               </div>
@@ -466,8 +486,9 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
               <div className="space-y-2">
                 <Label className='text-gray-900'>Cancellation Deadline</Label>
                 <Input
+                  id="cancellationDeadline"
                   type="datetime-local"
-                  defaultValue={event.cancellation_deadline_datetime ? new Date(event.cancellation_deadline_datetime).toISOString().slice(0, 16) : ''}
+                  defaultValue={event.cancellation_deadline_datetime || ''}
                   className="w-full"
                 />
               </div>
@@ -489,10 +510,21 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
         </div>
 
         <div className="flex justify-end gap-4 mt-6">
-          <Button variant="outline" onClick={onCloseAction} className="hover:bg-black hover:text-white bg-white text-black border border-gray-700 cursor-pointer">
+          <Button
+            variant="outline"
+            onClick={onCloseAction}
+            className="hover:bg-black hover:text-white bg-white text-black border border-gray-700 cursor-pointer"
+            disabled={isSaving}
+          >
             Cancel
           </Button>
-          <Button className="bg-black text-white cursor-pointer">Save Changes</Button>
+          <Button
+            className="bg-black text-white cursor-pointer"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
