@@ -1,54 +1,90 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { getEventById } from '@/services/organization/eventService';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { BarChart2, LayoutDashboard, Settings2, Wrench } from "lucide-react";
+import { BarChart2, LayoutDashboard, Settings2, Wrench, PlusCircle, MapPin, Calendar, ArrowRight, Medal, Mail, FileText } from "lucide-react";
 import Link from "next/link";
 import AnalyticsCard from "@/components/event-dashboard/analytics-card";
 import ToolCard from "@/components/event-dashboard/tool-card";
-import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import OverviewLayout from '@/components/event-dashboard/OverviewLayout';
-import { notFound } from 'next/navigation';
-import { getEventById } from '@/services/organization/eventService';
 import Image from 'next/image';
-import AnalyticsClientWrapper from '@/components/event-dashboard/analytics-client-wrapper';
-import { PlusCircle } from 'lucide-react';
 import ShareLinkButton from '@/components/event-dashboard/shareButton';
-import { Medal, Mail, FileText } from "lucide-react";
+import AnalyticsClientWrapper from '@/components/event-dashboard/analytics-client-wrapper';
 
+export default function EventOverviewPage() {
+  const searchParams = useSearchParams();
+  const eventId = searchParams.get('id');
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+  // Fetch event data when component mounts
+  useEffect(() => {
+    const fetchEvent = async () => {
+      if (!eventId) {
+        setError('No event ID provided');
+        setLoading(false);
+        return;
+      }
 
-// Animation variants
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
+      try {
+        setLoading(true);
+        const response = await getEventById(eventId);
+        console.log('Event data response:', response);
+        if (response?.success && response.data) {
+          setEvent(response.data);
+        } else {
+          setError('Failed to load event data');
+        }
+      } catch (err: any) {
+        console.error('Error fetching event:', err);
+        setError(err.message || 'An error occurred while fetching event data');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
+    fetchEvent();
+  }, [eventId]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div>Loading event details...</div>
+      </div>
+    );
   }
-};
 
-export default async function EventOverview({ params }: PageProps) {
-
-  // Await the params promise
-  const { id } = await params;
-
-  // Fetch event from API
-  const response = await getEventById(id);
-  if (!response?.success || !response.data) {
-    notFound();
+  // Error state
+  if (error || !event) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="text-red-500 text-lg mb-4">Error: {error || 'Event not found'}</div>
+        <Link href="/events">
+          <Button variant="outline">Back to Events</Button>
+        </Link>
+      </div>
+    );
   }
-  const event = response.data;
+  // Get current status based on dates
+  const getCurrentStatus = () => {
+    const now = new Date();
+    const start = new Date(event.start_datetime);
+    const end = new Date(event.end_datetime);
+    
+    if (now < start) return 'upcoming';
+    if (now >= start && now <= end) return 'ongoing';
+    return 'completed';
+  };
+
+  const currentStatus = getCurrentStatus();
 
   // Sessions: from event.sessions_id (array of session objects) or []
   const sessions = event.sessions_id || [];
@@ -194,7 +230,7 @@ const logoImage = event.branding_id?.branding_logo
                   src={logoImage}
                   alt={`${event.name} logo`}
                   fill
-                  className="object-cover"
+                  className="object-fill"
                   sizes="(max-width: 768px) 6rem, 8rem"
                 />
               ) : (
@@ -386,7 +422,7 @@ const logoImage = event.branding_id?.branding_logo
               </div>
               <div className="grid gap-6 md:grid-cols-3">
                 {/* Badge Card */}
-                {event.badge_id[0] ? (
+                {event.badge_id ? (
                   <Card className="h-full flex flex-col transition-all hover:shadow-md group">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
