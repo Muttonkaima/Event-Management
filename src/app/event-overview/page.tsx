@@ -279,9 +279,9 @@ export default function EventOverviewPage() {
                 )}
 
                 <div className="mt-4 flex items-center gap-3 text-white">
-                  <Button className="cursor-pointer text-white">
+                  <Button className="cursor-pointer text-black bg-white hover:bg-black hover:text-white">
                     <Settings2 className="mr-2 h-4 w-4" />
-                    Manage Event
+                    Edit Event
                   </Button>
                   <ShareLinkButton />
                 </div>
