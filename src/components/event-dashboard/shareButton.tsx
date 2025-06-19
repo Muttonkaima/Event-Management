@@ -28,7 +28,7 @@ const ShareLinkButton = () => {
   return (
     <Button
       variant="outline"
-      className="cursor-pointer bg-black border-none text-white hover:bg-white hover:text-black"
+      className="cursor-pointer bg-white border border-gray-200 text-black hover:bg-black hover:text-white hover:border-white"
       onClick={handleShareLink}
     >
       <Share2 className="mr-2 h-4 w-4" />

@@ -14,13 +14,13 @@ import { FiLogOut, FiX,
 
 const navItems = [
   { name: 'Overview', href: '/event-overview', icon: <FiCalendar className="w-5 h-5" /> },
-  { name: 'Attendees', href: '/attendees', icon: <FiUsers className="w-5 h-5" /> },
-  { name: 'Sessions', href: '/sessions', icon: <FiVideo className="w-5 h-5" /> },
-  { name: 'Registration', href: '/registration', icon: <FiClipboard className="w-5 h-5" /> },
-  { name: 'Event App', href: '/event-app', icon: <FiSmartphone className="w-5 h-5" /> },
-  { name: 'Onsite', href: '/onsite', icon: <FiMapPin className="w-5 h-5" /> },
-  { name: 'Lead Retrieval', href: '/lead-retrieval', icon: <FiDownload className="w-5 h-5" /> },
-  { name: 'Live Display', href: '/live-display', icon: <FiMonitor className="w-5 h-5" /> },
+  // { name: 'Attendees', href: '/attendees', icon: <FiUsers className="w-5 h-5" /> },
+  // { name: 'Sessions', href: '/sessions', icon: <FiVideo className="w-5 h-5" /> },
+  // { name: 'Registration', href: '/registration', icon: <FiClipboard className="w-5 h-5" /> },
+  // { name: 'Event App', href: '/event-app', icon: <FiSmartphone className="w-5 h-5" /> },
+  // { name: 'Onsite', href: '/onsite', icon: <FiMapPin className="w-5 h-5" /> },
+  // { name: 'Lead Retrieval', href: '/lead-retrieval', icon: <FiDownload className="w-5 h-5" /> },
+  // { name: 'Live Display', href: '/live-display', icon: <FiMonitor className="w-5 h-5" /> },
 ];
 
 export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boolean; toggleSidebarAction: () => void }) {

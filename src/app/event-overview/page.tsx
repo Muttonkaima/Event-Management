@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { getEventById } from '@/services/organization/eventService';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { getEventById, publishEventById } from '@/services/organization/eventService';
+import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,38 @@ export default function EventOverviewPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const router = useRouter();
+
+  // Handle publish event
+  const handlePublishEvent = async () => {
+    if (!event?._id) return;
+
+    // Show confirmation dialog
+    const isConfirmed = window.confirm(
+      'Are you sure you want to publish this event?\n\n' +
+      'After publishing, you will not be able to edit the event details.'
+    );
+
+    if (!isConfirmed) return;
+
+    try {
+      setIsPublishing(true);
+      const response = await publishEventById(event._id);
+
+      if (response?.success) {
+        toast.success('Event published successfully!');
+        window.location.reload();
+      } else {
+        toast.error(response?.message || 'Failed to publish event');
+      }
+    } catch (err: any) {
+      console.error('Error publishing event:', err);
+      toast.error(err.message || 'An error occurred while publishing the event');
+    } finally {
+      setIsPublishing(false);
+    }
+  };
 
   // Fetch event data when component mounts
   useEffect(() => {
@@ -214,7 +247,7 @@ export default function EventOverviewPage() {
           event={event}
         />
         {/* Hero Section */}
-        <div className="relative h-72 overflow-hidden rounded-2xl">
+        <div className="relative h-80 overflow-hidden rounded-2xl">
           {bannerImage ? (
             <Image
               src={bannerImage}
@@ -229,71 +262,96 @@ export default function EventOverviewPage() {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
 
-          <div className="relative container mx-auto px-4 h-full flex items-end pb-8">
-            <div className="flex flex-col md:flex-row items-start md:items-end gap-6 w-full">
-              <div className="relative mt-16 w-32 h-32 md:w-36 md:h-36 rounded-2xl border-4 border-background bg-card shadow-xl overflow-hidden hidden md:block">
-                {logoImage ? (
-                  <Image
-                    src={logoImage}
-                    alt={`${event.name} logo`}
-                    fill
-                    className="object-fill"
-                    sizes="(max-width: 768px) 6rem, 8rem"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
-                    <span className="text-4xl font-bold text-white/80">
-                      {event.event_name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-              </div>
+          <div className="relative container mx-auto px-4 h-full flex flex-col">
+            {/* Top bar with publish button */}
+            <div className="flex justify-end pt-4">
+              {event?.is_published ? (
+                <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-green-100 text-green-700">
+                  <svg className="-ml-0.5 mr-1.5 h-3 w-3 text-green-500" fill="currentColor" viewBox="0 0 8 8">
+                    <circle cx="4" cy="4" r="3" />
+                  </svg>
+                  Published
+                </div>
+              ) : (
+                <Button
+                  className="bg-white text-black border-gray-200 hover:bg-black hover:text-white border-2 hover:border-white cursor-pointer"
+                  onClick={handlePublishEvent}
+                  disabled={isPublishing}
+                >
+                  {isPublishing ? 'Publishing...' : 'Publish Event'}
+                </Button>
+              )}
+            </div>
 
-              <div className="flex-1">
-                <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 md:mb-3 mb-0">
-                  <div className="w-fit">
-                    <Badge className={cn(
-                      "px-3 py-1 text-xs md:text-sm md:py-1.5 font-medium whitespace-nowrap",
-                      getStatusBadgeVariant(event.status || 'upcoming')
-                    )}>
-                      {getStatusText(event.status || 'upcoming')}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-white flex-wrap">
-                    <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-md">
-                      <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
-                      <span className="whitespace-nowrap text-xs sm:text-sm">{formatDate(event.start_datetime)}</span>
+            <div className="flex-1 flex items-end pb-8">
+              <div className="flex flex-col md:flex-row items-start md:items-end gap-6 w-full">
+                <div className="relative mt-16 w-32 h-32 md:w-36 md:h-36 rounded-2xl border-4 border-background bg-card shadow-xl overflow-hidden hidden md:block">
+                  {logoImage ? (
+                    <Image
+                      src={logoImage}
+                      alt={`${event.name} logo`}
+                      fill
+                      className="object-fill"
+                      sizes="(max-width: 768px) 6rem, 8rem"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+                      <span className="text-4xl font-bold text-white/80">
+                        {event.event_name.charAt(0).toUpperCase()}
+                      </span>
                     </div>
-                    {event.address && (
-                      <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-md">
-                        <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                        <span className="text-xs sm:text-sm line-clamp-1">
-                          {event.address}, {event.state}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
 
-                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-                  {event.event_name}
-                </h1>
+                <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 md:mb-3 mb-0">
+                    <div className="w-fit">
+                      <Badge className={cn(
+                        "px-3 py-1 text-xs md:text-sm md:py-1.5 font-medium whitespace-nowrap",
+                        getStatusBadgeVariant(event.status || 'upcoming')
+                      )}>
+                        {getStatusText(event.status || 'upcoming')}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-white flex-wrap">
+                      <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-md">
+                        <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
+                        <span className="whitespace-nowrap text-xs sm:text-sm">{formatDate(event.start_datetime)}</span>
+                      </div>
+                      {event.address && (
+                        <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-md">
+                          <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+                          <span className="text-xs sm:text-sm line-clamp-1">
+                            {event.address}, {event.state}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-                {event.description && (
-                  <p className="mt-2 text-base text-white/90 max-w-3xl">
-                    {event.description}
-                  </p>
-                )}
+                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
+                    {event.event_name}
+                  </h1>
 
-                <div className="mt-4 flex items-center gap-3 text-white">
-                  <Button 
-                    className="cursor-pointer text-black bg-white hover:bg-black hover:text-white"
-                    onClick={() => setIsEditModalOpen(true)}
-                  >
-                    <Settings2 className="mr-2 h-4 w-4" />
-                    Edit Event
-                  </Button>
-                  <ShareLinkButton />
+                  {event.description && (
+                    <p className="mt-2 text-base text-white/90 max-w-3xl">
+                      {event.description}
+                    </p>
+                  )}
+
+                  <div className="mt-4 flex items-center gap-3 text-white">
+                    {!event.is_published ? (
+                      <Button
+                        className="cursor-pointer border border-gray-200 text-black bg-white hover:bg-black hover:text-white hover:border-white"
+                        onClick={() => setIsEditModalOpen(true)}
+                      >
+                        <Settings2 className="mr-2 h-4 w-4" />
+                        Edit Event
+                      </Button>
+                    ):(
+                      <ShareLinkButton />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -438,11 +496,11 @@ export default function EventOverviewPage() {
                         <CardHeader className="pb-2">
                           <div className="flex justify-between items-start">
                             <CardTitle className="text-lg text-gray-700">{ticket.ticket_name}</CardTitle>
-                            <Badge 
+                            <Badge
                               variant="outline"
                               className={cn(
-                                ticket.ticket_type === 'free' 
-                                  ? 'bg-green-100 text-green-800 border-green-200' 
+                                ticket.ticket_type === 'free'
+                                  ? 'bg-green-100 text-green-800 border-green-200'
                                   : 'bg-blue-100 text-blue-800 border-blue-200'
                               )}
                             >
@@ -455,8 +513,8 @@ export default function EventOverviewPage() {
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-500">Price:</span>
                               <span className="text-lg font-medium text-gray-700">
-                                {ticket.ticket_type === 'free' 
-                                  ? 'Free' 
+                                {ticket.ticket_type === 'free'
+                                  ? 'Free'
                                   : `${ticket.currency} ${ticket.price}`}
                               </span>
                             </div>
@@ -506,13 +564,16 @@ export default function EventOverviewPage() {
                           <p className="text-md text-gray-800">{event.badge_id.badges_name}</p>
                           <p className="text-sm font-medium text-gray-500 mt-2">DESCRIPTION:</p>
                           <p className="text-sm text-gray-700">{event.badge_id.badges_description}</p>
-                          <div className="mt-4">
-                            <Link href={`/badge-designer?eventId=${event._id}`}>
-                              <Button variant="outline" size="sm" className="w-full cursor-pointer border-2 border-gray-200 bg-white text-black hover:bg-black hover:text-white">
-                                Change Badge
-                              </Button>
-                            </Link>
-                          </div>
+                          {!event.is_published && (
+                            <div className="mt-4">
+                              <Link href={`/badge-designer?eventId=${event._id}`}>
+                                <Button variant="outline" size="sm" className="w-full cursor-pointer border-2 border-gray-200 bg-white text-black hover:bg-black hover:text-white">
+                                  Change Badge
+                                </Button>
+                              </Link>
+                            </div>
+                          )}
+
                         </div>
                       </CardContent>
                     </Card>
@@ -548,13 +609,15 @@ export default function EventOverviewPage() {
                           <p className="text-md text-gray-800">{event.registration_form_id.registration_form_name}</p>
                           <p className="text-sm font-medium text-gray-500 mt-2">DESCRIPTION:</p>
                           <p className="text-sm text-gray-700">{event.registration_form_id.registration_form_description}</p>
-                          <div className="mt-4">
-                            <Link href={`/form-builder?eventId=${event._id}`}>
-                              <Button variant="outline" size="sm" className="w-full cursor-pointer border-2 border-gray-200 bg-white text-black hover:bg-black hover:text-white">
-                                Change Form
-                              </Button>
-                            </Link>
-                          </div>
+                          {!event.is_published && (
+                            <div className="mt-4">
+                              <Link href={`/form-builder?eventId=${event._id}`}>
+                                <Button variant="outline" size="sm" className="w-full cursor-pointer border-2 border-gray-200 bg-white text-black hover:bg-black hover:text-white">
+                                  Change Form
+                                </Button>
+                              </Link>
+                            </div>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
@@ -590,13 +653,15 @@ export default function EventOverviewPage() {
                           <p className="text-md text-gray-800">{event.email_template_id.email_template_name}</p>
                           <p className="text-sm font-medium text-gray-500 mt-2">DESCRIPTION:</p>
                           <p className="text-sm text-gray-700">{event.email_template_id.email_template_description}</p>
-                          <div className="mt-4">
-                            <Link href={`/email-builder?eventId=${event._id}`}>
-                              <Button variant="outline" size="sm" className="w-full cursor-pointer border-2 border-gray-200 bg-white text-black hover:bg-black hover:text-white">
-                                Change Template
-                              </Button>
-                            </Link>
-                          </div>
+                          {!event.is_published && (
+                            <div className="mt-4">
+                              <Link href={`/email-builder?eventId=${event._id}`}>
+                                <Button variant="outline" size="sm" className="w-full cursor-pointer border-2 border-gray-200 bg-white text-black hover:bg-black hover:text-white">
+                                  Change Template
+                                </Button>
+                              </Link>
+                            </div>
+                          )}
                         </div>
                       </CardContent>
                     </Card>

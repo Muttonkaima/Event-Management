@@ -232,3 +232,12 @@ export async function updateEventResourcesById(id: string, data: any) {
   }
 }
 
+export async function publishEventById(id: string) {
+  try {
+    const response = await put(`/organization/publish-event-by-id/${id}`);
+    console.log('publish event by id response ----', response);
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to publish event by id');
+  }
+}
