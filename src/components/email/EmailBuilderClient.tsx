@@ -179,9 +179,9 @@ export function EmailBuilderClient({ initialData, templateId }: EmailBuilderClie
               variant="ghost"
               size="sm"
               className="text-gray-600 border-2 border-gray-200 hover:bg-gray-50 hover:text-gray-800 cursor-pointer"
-              onClick={() => window.location.href = "/email-builder"}
+              onClick={() => window.history.back()}
             >
-              Back to Email Templates
+              Go Back
             </Button>
         </div>
         <div className="flex items-center gap-3">

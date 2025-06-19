@@ -444,9 +444,9 @@ export default function BadgeDesigner() {
               variant="ghost"
               size="sm"
               className="text-gray-600 border-2 border-gray-200 hover:bg-gray-50 hover:text-gray-800 cursor-pointer"
-              onClick={() => window.location.href = "/badge-designer"}
+              onClick={() => window.history.back()}
             >
-              Back to Badges
+              Go Back
             </Button>
           </div>
           <div className="flex items-center gap-3">

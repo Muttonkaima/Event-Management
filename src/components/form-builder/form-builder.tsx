@@ -118,9 +118,9 @@ export default function FormBuilder() {
               variant="ghost"
               size="sm"
               className="text-gray-600 border-2 border-gray-200 hover:bg-gray-50 hover:text-gray-800 cursor-pointer"
-              onClick={() => window.location.href = "/form-builder"}
+              onClick={() => window.history.back()}
             >
-              Back to Forms
+              Go Back
             </Button>
           </div>
           <div className="flex items-center gap-3">

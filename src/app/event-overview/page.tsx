@@ -158,7 +158,7 @@ export default function EventOverviewPage() {
     {
       title: "Registration Form Builder",
       description: "Create and customize your event registration form",
-      link: `/form-builder?eventId=${event._id}`,
+      link: "/form-builder/builder",
       status: "Popular" as const,
       icon: "form-input",
       isActive: true
@@ -166,7 +166,7 @@ export default function EventOverviewPage() {
     {
       title: "Email Builder",
       description: "Design emails for confirmations and reminders",
-      link: `/email-builder?eventId=${event._id}`,
+      link: "/email-builder/builder",
       status: "Popular" as const,
       icon: "mail",
       isActive: true
@@ -174,7 +174,7 @@ export default function EventOverviewPage() {
     {
       title: "Badge Designer",
       description: "Create custom badges for your attendees",
-      link: `/badge-designer?eventId=${event._id}`,
+      link: "/badge-designer/builder",
       status: "Popular" as const,
       icon: "badge",
       isActive: true
@@ -506,6 +506,13 @@ export default function EventOverviewPage() {
                           <p className="text-md text-gray-800">{event.badge_id.badges_name}</p>
                           <p className="text-sm font-medium text-gray-500 mt-2">DESCRIPTION:</p>
                           <p className="text-sm text-gray-700">{event.badge_id.badges_description}</p>
+                          <div className="mt-4">
+                            <Link href={`/badge-designer?eventId=${event._id}`}>
+                              <Button variant="outline" size="sm" className="w-full cursor-pointer border-2 border-gray-200 bg-white text-black hover:bg-black hover:text-white">
+                                Change Badge
+                              </Button>
+                            </Link>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -515,8 +522,12 @@ export default function EventOverviewPage() {
                         <Medal className="h-6 w-6 text-gray-400" />
                       </div>
                       <p className="text-sm text-gray-900 mb-1">No badge selected</p>
-                      <p className="text-sm text-gray-700">Create badge to identify attendees</p>
-
+                      <p className="text-sm text-gray-700 mb-4">Create badge to identify attendees</p>
+                      <Link href={`/badge-designer?eventId=${event._id}`}>
+                        <Button size="sm" className="w-full">
+                          Select Badge
+                        </Button>
+                      </Link>
                     </div>
                   )}
 
@@ -537,7 +548,13 @@ export default function EventOverviewPage() {
                           <p className="text-md text-gray-800">{event.registration_form_id.registration_form_name}</p>
                           <p className="text-sm font-medium text-gray-500 mt-2">DESCRIPTION:</p>
                           <p className="text-sm text-gray-700">{event.registration_form_id.registration_form_description}</p>
-
+                          <div className="mt-4">
+                            <Link href={`/form-builder?eventId=${event._id}`}>
+                              <Button variant="outline" size="sm" className="w-full cursor-pointer border-2 border-gray-200 bg-white text-black hover:bg-black hover:text-white">
+                                Change Form
+                              </Button>
+                            </Link>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -547,8 +564,12 @@ export default function EventOverviewPage() {
                         <FileText className="h-6 w-6 text-gray-400" />
                       </div>
                       <p className="text-sm text-gray-900 mb-1">No form selected</p>
-                      <p className="text-sm text-gray-700">Create form to collect attendee information</p>
-
+                      <p className="text-sm text-gray-700 mb-4">Create form to collect attendee information</p>
+                      <Link href={`/form-builder?eventId=${event._id}`}>
+                        <Button size="sm" className="w-full">
+                          Select Form
+                        </Button>
+                      </Link>
                     </div>
                   )}
 
@@ -569,6 +590,13 @@ export default function EventOverviewPage() {
                           <p className="text-md text-gray-800">{event.email_template_id.email_template_name}</p>
                           <p className="text-sm font-medium text-gray-500 mt-2">DESCRIPTION:</p>
                           <p className="text-sm text-gray-700">{event.email_template_id.email_template_description}</p>
+                          <div className="mt-4">
+                            <Link href={`/email-builder?eventId=${event._id}`}>
+                              <Button variant="outline" size="sm" className="w-full cursor-pointer border-2 border-gray-200 bg-white text-black hover:bg-black hover:text-white">
+                                Change Template
+                              </Button>
+                            </Link>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -578,7 +606,12 @@ export default function EventOverviewPage() {
                         <Mail className="h-6 w-6 text-gray-400" />
                       </div>
                       <p className="text-sm text-gray-900 mb-1">No template selected</p>
-                      <p className="text-sm text-gray-700">Create template to send emails to attendees</p>
+                      <p className="text-sm text-gray-700 mb-4">Create template to send emails to attendees</p>
+                      <Link href={`/email-builder?eventId=${event._id}`}>
+                        <Button size="sm" className="w-full">
+                          Select Template
+                        </Button>
+                      </Link>
                     </div>
                   )}
                 </div>
