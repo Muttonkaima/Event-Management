@@ -239,7 +239,7 @@ export default function EventOverviewPage() {
   ];
 
   return (
-    <OverviewLayout title={event.event_name}>
+    <OverviewLayout title={event.event_name} eventId={event._id}>
       <div className="min-h-screen bg-transparent">
         <EditEventModal
           isOpen={isEditModalOpen}

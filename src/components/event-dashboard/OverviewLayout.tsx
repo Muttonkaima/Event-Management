@@ -8,9 +8,10 @@ import Header from './Header';
 type DashboardLayoutProps = {
   children: ReactNode;
   title?: string;
+  eventId?: string;
 };
 
-export default function DashboardLayout({ children, title = 'Dashboard' }: DashboardLayoutProps) {
+export default function DashboardLayout({ children, title = 'Dashboard', eventId }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -34,7 +35,7 @@ export default function DashboardLayout({ children, title = 'Dashboard' }: Dashb
         <meta name="description" content="Event overview dashboard" />
       </Head>
 
-      <Sidebar isOpen={isSidebarOpen} toggleSidebarAction={toggleSidebar} />
+      <Sidebar isOpen={isSidebarOpen} toggleSidebarAction={toggleSidebar} eventId={eventId} />
 
       <div className="lg:pl-64 flex flex-col flex-1">
         <Header toggleSidebarAction={toggleSidebar} />

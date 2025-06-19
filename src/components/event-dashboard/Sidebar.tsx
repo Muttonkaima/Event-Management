@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { FiLogOut, FiX,
   FiCalendar,
   FiUsers,
-  FiVideo,
+  FiMail,
   FiClipboard,
   FiSmartphone,
   FiMapPin,
@@ -14,6 +14,7 @@ import { FiLogOut, FiX,
 
 const navItems = [
   { name: 'Overview', href: '/event-overview', icon: <FiCalendar className="w-5 h-5" /> },
+  { name: 'Send Invitations', href: `/send-invitations`, icon: <FiMail className="w-5 h-5" /> },
   // { name: 'Attendees', href: '/attendees', icon: <FiUsers className="w-5 h-5" /> },
   // { name: 'Sessions', href: '/sessions', icon: <FiVideo className="w-5 h-5" /> },
   // { name: 'Registration', href: '/registration', icon: <FiClipboard className="w-5 h-5" /> },
@@ -23,7 +24,7 @@ const navItems = [
   // { name: 'Live Display', href: '/live-display', icon: <FiMonitor className="w-5 h-5" /> },
 ];
 
-export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boolean; toggleSidebarAction: () => void }) {
+export default function Sidebar({ isOpen, toggleSidebarAction, eventId }: { isOpen: boolean; toggleSidebarAction: () => void; eventId?: string }) {
   // Alias the prop to avoid renaming all instances
   const toggleSidebar = toggleSidebarAction;
   const pathname = usePathname();
@@ -58,7 +59,7 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
             {navItems.map((item) => (
               <li key={item.name}>
                 <Link
-                  href={item.href}
+                  href={`${item.href}?id=${eventId}`}
                   className={`flex items-center p-3 rounded-lg transition-colors ${
                     pathname === item.href
                       ? 'bg-black/10 text-black'
