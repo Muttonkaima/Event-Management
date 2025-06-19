@@ -585,7 +585,7 @@ export default function EventOverviewPage() {
                       <p className="text-sm text-gray-900 mb-1">No badge selected</p>
                       <p className="text-sm text-gray-700 mb-4">Create badge to identify attendees</p>
                       <Link href={`/badge-designer?eventId=${event._id}`}>
-                        <Button size="sm" className="w-full">
+                        <Button size="sm" className="w-full bg-transparent border-2 border-gray-200 hover:bg-black hover:text-white text-gray-500 hover:border-black cursor-pointer">
                           Select Badge
                         </Button>
                       </Link>
@@ -629,7 +629,7 @@ export default function EventOverviewPage() {
                       <p className="text-sm text-gray-900 mb-1">No form selected</p>
                       <p className="text-sm text-gray-700 mb-4">Create form to collect attendee information</p>
                       <Link href={`/form-builder?eventId=${event._id}`}>
-                        <Button size="sm" className="w-full">
+                        <Button size="sm" className="w-full bg-transparent border-2 border-gray-200 hover:bg-black hover:text-white text-gray-500 hover:border-black cursor-pointer">
                           Select Form
                         </Button>
                       </Link>
@@ -673,7 +673,7 @@ export default function EventOverviewPage() {
                       <p className="text-sm text-gray-900 mb-1">No template selected</p>
                       <p className="text-sm text-gray-700 mb-4">Create template to send emails to attendees</p>
                       <Link href={`/email-builder?eventId=${event._id}`}>
-                        <Button size="sm" className="w-full">
+                        <Button size="sm" className="w-full bg-transparent border-2 border-gray-200 hover:bg-black hover:text-white text-gray-500 hover:border-black cursor-pointer">
                           Select Template
                         </Button>
                       </Link>

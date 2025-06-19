@@ -11,6 +11,7 @@ interface EmailPreviewProps {
   onDeleteBlock: (blockId: string) => void;
   onAddBlock: (blockType: 'header' | 'text' | 'image' | 'button' | 'divider') => void;
   onExportTemplate: () => void;
+  readonly?: boolean;
 }
 
 export function EmailPreview({ 
@@ -19,7 +20,8 @@ export function EmailPreview({
   onSelectBlock, 
   onDeleteBlock, 
   onAddBlock,
-  onExportTemplate 
+  onExportTemplate,
+  readonly = false
 }: EmailPreviewProps) {
   const getBackgroundColor = (bg: string) => {
     return bg;
@@ -37,18 +39,20 @@ export function EmailPreview({
     return (
       <div
         key={block.id}
-        className={`email-block relative group cursor-pointer ${isSelected ? 'shadow-sm selected' : ''}`}
-        onClick={() => onSelectBlock(block.id)}
+        className={`email-block relative ${!readonly ? 'group cursor-pointer' : ''} ${isSelected ? 'shadow-sm selected' : ''}`}
+        onClick={() => !readonly && onSelectBlock(block.id)}
       >
-        <button
-          className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDeleteBlock(block.id);
-          }}
-        >
-          <Trash2 className="w-3 h-3" />
-        </button>
+        {!readonly && (
+          <button
+            className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteBlock(block.id);
+            }}
+          >
+            <Trash2 className="w-3 h-3" />
+          </button>
+        )}
 
         {block.type === 'header' && (
           <div style={commonStyles}>
@@ -192,42 +196,44 @@ export function EmailPreview({
           ) : (
             <div className="divide-y divide-gray-100">
               {blocks.map((block, index) => (
-                <div key={block.id} className="relative group">
-                  <div className="absolute left-0 top-1/2 -translate-x-4 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col space-y-1">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button 
-                            className="w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-50"
-                            onClick={() => onAddBlock('text')}
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          <p>Add block above</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button 
-                            className="w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-50"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onDeleteBlock(block.id);
-                            }}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          <p>Delete block</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
+                <div key={block.id} className={`relative ${!readonly ? 'group' : ''}`}>
+                  {!readonly && (
+                    <div className="absolute left-0 top-1/2 -translate-x-4 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col space-y-1">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button 
+                              className="w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-50"
+                              onClick={() => onAddBlock('text')}
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>Add block above</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button 
+                              className="w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-50"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDeleteBlock(block.id);
+                              }}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>Delete block</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )}
                   <div className="px-8 py-4">
                     {renderBlock(block)}
                   </div>
@@ -237,15 +243,16 @@ export function EmailPreview({
           )}
         </div>
 
-        <div className="text-center py-6 border-t border-gray-200">
-         
-          <button
-            onClick={onExportTemplate}
-            className="flex items-center text-gray-900 justify-center space-x-2 mx-auto px-4 py-2 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer"
-          >
-            <span className="text-sm font-medium">Export Template</span>
-          </button>
-        </div>
+        {!readonly && (
+          <div className="text-center py-6 border-t border-gray-200">
+            <button
+              onClick={onExportTemplate}
+              className="flex items-center text-gray-900 justify-center space-x-2 mx-auto px-4 py-2 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer"
+            >
+              <span className="text-sm font-medium">Export Template</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
