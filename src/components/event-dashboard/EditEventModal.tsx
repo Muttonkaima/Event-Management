@@ -7,15 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Image as ImageIcon, X, Upload, Clock, Users, Tag } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Image as ImageIcon, Upload } from "lucide-react";
 import Image from 'next/image';
 import { Country, State, City } from 'country-state-city';
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 
 interface EditEventModalProps {
   isOpen: boolean;
@@ -492,8 +487,6 @@ export default function EditEventModal({ isOpen, onCloseAction, event }: EditEve
             </div>
           </div>
         </div>
-
-        
 
         <div className="flex justify-end gap-4 mt-6">
           <Button variant="outline" onClick={onCloseAction} className="hover:bg-black hover:text-white bg-white text-black border border-gray-700 cursor-pointer">
