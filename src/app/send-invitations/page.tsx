@@ -7,7 +7,7 @@ import OverviewLayout from "@/components/event-dashboard/OverviewLayout";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { getEventById } from "@/services/organization/eventService";
+import { getEventById, sendEventInvitation } from "@/services/organization/eventService";
 import { toast } from "@/hooks/use-toast";
 
 // Dynamically import EmailPreview for SSR safety
@@ -22,6 +22,7 @@ function parseEmailsFromText(text: string): string[] {
 }
 
 export default function SendInvitationsPage() {
+  const [sending, setSending] = useState(false);
   const searchParams = useSearchParams();
   const eventId = searchParams.get("id") || "";
 
@@ -150,6 +151,89 @@ export default function SendInvitationsPage() {
               ))}
               {emails.length === 0 && <span className="text-gray-400">No emails added yet.</span>}
             </div>
+            {/* Send Invitations Button */}
+            {emails.length > 0 && (
+              <Button
+                type="button"
+                className="mt-4 bg-black text-white font-semibold w-full cursor-pointer"
+                disabled={sending}
+                onClick={async () => {
+                  setSending(true);
+                  try {
+                    const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL || "";
+                    const fields = event?.email_template_id?.email_fields || [];
+                    const templateHtml = `
+                    <div style="
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      margin: 0 auto;
+      max-width: 600px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+      padding: 32px;
+      border-radius: 16px;
+      background-color: #ffffff;
+      color: #222;
+                    ">
+                      ${fields.map((block: any) => {
+                      const p = block.properties || {};
+                      if (block.type === "header") {
+                        return `<div style="text-align:${p.textAlignment || "center"}; font-size:${p.fontSize || 24}px; font-weight:${p.fontWeight || "700"}; padding:${p.padding || 20}px 0;">${p.headerText || ""}</div>`;
+                      }
+                      else if (block.type === "text") {
+                        return `<div style="text-align:${p.textAlignment || "left"}; font-size:${p.fontSize || 16}px; font-weight:${p.fontWeight || "400"}; line-height:1.5; padding:${p.padding || 16}px 0;">${p.textContent || ""}</div>`;
+                      }
+                      else if (block.type === "image") {
+                        let url = p.imageUrl || "";
+                        if (url && !/^https?:\/\//.test(url)) {
+                          url = ASSETS_URL + url;
+                        }
+                        return `<div style="text-align:center; padding:${p.padding || 16}px 0;"><img src="${url}" alt="" style="max-width:100%; border-radius:${p.borderRadius || 8}px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" /></div>`;
+                      }
+                      else if (block.type === "button") {
+                        return `
+                            <div style="text-align:center; padding:${p.padding || 16}px 0;">
+                              <a
+                                href="{{JOIN_LINK}}"
+                                style="
+                                  background-color: ${p.backgroundColor || "#007BFF"};
+                                  color: ${p.textColor || "#fff"};
+                                  padding: 12px 28px;
+                                  font-size: ${p.fontSize || 16}px;
+                                  font-weight: ${p.fontWeight || "600"};
+                                  text-decoration: none;
+                                  border-radius: ${p.borderRadius || 6}px;
+                                  display: inline-block;
+                                  box-shadow: 0 4px 12px rgba(0,123,255,0.4);
+                                "
+                              >
+                                ${p.buttonText || "Join Event"}
+                              </a>
+                            </div>
+                          `;
+                      }
+                      return "";
+                    }).join("")}
+                    </div>
+                  `;
+
+
+                    console.log('template html ----', templateHtml);
+                    console.log('emails ----', emails);
+                    console.log('event id ----', eventId);
+                    await sendEventInvitation(eventId, emails, templateHtml);
+                    window.location.reload();
+                    toast({ title: `Invitations sent to ${emails.length} recipients.`, variant: "default" });
+
+                  } catch (err: any) {
+                    toast({ title: err.message || "Failed to send invitations", variant: "destructive" });
+                    setSending(false);
+                  }
+                }}
+              >
+                {sending ? "Sending..." : "Send Invitations"}
+              </Button>
+            )}
           </div>
         </div>
         {/* Right: Email Template Preview */}
@@ -158,14 +242,14 @@ export default function SendInvitationsPage() {
             <div className="flex items-center justify-center h-72 text-gray-400">Loading...</div>
           ) : event && emailBlocks.length > 0 ? (
             <div className="max-w-2xl mx-auto h-[590px] overflow-y-auto rounded-xl bg-white shadow border border-gray-100 flex flex-col">
-                <h2 className="text-xl font-semibold text-black text-center bg-transparent p-6">Email Template Preview</h2>
+              <h2 className="text-xl font-semibold text-black text-center bg-transparent p-6">Email Template Preview</h2>
               <EmailPreview
                 blocks={emailBlocks}
                 selectedBlockId={emailBlocks[0]?.id || ""}
-                onSelectBlock={() => {}}
-                onDeleteBlock={() => {}}
-                onAddBlock={() => {}}
-                onExportTemplate={() => {}}
+                onSelectBlock={() => { }}
+                onDeleteBlock={() => { }}
+                onAddBlock={() => { }}
+                onExportTemplate={() => { }}
                 readonly={true}
               />
             </div>
