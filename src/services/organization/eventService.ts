@@ -1,3 +1,4 @@
+
 import { get, post, upload, del, put } from '@/services/controllerServices';
 
 export async function getEventTemplates() {
@@ -250,5 +251,16 @@ export async function sendEventInvitation(id: string, data: string[], templateHt
     return response;
   } catch (err: any) {
     throw new Error(err.message || 'Failed to send invitations');
+  }
+}
+
+// Get Google OAuth URL for invitation verification
+export async function getGoogleOAuthUrl(invitedEmail: string, eventToken: string): Promise<string> {
+  try {
+    const response = await get(`/auth/google/url?invitedEmail=${encodeURIComponent(invitedEmail)}&eventToken=${eventToken}`);
+    console.log('response from getGoogleOAuthUrl', response);
+    return response.url;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get Google OAuth URL');
   }
 }

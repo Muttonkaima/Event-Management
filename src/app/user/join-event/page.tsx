@@ -1,13 +1,23 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useSearchParams } from "next/navigation";
 import { Calendar, MapPin, Users, Tag } from "lucide-react";
 import Image from "next/image";
-import { getEventById } from "@/services/organization/eventService";
+import { getEventById, getGoogleOAuthUrl } from "@/services/organization/eventService";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
+// Simple modal component
+function Modal({ open, children }: { open: boolean, children: React.ReactNode }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+      <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full text-center">
+        {children}
+      </div>
+    </div>
+  );
+}
 
 function formatDateTime(start: string, end: string) {
   if (!start || !end) {
@@ -52,20 +62,92 @@ function getLocationText(event: any) {
 
 export default function JoinEventPage() {
   const searchParams = useSearchParams();
-  const eventToken = searchParams.get("eventId");
-  // Decode JWT to get the real eventId
-  let eventId: string | null = null;
-  if (eventToken) {
-    try {
-      const decoded: any = jwtDecode(eventToken);
-      eventId = decoded.eventId;
-    } catch (err) {
-      eventId = null;
-    }
-  }
+  const [eventId, setEventId] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [eventToken, setEventToken] = useState<string | null>(null);
+  const [googleEmail, setGoogleEmail] = useState<string | null>(null);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verifyError, setVerifyError] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  const [isAllowed, setIsAllowed] = useState<boolean | null>(null);
+
+  // ✅ Moved these hooks to the top before any conditional return
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const googleToken = params.get('google_email');
+      
+      // Decode the JWT token if it exists
+      if (googleToken) {
+        try {
+          const decodedToken: any = jwtDecode(googleToken);
+          setGoogleEmail(decodedToken.email || googleToken);
+        } catch (err) {
+          console.error('Error decoding google_email token:', err);
+          setGoogleEmail(googleToken); // Fallback to raw token if decoding fails
+        }
+      } else {
+        setGoogleEmail(null);
+      }
+      
+      setEventToken(params.get('eventId'));
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!eventToken) {
+      setEventId(null);
+      setEmail(null);
+      setShowVerifyModal(false);
+      setIsVerified(false);
+      return;
+    }
+
+    try {
+      const decoded: any = jwtDecode(eventToken);
+      const invitedEmail = decoded.email;
+
+      setEventId(decoded.eventId);
+      setEmail(invitedEmail);
+
+      if (!invitedEmail) {
+        setIsVerified(true);
+        setShowVerifyModal(false);
+        setIsAllowed(true);
+        return;
+      }
+
+      if (googleEmail) {
+        if (googleEmail.toLowerCase() === invitedEmail.toLowerCase()) {
+          setIsAllowed(true);
+          setIsVerified(true);
+          setShowVerifyModal(false);
+        } else {
+          setIsAllowed(false);
+          setVerifyError('You are not authorized to see this page. Email mismatch.');
+        }
+      } else {
+        setShowVerifyModal(!!invitedEmail);
+        setIsVerified(false);
+      }
+    } catch (err) {
+      console.error('Error decoding token:', err);
+      setIsAllowed(false);
+      setVerifyError('Invalid event token.');
+    }
+  }, [eventToken, googleEmail]);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => { isMounted.current = false; };
+  }, []);
 
   useEffect(() => {
     async function fetchEvent() {
@@ -75,7 +157,6 @@ export default function JoinEventPage() {
         if (!eventId) throw new Error("Invalid or missing event id");
         const res = await getEventById(eventId);
         if (!res?.data) throw new Error("Event not found");
-        // Remove sensitive/irrelevant fields
         const { email_template_id, badge_id, registration_form_id, ...cleaned } = res.data;
         setEvent(cleaned);
       } catch (err: any) {
@@ -87,42 +168,78 @@ export default function JoinEventPage() {
     fetchEvent();
   }, [eventId]);
 
+  const handleContinue = async () => {
+    setVerifying(true);
+    setVerifyError("");
+    try {
+      const url = await getGoogleOAuthUrl(email || "", eventToken || "");
+      window.open(url, '_blank');
+      setVerifying(false);
+    } catch (err) {
+      setVerifyError("Failed to get Google OAuth URL");
+      setVerifying(false);
+    }
+  };
+
+  // Conditional rendering
+  if (isAllowed === false) {
+    return (
+      <Modal open>
+        <div className="text-red-600 font-bold mb-2">You are not allowed to visit this page</div>
+        <div className="text-sm text-gray-600">You signed in as {googleEmail} , but the invitation was sent to {email}.</div>
+      </Modal>
+    );
+  }
+
+  if (!isVerified && isAllowed !== true) {
+    return (
+      <>
+        <Modal open={showVerifyModal}>
+          <h2 className="text-xl font-semibold mb-4 text-gray-900">Verify Invitation Email</h2>
+          <p className="mb-4 text-gray-700">This invitation is sent to <span className="font-bold">{email}</span>.<br />Please verify that you are the intended recipient.</p>
+          {verifyError && <div className="text-red-500 mb-2">{verifyError}</div>}
+          <button
+            className="bg-black text-white px-6 py-2 rounded font-semibold disabled:opacity-60 cursor-pointer"
+            onClick={handleContinue}
+            disabled={verifying}
+          >
+            {verifying ? "Verifying..." : "Verify"}
+          </button>
+        </Modal>
+        <div className="fixed inset-0 bg-black opacity-30 z-40" />
+      </>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500 text-lg">Loading event...</div>
     );
   }
+
   if (error || !event) {
     return (
       <div className="flex justify-center items-center h-screen text-red-500 text-lg">{error || "Event not found."}</div>
     );
   }
 
-  // Branding
   const branding = event.branding_id || {};
-  const palette = branding.branding_color_palette_id?.colors[0] || {};
+  const palette = branding.branding_color_palette_id?.colors?.[0] || {};
   const fontClass = branding.branding_font_family_id?.font_family || "";
   const visibility = branding.branding_visibility_id?.fields || {};
   const themeGradient = palette.bgColor;
   const sidebarGradient = palette.sidebarColor || "bg-gray-700";
   const buttonGradient = palette.buttonColor || "bg-blue-600";
-  
-  console.log('branding', branding);
-  console.log('palette', palette);
-  // Dates
+
   const dateTimeText = formatDateTime(event.start_datetime, event.end_datetime);
   const locationText = getLocationText(event);
-
-  // Sessions
   const sessions = event.sessions_id || [];
-  // Tickets
   const tickets = event.ticket_ids || [];
-  // Registration
   const attendeeLimit = event.attendee_limit_enabled ? event.attendee_limit : undefined;
 
   return (
     <div className={`min-h-screen w-full max-w-7xl mx-auto px-2 my-4 md:my-8 bg-black text-white ${fontClass} flex flex-col`}>
-      {/* Hero Banner */}
+      {/* Banner */}
       <div className="relative h-72 md:h-96 w-full overflow-hidden border-t-3 border-l-3 border-r-3 rounded-t-2xl">
         {visibility.showBanner && (
           <Image
@@ -162,17 +279,15 @@ export default function JoinEventPage() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Content */}
       <div className={`flex-1 w-full max-w-7xl mx-auto px-2 md:px-8 py-6 bg-gradient-to-r ${themeGradient} border-l-3 border-r-3 border-b-3 rounded-b-2xl`}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Info */}
+          {/* Left */}
           <div className="lg:col-span-2">
             {visibility.showDescription && (
               <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4 text-white">About</h2>
-                <p className="text-white/90 leading-relaxed">
-                  {event.description || "Your event description will appear here."}
-                </p>
+                <p className="text-white/90 leading-relaxed">{event.description || "Your event description will appear here."}</p>
               </div>
             )}
             {visibility.showLocation && (
@@ -195,9 +310,7 @@ export default function JoinEventPage() {
                           <div>
                             <h4 className="font-medium text-white">{session.session_title}</h4>
                             <p className="text-white mt-1">{session.speaker_name}</p>
-                            {session.session_description && (
-                              <p className="text-white text-sm mt-2">{session.session_description}</p>
-                            )}
+                            {session.session_description && <p className="text-white text-sm mt-2">{session.session_description}</p>}
                             {session.tags && session.tags.length > 0 && (
                               <div className="flex flex-wrap gap-1 mt-2">
                                 {session.tags.map((tag: string, tagIdx: number) => (
@@ -222,7 +335,7 @@ export default function JoinEventPage() {
           </div>
 
           {/* Sidebar */}
-          <div className={`lg:col-span-1 ${sidebarGradient} h-fit sticky top-8 rounded-2xl`}> 
+          <div className={`lg:col-span-1 ${sidebarGradient} h-fit sticky top-8 rounded-2xl`}>
             <div className="rounded-lg p-6">
               <div className="space-y-4 mb-6 text-sm">
                 <div className="flex items-center text-white">
@@ -250,7 +363,9 @@ export default function JoinEventPage() {
                         <div key={ticket._id || idx} className="flex justify-between items-center">
                           <span className="text-white">{ticket.ticket_name}</span>
                           <span className="text-white">
-                            {ticket.ticket_type === "free" ? "Free" : `${ticket.currency || "INR"} ${ticket.price ? ticket.price.toFixed(2) : "0.00"}`}
+                            {ticket.ticket_type === "free"
+                              ? "Free"
+                              : `${ticket.currency || "INR"} ${ticket.price ? ticket.price.toFixed(2) : "0.00"}`}
                           </span>
                         </div>
                       ))}
