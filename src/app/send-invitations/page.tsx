@@ -158,78 +158,85 @@ export default function SendInvitationsPage() {
                 className="mt-4 bg-black text-white font-semibold w-full cursor-pointer"
                 disabled={sending}
                 onClick={async () => {
+                  if (!event?.is_published) {
+                    alert("Please publish your event before sending invitations.");
+                    return;
+                  }
+
                   setSending(true);
                   try {
                     const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL || "";
                     const fields = event?.email_template_id?.email_fields || [];
+
+                    const hasButton = fields.some((block: any) => block.type === "button");
+
                     const templateHtml = `
                     <div style="
                       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      margin: 0 auto;
-      max-width: 600px;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-      padding: 32px;
-      border-radius: 16px;
-      background-color: #ffffff;
-      color: #222;
+                      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                      margin: 0 auto;
+                      max-width: 600px;
+                      border: 1px solid #e0e0e0;
+                      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+                      padding: 32px;
+                      border-radius: 16px;
+                      background-color: #ffffff;
+                      color: #222;
                     ">
                       ${fields.map((block: any) => {
                       const p = block.properties || {};
                       if (block.type === "header") {
                         return `<div style="text-align:${p.textAlignment || "center"}; font-size:${p.fontSize || 24}px; font-weight:${p.fontWeight || "700"}; padding:${p.padding || 20}px 0;">${p.headerText || ""}</div>`;
                       }
-                      else if (block.type === "text") {
+                      if (block.type === "text") {
                         return `<div style="text-align:${p.textAlignment || "left"}; font-size:${p.fontSize || 16}px; font-weight:${p.fontWeight || "400"}; line-height:1.5; padding:${p.padding || 16}px 0;">${p.textContent || ""}</div>`;
                       }
-                      else if (block.type === "image") {
+                      if (block.type === "image") {
                         let url = p.imageUrl || "";
                         if (url && !/^https?:\/\//.test(url)) {
                           url = ASSETS_URL + url;
                         }
                         return `<div style="text-align:center; padding:${p.padding || 16}px 0;"><img src="${url}" alt="" style="max-width:100%; border-radius:${p.borderRadius || 8}px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" /></div>`;
                       }
-                      else if (block.type === "button") {
+                      if (block.type === "button") {
                         return `
-                            <div style="text-align:center; padding:${p.padding || 16}px 0;">
-                              <a
-                                href="{{JOIN_LINK}}"
-                                style="
-                                  background-color: ${p.backgroundColor || "#007BFF"};
-                                  color: ${p.textColor || "#fff"};
-                                  padding: 12px 28px;
-                                  font-size: ${p.fontSize || 16}px;
-                                  font-weight: ${p.fontWeight || "600"};
-                                  text-decoration: none;
-                                  border-radius: ${p.borderRadius || 6}px;
-                                  display: inline-block;
-                                  box-shadow: 0 4px 12px rgba(0,123,255,0.4);
-                                "
-                              >
-                                ${p.buttonText || "Join Event"}
-                              </a>
-                            </div>
-                          `;
-                      }
-                      return "";
-                    }).join("")}
-                    </div>
-                  `;
+                        <div style="text-align:center; padding:${p.padding || 16}px 0;">
+                          <a
+                            href="{{JOIN_LINK}}"
+                            style="
+                              background-color: ${p.backgroundColor || "#007BFF"};
+                              color: ${p.textColor || "#fff"};
+                              padding: 12px 28px;
+                              font-size: ${p.fontSize || 16}px;
+                              font-weight: ${p.fontWeight || "600"};
+                              text-decoration: none;
+                              border-radius: ${p.borderRadius || 6}px;
+                              display: inline-block;
+                              box-shadow: 0 4px 12px rgba(0,123,255,0.4);
+                            "
+                          >
+                            ${p.buttonText || "Join Event"}
+                          </a>
+                        </div>`;
+                                    }
+                                    return "";
+                                  }).join("")}
 
-
-                    console.log('template html ----', templateHtml);
-                    console.log('emails ----', emails);
-                    console.log('event id ----', eventId);
+                  ${!hasButton ? `<div style="margin-top: 24px; font-size: 16px; text-align: center;">Click the below link to join the event:<br /><a href="{{JOIN_LINK}}" style="color: #007BFF;">{{JOIN_LINK}}</a></div>` : ""}
+                </div>
+              `;
                     await sendEventInvitation(eventId, emails, templateHtml);
                     window.location.reload();
-                    toast({ title: `Invitations sent to ${emails.length} recipients.`, variant: "default" });
-
+                    toast({
+                      title: `Invitations sent to ${emails.length} recipients.`,
+                      variant: "default",
+                    });
                   } catch (err: any) {
                     toast({ title: err.message || "Failed to send invitations", variant: "destructive" });
                     setSending(false);
                   }
                 }}
+
               >
                 {sending ? "Sending..." : "Send Invitations"}
               </Button>
