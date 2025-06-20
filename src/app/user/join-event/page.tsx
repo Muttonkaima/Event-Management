@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import { useSearchParams } from "next/navigation";
 import { Calendar, MapPin, Users, Tag } from "lucide-react";
 import Image from "next/image";
@@ -51,7 +52,17 @@ function getLocationText(event: any) {
 
 export default function JoinEventPage() {
   const searchParams = useSearchParams();
-  const eventId = searchParams.get("id");
+  const eventToken = searchParams.get("eventId");
+  // Decode JWT to get the real eventId
+  let eventId: string | null = null;
+  if (eventToken) {
+    try {
+      const decoded: any = jwtDecode(eventToken);
+      eventId = decoded.eventId;
+    } catch (err) {
+      eventId = null;
+    }
+  }
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -61,7 +72,7 @@ export default function JoinEventPage() {
       setLoading(true);
       setError("");
       try {
-        if (!eventId) throw new Error("No event id provided");
+        if (!eventId) throw new Error("Invalid or missing event id");
         const res = await getEventById(eventId);
         if (!res?.data) throw new Error("Event not found");
         // Remove sensitive/irrelevant fields
