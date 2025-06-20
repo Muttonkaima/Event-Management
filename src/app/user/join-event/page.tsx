@@ -6,7 +6,7 @@ import { Calendar, MapPin, Users, Tag } from "lucide-react";
 import Image from "next/image";
 import { getEventById, getGoogleOAuthUrl } from "@/services/organization/eventService";
 import { Button } from "@/components/ui/button";
-
+import Link from "next/link"
 // Simple modal component
 function Modal({ open, children }: { open: boolean, children: React.ReactNode }) {
   if (!open) return null;
@@ -157,8 +157,14 @@ export default function JoinEventPage() {
         if (!eventId) throw new Error("Invalid or missing event id");
         const res = await getEventById(eventId);
         if (!res?.data) throw new Error("Event not found");
-        const { email_template_id, badge_id, registration_form_id, ...cleaned } = res.data;
+        const { email_template_id, badge_id, ...cleaned } = res.data;
+        // Include registration_form_id in the cleaned event object
+        cleaned.registration_form_id = res.data.registration_form_id;
+        cleaned.event_id = res.data._id      
+        console.log("cleaned", cleaned);
         setEvent(cleaned);
+
+        console.log("event", event);
       } catch (err: any) {
         setError(err.message || "Failed to fetch event");
       } finally {
@@ -373,10 +379,17 @@ export default function JoinEventPage() {
                   )}
                 </div>
               </div>
-              {visibility.showRegistration && (
-                <Button className={`w-full ${buttonGradient} cursor-pointer text-white font-medium py-3 px-4 rounded-lg transition-colors mb-6`}>
-                  Register Now
-                </Button>
+              {visibility.showRegistration && event?.registration_form_id?._id && (
+                <>
+                <Link 
+                  href={`/user/registration-form?event_id=${event.event_id}&form_id=${event.registration_form_id._id}`}
+                  className="w-full"
+                >
+                  <Button className={`w-full ${buttonGradient} cursor-pointer text-white font-medium py-3 px-4 rounded-lg transition-colors mb-6`}>
+                    Register Now
+                  </Button>
+                </Link>
+                </>
               )}
             </div>
           </div>
