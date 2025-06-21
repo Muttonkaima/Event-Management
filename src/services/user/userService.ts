@@ -10,13 +10,14 @@ export async function getUserRegistrationForm(data: any) {
   }
 }
 
-export async function registerUser(data: any) {
+export async function submitRegistrationForm(data: any) {
   try {
-    const response = await post('/user/register', data);
-    console.log('register user response----', response)
+    console.log('submit registration form data----', data)
+    const response = await upload('/user/submit-user-registration-form', data);
+    console.log('submit registration form response----', response)
     return response;
   } catch (err: any) {
-    throw new Error(err.message || 'Failed to register user');
+    throw new Error(err.message || 'Failed to submit registration form');
   }
 }
 

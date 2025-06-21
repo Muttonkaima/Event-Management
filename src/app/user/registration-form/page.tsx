@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { urlToFile } from "@/utils/urlToFile";
+import { submitRegistrationForm } from "@/services/user/userService";
 import { useSearchParams } from "next/navigation";
 import { getRegistrationFormById, getEventById } from "@/services/organization/eventService";
 import { Button } from "@/components/ui/button";
@@ -219,29 +221,63 @@ export default function RegistrationFormPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+  
     if (!validateForm()) {
       return;
     }
 
     setSubmitting(true);
     try {
-      // Prepare form data for submission
+      if (!form || !decodedToken) throw new Error("Form or token missing");
       const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value instanceof File) {
-          formDataToSend.append(key, value);
-        } else if (value !== null) {
-          formDataToSend.append(key, value);
+
+      // Prepare fields and files
+      const fieldsArr: { field: string; value: any }[] = [];
+      const filePromises: Promise<{ file: File; filename: string }> [] = [];
+      const fileFieldIds: string[] = [];
+
+      for (const field of form.fields) {
+        const value = formData[field._id];
+        if (field.type === "file" && value) {
+          // Assume value is a URL string (or File)
+          if (typeof value === "string" && value.startsWith("http")) {
+            // Convert URL to File
+            filePromises.push(
+              urlToFile(value, `${field._id}_${Date.now()}`)
+                .then(file => ({ file, filename: file.name }))
+            );
+            fieldsArr.push({ field: field._id, value: `${field._id}_${Date.now()}` });
+            fileFieldIds.push(field._id);
+          } else if (value instanceof File) {
+            formDataToSend.append('files', value, value.name);
+            fieldsArr.push({ field: field._id, value: value.name });
+          }
+        } else if (value !== undefined && value !== null && value !== "") {
+          fieldsArr.push({ field: field._id, value });
         }
+      }
+
+      // Wait for all file URLs to be converted
+      const filesFromUrls = await Promise.all(filePromises);
+      filesFromUrls.forEach(({ file }) => {
+        formDataToSend.append('files', file, file.name);
       });
 
-      // TODO: Replace with your actual API endpoint
-      // const response = await fetch('/api/submit-registration', {
-      //   method: 'POST',
-      //   body: formDataToSend,
-      // });
-      // const result = await response.json();
+      // Append fields array as JSON string
+      formDataToSend.append('fields', JSON.stringify(fieldsArr));
+      formDataToSend.append('event', decodedToken.event_id);
+      formDataToSend.append('registration_form', decodedToken.registration_form_id);
+      formDataToSend.append('user_email', decodedToken.email);
+      if (formData['ticket']) {
+        formDataToSend.append('ticket', formData['ticket'] as string);
+      }
+
+      console.log(
+        'Registration FormData contents:',
+        [...formDataToSend.entries()].map(([k, v]) => [k, v instanceof File ? v.name : v])
+      );
+      // Submit to backend
+      await submitRegistrationForm(formDataToSend);
 
       toast({
         title: "Success!",
@@ -295,7 +331,73 @@ export default function RegistrationFormPage() {
             {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
           </div>
         );
-
+      case "date":
+        return (
+          <div key={fieldId} className="mb-4">
+            <Label htmlFor={fieldId} className="font-medium text-gray-700">
+              {field.label} {isRequired && <span className="text-red-500">*</span>}
+            </Label>
+            <Input
+              id={fieldId}
+              type="date"
+              placeholder={field.placeholder}
+              value={formData[fieldId] as string || ""}
+              onChange={(e) => handleChange(fieldId, e.target.value)}
+              className={`mt-1 ${error ? 'border-red-500' : ''}`}
+              required={isRequired}
+            />
+            {field.helpText && (
+              <p className="text-xs text-gray-500 mt-1">{field.helpText}</p>
+            )}
+            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+          </div>
+        );
+      case "radio":
+        return (
+          <div key={fieldId} className="mb-4">
+            <Label className="font-medium text-gray-700">
+              {field.label} {isRequired && <span className="text-red-500">*</span>}
+            </Label>
+            <RadioGroup
+              onValueChange={(value) => handleChange(fieldId, value)}
+              value={formData[fieldId] as string || ""}
+              className="space-y-2 flex mt-2"
+              required={isRequired}
+            >
+              {field.options?.map((option) => (
+                <div key={option} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option} id={`${fieldId}-${option}`} required={isRequired} />
+                  <Label htmlFor={`${fieldId}-${option}`} className="font-medium text-gray-700">{option}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+            {field.helpText && (
+              <p className="text-xs text-gray-500 mt-1">{field.helpText}</p>
+            )}
+            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+          </div>
+        );
+      case "number":
+        return (
+          <div key={fieldId} className="mb-4">
+            <Label htmlFor={fieldId} className="font-medium text-gray-700">
+              {field.label} {isRequired && <span className="text-red-500">*</span>}
+            </Label>
+            <Input
+              id={fieldId}
+              type="number"
+              placeholder={field.placeholder}
+              value={formData[fieldId] as string || ""}
+              onChange={(e) => handleChange(fieldId, e.target.value)}
+              className={`mt-1 ${error ? 'border-red-500' : ''}`}
+              required={isRequired}
+            />
+            {field.helpText && (
+              <p className="text-xs text-gray-500 mt-1">{field.helpText}</p>
+            )}
+            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+          </div>
+        );
       case "select":
         return (
           <div key={fieldId} className="mb-4">
@@ -330,33 +432,6 @@ export default function RegistrationFormPage() {
             {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
           </div>
         );
-
-      case "radio":
-        return (
-          <div key={fieldId} className="mb-4">
-            <Label className="font-medium text-gray-700">
-              {field.label} {isRequired && <span className="text-red-500">*</span>}
-            </Label>
-            <RadioGroup
-              onValueChange={(value) => handleChange(fieldId, value)}
-              value={formData[fieldId] as string || ""}
-              className="space-y-2 flex mt-2"
-              required={isRequired}
-            >
-              {field.options?.map((option) => (
-                <div key={option} className="flex items-center space-x-2">
-                  <RadioGroupItem value={option} id={`${fieldId}-${option}`} required={isRequired} />
-                  <Label htmlFor={`${fieldId}-${option}`} className="font-medium text-gray-700">{option}</Label>
-                </div>
-              ))}
-            </RadioGroup>
-            {field.helpText && (
-              <p className="text-xs text-gray-500 mt-1">{field.helpText}</p>
-            )}
-            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
-          </div>
-        );
-
       case "file":
         return (
           <div key={fieldId} className="mb-4">
@@ -376,7 +451,47 @@ export default function RegistrationFormPage() {
             {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
           </div>
         );
-
+      case "textarea":
+        return (
+          <div key={fieldId} className="mb-4">
+            <Label htmlFor={fieldId} className="font-medium text-gray-700">
+              {field.label} {isRequired && <span className="text-red-500">*</span>}
+            </Label>
+            <textarea
+              id={fieldId}
+              placeholder={field.placeholder}
+              value={formData[fieldId] as string || ""}
+              onChange={(e) => handleChange(fieldId, e.target.value)}
+              className={`mt-1 block w-full rounded-md border-2 border-gray-200 focus:border-black focus:ring-black sm:text-sm ${error ? 'border-red-500' : ''}`}
+              required={isRequired}
+              rows={4}
+            />
+            {field.helpText && (
+              <p className="text-xs text-gray-500 mt-1">{field.helpText}</p>
+            )}
+            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+          </div>
+        );
+      case "checkbox":
+        return (
+          <div key={fieldId} className="mb-4 flex items-center">
+            <input
+              id={fieldId}
+              type="checkbox"
+              checked={!!formData[fieldId]}
+              onChange={(e) => handleChange(fieldId, e.target.checked ? 'true' : '')}
+              className={`mr-2 ${error ? 'border-red-500' : ''}`}
+              required={isRequired}
+            />
+            <Label htmlFor={fieldId} className="font-medium text-gray-700">
+              {field.label} {isRequired && <span className="text-red-500">*</span>}
+            </Label>
+            {field.helpText && (
+              <p className="text-xs text-gray-500 ml-2">{field.helpText}</p>
+            )}
+            {error && <p className="text-xs text-red-500 ml-2">{error}</p>}
+          </div>
+        );
       default:
         return null;
     }
@@ -449,7 +564,7 @@ export default function RegistrationFormPage() {
               <div className="pt-4">
                 <Button 
                   type="submit" 
-                  className="w-full bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-md text-base font-medium transition-colors"
+                  className="w-full bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-md text-base font-medium transition-colors cursor-pointer"
                   disabled={submitting}
                 >
                   {submitting ? "Submitting..." : "Submit Registration"}
