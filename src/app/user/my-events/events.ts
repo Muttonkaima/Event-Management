@@ -1,5 +1,4 @@
-// Adapter to transform events-new.json to the Event interface expected by EventsPage
-import rawEvents from '@/data/user/events.json';
+// Adapter to transform backend registeredEvents to the Event interface expected by EventsPage
 
 export interface Event {
   id: string;
@@ -57,54 +56,61 @@ function getStatus(event: any): string {
   return 'past';
 }
 
-export function adaptEvents(raw = rawEvents): Event[] {
-  return raw.map((e: any) => {
-    const event = e.event;
-    const branding = e.branding || {};
-    const visibility = branding.visibility || {};
-    const reg = e.registration || {};
-    const sessions = e.sessions || [];
+/**
+ * Adapts registeredEvents from backend to Event[] for EventsPage
+ */
+export function adaptEventsFromDB(registeredEvents: any[]): Event[] {
+  console.log('[ADAPTER] Raw registeredEvents from backend:', registeredEvents);
+  return registeredEvents.map((e: any) => {
     return {
-      id: e.id,
-      name: event.name,
-      description: visibility.showDescription === false ? '' : event.description,
-      sessions: e.sessions || [],
-      registration: e.registration || {},
+      id: e._id || '',
+      name: e.event_name || '',
+      description: e.description || '',
+      sessions: [], // Not present in backend, add if needed
+      registration: {}, // Not present in backend, add if needed
       date: {
-        start: event.startDate || '',
-        end: event.endDate || '',
+        start: e.start_datetime || '',
+        end: e.end_datetime || '',
       },
       location: {
-        name: event.address || '',
-        city: event.city || '',
-        address: event.address || '',
-        country: event.country || '',
+        name: e.address || '',
+        city: e.state || '',
+        address: e.address || '',
+        country: e.country || '',
       },
-      status: getStatus(event),
+      status: (() => {
+        const now = new Date();
+        const start = new Date(e.start_datetime);
+        const end = new Date(e.end_datetime);
+        if (now < start) return 'upcoming';
+        if (now >= start && now <= end) return 'ongoing';
+        return 'past';
+      })(),
       organizer: {
-        name: reg.organizerName || 'Organizer',
-        email: reg.organizerEmail || '',
-        avatar: branding.logoUrl || '',
+        name: '', // Not present, add if needed
+        email: '',
+        avatar: e.branding_id?.branding_logo || e.branding_id?.branding_banner ||'',
       },
-      attendees: reg.maxAttendees || 0,
-      category: event.eventType || 'Other',
-      tags: sessions.length > 0 ? sessions.flatMap((s: any) => s.tags || []) : [],
-      image: (branding.visibility?.showBanner !== false && branding.bannerUrl) ? branding.bannerUrl : (event.templateImage || event.templateImage || '/images/default.jpg'),
-      branding: {
-        colorTheme: branding.colorTheme || 'default',
-        fontStyle: branding.fontStyle || 'default',
+      attendees: e.attendee_limit || 0,
+      category: e.event_type || 'Other',
+      tags: [],
+      // Use banner as main event image if available, fallback to logo or empty string
+      image: e.branding_id?.branding_banner || e.branding_id?.branding_logo || '',
+      branding: e.branding_id ? {
+        colorTheme: e.branding_id.branding_color_palette_id?.name || 'default',
+        fontStyle: e.branding_id.branding_font_family_id?.font_family || 'default',
         visibility: {
-          showLogo: visibility.showLogo !== false,
-          showBanner: visibility.showBanner !== false,
-          showDescription: visibility.showDescription !== false,
-          showSchedule: visibility.showSchedule !== false,
-          showSpeakers: visibility.showSpeakers !== false,
-          showLocation: visibility.showLocation !== false,
-          showRegistration: visibility.showRegistration !== false,
+          showLogo: e.branding_id.branding_visibility_id?.fields?.showLogo !== false,
+          showBanner: e.branding_id.branding_visibility_id?.fields?.showBanner !== false,
+          showDescription: e.branding_id.branding_visibility_id?.fields?.showDescription !== false,
+          showSchedule: e.branding_id.branding_visibility_id?.fields?.showSchedule !== false,
+          showSpeakers: e.branding_id.branding_visibility_id?.fields?.showSpeakers !== false,
+          showLocation: e.branding_id.branding_visibility_id?.fields?.showLocation !== false,
+          showRegistration: e.branding_id.branding_visibility_id?.fields?.showRegistration !== false,
         },
-        logoUrl: branding.logoUrl || '',
-       bannerUrl: branding.bannerUrl || '',
-      },
+        logoUrl: e.branding_id.branding_logo || '',
+        bannerUrl: e.branding_id.branding_banner || '',
+      } : undefined,
     };
   });
 }

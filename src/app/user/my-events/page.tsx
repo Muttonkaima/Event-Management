@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiSearch, FiCalendar, FiMapPin, FiUsers, FiUser, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
 import Link from 'next/link';
-import { adaptEvents, Event } from '@/app/user/my-events/events';
-import rawEvents from '@/data/user/events.json';
+import { adaptEventsFromDB, Event } from '@/app/user/my-events/events';
 import DashboardLayout from '@/components/user/dashboard/DashboardLayout';
 import Image from 'next/image';
+import { getUserProfile } from '@/services/user/userService';
 type ViewMode = 'grid' | 'list';
 // Use Event type from adapter, which includes branding
 // (local interface removed to avoid conflicts)
@@ -19,8 +19,35 @@ export default function EventsPage() {
   const [locationFilter, setLocationFilter] = useState('All Locations');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
-  // Adapt events.json to Event[]
-  const eventsData: Event[] = adaptEvents(rawEvents);
+  // Fetch and adapt events from backend, fallback to static if needed
+  const [eventsData, setEventsData] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL;
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const userStr = localStorage.getItem('user');
+        if (!userStr) throw new Error('User not found in localStorage');
+        const user = JSON.parse(userStr);
+        const profileRes = await getUserProfile(user._id);
+        console.log('[my-events] getUserProfile response:', profileRes);
+        const registeredEvents = profileRes?.data?.registeredEvents || [];
+        const adapted = adaptEventsFromDB(registeredEvents);
+        console.log('[my-events] Adapted events from backend:', adapted);
+        setEventsData(adapted);
+        console.log('[my-events] Events data:', eventsData);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch events from backend.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
 
   // Get unique categories, locations for filters
   const categories = ['All Categories', ...new Set(eventsData.map((event: Event) => event.category))];
@@ -61,12 +88,6 @@ export default function EventsPage() {
           </div>
           <div className="flex items-center gap-4">
 
-            <Link
-              href="/create-event"
-              className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg cursor-pointer hover:bg-gray-800 transition-colors"
-            >
-              Create Event
-            </Link>
             <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode('grid')}
@@ -150,7 +171,7 @@ export default function EventsPage() {
               >
                 <div className="relative h-48">
                   <Image
-                    src={event.image}
+                    src={`${ASSETS_URL}${event.image}`}
                     alt={event.name}
                     className="w-full h-full object-cover"
                     width={48}
@@ -158,7 +179,7 @@ export default function EventsPage() {
                   />
                   {event.branding?.visibility?.showLogo && event.branding?.logoUrl && (
                     <div className="absolute top-3 left-3 bg-white rounded-full p-1 shadow-md">
-                      <Image src={event.branding.logoUrl} alt={event.name + ' logo'} width={48} height={48} className="rounded-full object-cover" />
+                      <Image src={`${ASSETS_URL}${event.branding.logoUrl}`} alt={event.name + ' logo'} width={48} height={48} className="rounded-full object-cover" />
                     </div>
                   )}
                   <div className="absolute top-3 right-3">
@@ -202,7 +223,7 @@ export default function EventsPage() {
                         <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                           {event.organizer.avatar ? (
                             <Image
-                              src={event.organizer.avatar}
+                              src={`${ASSETS_URL}${event.organizer.avatar}`}
                               alt={event.organizer.name}
                               className="w-full h-full object-cover"
                               width={48}
@@ -233,7 +254,7 @@ export default function EventsPage() {
                     <div className="relative h-32 rounded-lg overflow-hidden">
                       {event.branding?.visibility?.showBanner !== false && event.branding?.bannerUrl ? (
                         <Image
-                          src={event.branding.bannerUrl}
+                          src={`${ASSETS_URL}${event.branding.bannerUrl}`}
                           alt={event.name}
                           className="w-full h-full object-cover"
                           fill
@@ -285,7 +306,7 @@ export default function EventsPage() {
                           <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                             {event.organizer.avatar ? (
                               <Image
-                                src={event.organizer.avatar}
+                                src={`${ASSETS_URL}${event.organizer.avatar}`}
                                 alt={event.organizer.name}
                                 className="w-full h-full object-cover"
                                 width={48}

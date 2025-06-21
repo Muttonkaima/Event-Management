@@ -21,3 +21,24 @@ export async function submitRegistrationForm(data: any) {
   }
 }
 
+export async function getUserRegistrationResponse(data: any) {
+  try {
+    const response = await get(`/user/get-user-registration-response?event_id=${data.event_id}&email=${data.email}`);
+    console.log('get user registration response----', response)
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get user registration response');
+  }
+}
+
+export async function getUserProfile(id: string) {
+  try {
+    const response = await get(`/user/get-user-profile-by-id/${id}`);
+    console.log('get user profile response----', response)
+    return response;
+  } catch (err: any) {
+    throw new Error(err.message || 'Failed to get user profile');
+  }
+}
+
+
