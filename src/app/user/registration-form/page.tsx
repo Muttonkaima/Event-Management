@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { urlToFile } from "@/utils/urlToFile";
 import { submitRegistrationForm } from "@/services/user/userService";
 import { useSearchParams } from "next/navigation";
@@ -45,6 +45,9 @@ type Ticket = {
 };
 
 export default function RegistrationFormPage() {
+  const fileInputRefs = useRef<{ [fieldId: string]: HTMLInputElement | null }>({});
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successData, setSuccessData] = useState<{ email: string; password: string; eventId: string } | null>(null);
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [decodedToken, setDecodedToken] = useState<any>(null);
@@ -277,7 +280,22 @@ export default function RegistrationFormPage() {
         [...formDataToSend.entries()].map(([k, v]) => [k, v instanceof File ? v.name : v])
       );
       // Submit to backend
-      await submitRegistrationForm(formDataToSend);
+      const response = await submitRegistrationForm(formDataToSend);
+      // Log response for debug
+      console.log('Registration submit response:', response);
+      if (response && response.success && response.data) {
+        setSuccessData({
+          email: response.data.email,
+          password: response.data.password,
+          eventId: response.data.eventId
+        });
+      } else {
+        setSuccessData({
+          email: decodedToken.email,
+          password: '******',
+          eventId: decodedToken.event_id
+        });
+      }
 
       toast({
         title: "Success!",
@@ -290,7 +308,20 @@ export default function RegistrationFormPage() {
         initialData[field._id] = "";
       });
       setFormData(initialData);
-      
+      // Reset file inputs in DOM
+      Object.values(fileInputRefs.current).forEach(input => {
+        if (input) input.value = "";
+      });
+
+      // Show animated success screen with email/password
+      if (typeof window !== 'undefined') {
+        // Try to get email/password from response
+        // We expect submitRegistrationForm to return { success, message, data: { email, password, eventId } }
+        // If not, fallback to decodedToken/email
+      }
+      setShowSuccess(true);
+      // The actual data is set below after the API call
+
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({
@@ -444,6 +475,7 @@ export default function RegistrationFormPage() {
               className="mt-1"
               required={isRequired}
               onChange={(e) => handleFileChange(fieldId, e.target.files?.[0] || null)}
+              ref={el => { fileInputRefs.current[fieldId] = el; }}
             />
             {field.helpText && (
               <p className="text-xs text-gray-500 mt-1">{field.helpText}</p>
@@ -519,6 +551,43 @@ export default function RegistrationFormPage() {
     );
   }
 
+  if (showSuccess && successData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white shadow-lg rounded-2xl px-10 py-12 max-w-lg w-full flex flex-col items-center">
+          {/* Animated tick */}
+          <div className="mb-6">
+            <div className="flex items-center justify-center">
+              <svg className="w-20 h-20 text-green-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="#e6fffa" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l3 3l5-5" />
+              </svg>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-green-700 mb-2">Registration Successful!</h2>
+          <p className="mb-4 text-gray-700 text-center">You have successfully registered for the event. Please use the credentials below to log in to the event platform.</p>
+          <div className="w-full bg-gray-100 rounded-md p-4 mb-4 flex flex-col items-center">
+            <div className="mb-2">
+              <span className="font-semibold text-gray-700">Email:</span> <span className="text-black">{successData.email}</span>
+            </div>
+            <div>
+              <span className="font-semibold text-gray-700">Password:</span> <span className="text-black">{successData.password}</span>
+            </div>
+          </div>
+          <p className="text-sm text-gray-600 mb-6 text-center">
+            <span className="font-semibold text-gray-800">Note:</span> Use this email and password to log in to the event platform.
+          </p>
+          <a
+            href={`/user/login?email=${encodeURIComponent(successData.email)}`}
+            className="inline-block w-full text-center py-3 px-4 bg-black text-white font-semibold rounded-lg shadow transition-colors text-lg cursor-pointer"
+          >
+            Continue to Event Platform
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
@@ -544,7 +613,7 @@ export default function RegistrationFormPage() {
                     value={formData['ticket'] as string || ""}
                     required
                   >
-                    <SelectTrigger className={`mt-1 ${errors['ticket'] ? 'border-red-500' : ''}`}>
+                    <SelectTrigger className={`mt-1 ${errors['ticket'] ? 'border-red-500' : ''}`}> 
                       <SelectValue placeholder="Select a ticket" />
                     </SelectTrigger>
                     <SelectContent>
