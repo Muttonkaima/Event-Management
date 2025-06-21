@@ -1,148 +1,59 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { format, parseISO, isBefore, isAfter } from 'date-fns';
 import DashboardLayout from '@/components/user/event-dashboard/DashboardLayout';
-import eventDataJson from '@/data/user/detailEvents.json';
+import { getUserRegistrationResponse } from '@/services/user/userService';
+
 import TicketModal from '@/components/user/event-dashboard/TicketModal';
 import announcements from '@/data/user/eventAnnouncements.json'
 
-type ColorTheme = 'professional' | 'ocean' | 'sunset' | 'forest';
-type FontStyle = 'modern' | 'classic' | 'minimal' | 'creative' | 'elegant';
+import type { EventData } from './eventData';
 
-interface EventData {
-  event: {
-    name: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    startTime: string;
-    endTime: string;
-    timezone: string;
-    eventType: string;
-    address: string;
-    city: string;
-    state: string;
-    country: string;
-    zipCode: string;
-    meetingLink: string;
-  };
-  branding: {
-    colorTheme: ColorTheme;
-    fontStyle: FontStyle;
-    visibility: {
-      showLogo: boolean;
-      showBanner: boolean;
-      showDescription: boolean;
-      showSchedule: boolean;
-      showSpeakers: boolean;
-      showLocation: boolean;
-      showRegistration: boolean;
-    };
-    logoUrl?: string;
-   bannerUrl?: string;
-  };
-  sessions: Array<{
-    id: number;
-    title: string;
-    speaker: string;
-    startTime: string;
-    duration: number;
-    description: string;
-    tags: string[];
-  }>;
-  registration: {
-    registrationOpen: string;
-    registrationClose: string;
-    updateDeadline: string;
-    maxAttendees: number;
-    tickets: Array<{
-      id: string;
-      name: string;
-      type: 'free' | 'paid';
-      price?: number;
-      currency?: string;
-    }>;
-  };
-}
-
-const colorThemes = [
-  {
-    id: 'professional' as ColorTheme,
-    name: 'Professional',
-    colors: ['bg-indigo-500', 'bg-indigo-300', 'bg-gray-600']
-  },
-  {
-    id: 'ocean' as ColorTheme,
-    name: 'Ocean Blue',
-    colors: ['bg-cyan-500', 'bg-blue-400', 'bg-teal-600']
-  },
-  {
-    id: 'sunset' as ColorTheme,
-    name: 'Sunset',
-    colors: ['bg-orange-500', 'bg-red-400', 'bg-yellow-500']
-  },
-  {
-    id: 'forest' as ColorTheme,
-    name: 'Forest',
-    colors: ['bg-green-600', 'bg-emerald-400', 'bg-lime-500']
-  }
-];
-
-const fontStyles = [
-  {
-    id: 'modern' as FontStyle,
-    name: 'Modern Sans',
-    description: 'Clean and professional for modern events',
-    className: 'font-sans'
-  },
-  {
-    id: 'classic' as FontStyle,
-    name: 'Classic Serif',
-    description: 'Traditional and elegant for formal events',
-    className: 'font-serif'
-  },
-  {
-    id: 'minimal' as FontStyle,
-    name: 'Minimal',
-    description: 'Light and airy for minimalist designs',
-    className: 'font-light tracking-wide'
-  },
-  {
-    id: 'creative' as FontStyle,
-    name: 'Creative',
-    description: 'Fun and unique for creative events',
-    className: 'font-mono'
-  },
-  {
-    id: 'elegant' as FontStyle,
-    name: 'Elegant',
-    description: 'Sophisticated for premium events',
-    className: 'font-serif font-light'
-  }
-];
+import { adaptEventDashboardFromDB } from './eventData';
 
 export default function Dashboard() {
   const [ticketModalOpen, setTicketModalOpen] = useState(false);
-  const [eventData, setEventData] = useState<EventData | null>(
-    (eventDataJson as EventData[])[0] || null
-  );
-  const [loading, setLoading] = useState(false);
+  const [eventData, setEventData] = useState<EventData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Fetch event data from backend on mount
+  useEffect(() => {
+    async function fetchEventData() {
+      setLoading(true);
+      setError(null);
+      try {
+        // Get event_id from URL params
+        const params = new URLSearchParams(window.location.search);
+        const event_id = params.get('eventId');
+        // Get email from localStorage
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const email = user.email;
+        if (!event_id || !email) throw new Error('Missing event ID or user email');
+        // Call backend
+        const res = await getUserRegistrationResponse({ event_id, email });
+        if (!res?.data?.event) throw new Error('No event data in backend response');
+        const adapted = adaptEventDashboardFromDB(res.data);
+        setEventData(adapted);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch event details');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEventData();
+  }, []);
 
   const [userRegistration, setUserRegistration] = useState(() => {
     const registration: any = eventData?.registration || {};
     return {
       isRegistered: registration.isRegistered ?? false,
-      tickets: registration.tickets ?? [],
+      tickets: registration?.tickets ?? {},
       checkInStatus: registration.checkInStatus ?? false,
     };
   });
-
-
-  const router = useRouter();
 
   if (loading) {
     return (
@@ -163,16 +74,34 @@ export default function Dashboard() {
     );
   }
 
-  const { event, branding, sessions, registration } = eventData;
-  const selectedTheme = colorThemes.find(theme => theme.id === branding.colorTheme) || colorThemes[0];
-  const selectedFont = fontStyles.find(font => font.id === branding.fontStyle) || fontStyles[0];
+  const { event, branding, sessions, registration, ticket } = eventData;
+  // Extract color palette and font info from normalized branding
+  const colorPalette = branding.colorPalette || {};
+  const mainBgColor = colorPalette.bgColor ? `bg-gradient-to-r ${colorPalette.bgColor}` : 'bg-gray-200';
+  const sidebarColor = colorPalette.sidebarColor || 'bg-gray-800';
+  const buttonColor = colorPalette.buttonColor || 'bg-blue-500';
+  const fontClass = branding.fontFamily || 'font-sans';
+  const logoUrl = branding.logoUrl || '';
+  const bannerUrl = branding.bannerUrl || '';
+  const visibility = branding.visibility || {};
+
+  console.log("logo", logoUrl);
+
 
   const formatDate = (dateString: string) => {
     return format(parseISO(dateString), 'MMMM d, yyyy');
   };
 
   const formatTime = (timeString: string) => {
-    return format(new Date(`2000-01-01T${timeString}`), 'h:mm a');
+    if (!timeString || typeof timeString !== 'string') return '-';
+    // Accepts HH:mm or HH:mm:ss
+    const valid = /^\d{2}:\d{2}(:\d{2})?$/.test(timeString.trim());
+    if (!valid) return '-';
+    try {
+      return format(new Date(`2000-01-01T${timeString}`), 'h:mm a');
+    } catch {
+      return '-';
+    }
   };
 
   const isRegistrationOpen = () => {
@@ -184,13 +113,13 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout title="Dashboard">
-      <div className={`min-h-screen ${selectedFont.className} bg-gray-50`}>
+      <div className={`min-h-screen ${fontClass} bg-gray-50`}>
         {/* Header with Banner */}
         <header className="relative">
-          {branding.bannerUrl && branding.visibility.showBanner ? (
-            <div className="h-64 md:h-96 w-full overflow-hidden rounded-2xl">
+          {bannerUrl && visibility.showBanner ? (
+            <div className="h-64 md:h-96 w-full overflow-hidden rounded-t-2xl">
               <Image
-                src={branding.bannerUrl}
+                src={bannerUrl || ''}
                 alt={`${event.name} Banner`}
                 width={1920}
                 height={600}
@@ -199,15 +128,15 @@ export default function Dashboard() {
               />
             </div>
           ) : (
-            <div className={`h-64 md:h-96 w-full ${selectedTheme.colors[0]} flex items-center justify-center`}>
+            <div className={`h-64 md:h-96 w-full ${sidebarColor} flex items-center justify-center rounded-2xl`}>
               <h1 className="text-4xl md:text-6xl font-bold text-white text-center px-4">{event.name}</h1>
             </div>
           )}
 
-          {branding.visibility.showLogo && branding.logoUrl && (
+          {visibility.showLogo && logoUrl && (
             <div className="absolute -bottom-16 left-8 w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-white shadow-lg">
               <Image
-                src={branding.logoUrl}
+                src={logoUrl || ''}
                 alt={`${event.name} Logo`}
                 width={160}
                 height={160}
@@ -217,37 +146,37 @@ export default function Dashboard() {
           )}
         </header>
 
-        <main className="container mx-auto px-4 md:px-6 py-12 mt-20 md:mt-24">
+        <main className={`container ${mainBgColor} rounded-b-2xl mx-auto px-4 md:px-6 py-12 mt-20 md:mt-24`}>
           {/* Event Info Section */}
           <section className="mb-16">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="md:w-2/3">
                 <div className="flex items-center mb-4">
-                  <span className={`inline-block w-3 h-3 ${selectedTheme.colors[0]} rounded-full mr-2`}></span>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  <span className={`inline-block w-3 h-3  rounded-full mr-2 ${buttonColor}`}></span>
+                  <span className="text-sm font-medium text-white uppercase tracking-wider">
                     {event.eventType}
                   </span>
                 </div>
-                <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">{event.name}</h1>
+                <h1 className={`${fontClass} text-3xl md:text-5xl font-bold text-white mb-4`}>{event.name}</h1>
 
-                {branding.visibility.showDescription && (
-                  <p className="text-lg text-gray-600 mb-6">{event.description}</p>
+                {visibility.showDescription && (
+                  <p className="text-lg text-white mb-6">{event.description}</p>
                 )}
 
                 <div className="flex flex-wrap gap-4 mb-6">
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <span className="text-gray-700">
+                    <span className="text-white">
                       {formatDate(event.startDate)}{event.endDate && ` - ${formatDate(event.endDate)}`}
                     </span>
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-gray-700">
+                    <span className="text-white">
                       {formatTime(event.startTime)} - {formatTime(event.endTime)} ({event.timezone})
                     </span>
                   </div>
@@ -261,49 +190,48 @@ export default function Dashboard() {
                       </svg>
                     </div>
                     <div className="ml-3">
-                      <p className="text-sm font-medium text-green-800">
+                      <p className="text-sm font-medium text-green-700">
                         You're registered for this event!
                       </p>
                     </div>
                   </div>
-                  {userRegistration.tickets && userRegistration.tickets.length ===1 && (
-                  <button
-                    className={`${selectedTheme.colors[0]} text-white px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center cursor-pointer`}
-                    onClick={() => setTicketModalOpen(userRegistration.tickets[0].id)}
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    View Ticket
-                  </button>
+                  {ticket && (
+                    <button
+                      className={`${buttonColor} text-white px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center cursor-pointer`}
+                      onClick={() => setTicketModalOpen(true)}
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      View Ticket
+                    </button>
                   )}
                 </div>
-
               </div>
 
-              <div className="md:w-1/3 bg-white rounded-xl shadow-md overflow-hidden">
-                <div className={`${selectedTheme.colors[0]} text-white p-4`}>
-                  <h3 className="text-lg font-semibold">Event Details</h3>
+              <div className={`md:w-1/3 ${sidebarColor} rounded-xl shadow-md overflow-hidden`}>
+                <div className={` text-white p-4`}>
+                  <h3 className="text-lg text-white font-semibold">Event Details</h3>
                 </div>
                 <div className="p-4">
                   <div className="mb-4">
-                    <h4 className="font-medium text-gray-700 mb-1">Date & Time</h4>
-                    <p className="text-gray-600">
+                    <h4 className="font-medium text-white mb-1">Date & Time</h4>
+                    <p className="text-white">
                       {formatDate(event.startDate)}{event.endDate && ` - ${formatDate(event.endDate)}`}
                       <br />
                       {formatTime(event.startTime)} - {formatTime(event.endTime)} ({event.timezone})
                     </p>
                   </div>
 
-                  {branding.visibility.showLocation && event.eventType === 'physical' && (
+                  {visibility.showLocation && event.eventType === 'physical' && (
                     <div className="mb-4">
-                      <h4 className="font-medium text-gray-700 mb-1">Location</h4>
-                      <p className="text-gray-600">
+                      <h4 className="font-medium text-white mb-1">Location</h4>
+                      <p className="text-white">
                         {event.address}<br />
                         {event.city}, {event.state}<br />
                         {event.country} {event.zipCode}
                       </p>
-                      <button className="mt-2 text-sm text-blue-600 hover:underline cursor-pointer">
+                      <button className="mt-2 text-sm text-blue-500 hover:underline cursor-pointer">
                         View on map
                       </button>
                     </div>
@@ -311,20 +239,20 @@ export default function Dashboard() {
 
                   {event.eventType === 'online' && event.meetingLink && (
                     <div className="mb-4">
-                      <h4 className="font-medium text-gray-700 mb-1">Join Online</h4>
+                      <h4 className="font-medium text-white mb-1">Join Online</h4>
                       <a
                         href={event.meetingLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline break-all"
+                        className="text-white hover:underline break-all"
                       >
                         {event.meetingLink}
                       </a>
                     </div>
                   )}
 
-                  <div className="pt-4 border-t border-gray-200">
-                    <h4 className="font-medium text-gray-700 mb-2">Share this event</h4>
+                  <div className="pt-4 border-t border-white">
+                    <h4 className="font-medium text-white mb-2">Share this event</h4>
                     <div className="flex space-x-3">
                       {['facebook', 'twitter', 'linkedin', 'link'].map((social) => (
                         <button
@@ -346,20 +274,20 @@ export default function Dashboard() {
           </section>
 
           {/* Sessions Section */}
-          {branding.visibility.showSchedule && sessions.length > 0 && (
+          {visibility.showSchedule && sessions.length > 0 && (
             <section className="mb-16">
               <div className="flex items-center mb-8">
-                <div className={`w-1 h-8 ${selectedTheme.colors[0]} mr-3`}></div>
-                <h2 className="text-2xl font-bold text-gray-900">Event Schedule</h2>
+                <div className={`w-1 h-8 ${mainBgColor} mr-3`}></div>
+                <h2 className="text-2xl font-bold text-white">Event Schedule</h2>
               </div>
 
               <div className="bg-white rounded-xl shadow-md overflow-hidden">
                 <div className="divide-y divide-gray-200">
                   {sessions.map((session: { id: number; title: string; speaker: string; startTime: string; duration: number; description: string; tags: string[]; }, index: number) => (
-                    <div key={session.id} className="p-6 hover:bg-gray-50 transition-colors">
+                    <div key={session.id} className={`p-6 hover:bg-gray-50 transition-colors`}>
                       <div className="flex flex-col md:flex-row md:items-center">
                         <div className="md:w-1/4 mb-4 md:mb-0">
-                          <div className="text-lg font-medium text-gray-900">
+                          <div className="text-lg font-medium text-gray-700">
                             {formatTime(session.startTime)}
                           </div>
                           <div className="text-sm text-gray-500">
@@ -380,7 +308,7 @@ export default function Dashboard() {
                               {session.tags.map((tag: string) => (
                                 <span
                                   key={tag}
-                                  className={`px-2 py-1 text-xs font-medium rounded-full ${selectedTheme.colors[2]} bg-opacity-20 text-${selectedTheme.colors[0].replace('bg-', '')}`}
+                                  className={`px-2 py-1 text-xs font-medium rounded-full ${mainBgColor} bg-opacity-20 text-${mainBgColor.replace('bg-', '')}`}
                                 >
                                   {tag}
                                 </span>
@@ -399,49 +327,49 @@ export default function Dashboard() {
           {/* Announcements Section */}
           <section className="mb-16">
             <div className="flex items-center mb-8">
-              <div className={`w-1 h-8 ${selectedTheme.colors[0]} mr-3`}></div>
-              <h2 className="text-2xl font-bold text-gray-900">Announcements</h2>
+              <div className={`w-1 h-8 ${mainBgColor} mr-3`}></div>
+              <h2 className="text-2xl font-bold text-white">Announcements</h2>
             </div>
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
               <div className="divide-y divide-gray-200">
-              {announcements
-  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort by latest date
-  .slice(0, 3) // Take only the latest 3
-  .map((announcement) => (
-    <div key={announcement.id} className="p-6 hover:bg-gray-50 transition-colors">
-      <div className="flex">
-        {announcement.isImportant && (
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-          </div>
-        )}
-        <div className="ml-3">
-          <div className="flex items-center">
-            <h3 className={`text-lg font-medium ${announcement.isImportant ? 'text-yellow-800' : 'text-gray-900'}`}>
-              {announcement.title}
-            </h3>
-            <span className="ml-2 text-sm text-gray-500">
-              {format(parseISO(announcement.date), 'MMM d, yyyy')}
-            </span>
-          </div>
-          <p className="mt-1 text-gray-600">{announcement.content}</p>
-        </div>
-      </div>
-    </div>
-))}
+                {announcements
+                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort by latest date
+                  .slice(0, 3) // Take only the latest 3
+                  .map((announcement) => (
+                    <div key={announcement.id} className="p-6 hover:bg-gray-50 transition-colors">
+                      <div className="flex">
+                        {announcement.isImportant && (
+                          <div className="flex-shrink-0">
+                            <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        )}
+                        <div className="ml-3">
+                          <div className="flex items-center">
+                            <h3 className={`text-lg font-medium ${announcement.isImportant ? 'text-yellow-800' : 'text-gray-900'}`}>
+                              {announcement.title}
+                            </h3>
+                            <span className="ml-2 text-sm text-gray-500">
+                              {format(parseISO(announcement.date), 'MMM d, yyyy')}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-gray-600">{announcement.content}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
 
               </div>
             </div>
           </section>
 
           {/* Registration Section */}
-          {branding.visibility.showRegistration && registration && (
+          {visibility.showRegistration && registration && (
             <section className="mb-16">
               <div className="flex items-center mb-8">
-                <div className={`w-1 h-8 ${selectedTheme.colors[0]} mr-3`}></div>
-                <h2 className="text-2xl font-bold text-gray-900">Registration</h2>
+                <div className={`w-1 h-8 ${mainBgColor} mr-3`}></div>
+                <h2 className="text-2xl font-bold text-white">Registration</h2>
               </div>
 
               <div className="bg-white rounded-xl shadow-md overflow-hidden">
@@ -468,96 +396,77 @@ export default function Dashboard() {
                     </p>
                   </div>
 
-                  {/* {registration.maxAttendees > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Capacity</h3>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div 
-                        className={`h-2.5 rounded-full ${selectedTheme.colors[0]}`} 
-                        style={{ width: '75%' }}
-                      ></div>
-                    </div>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {Math.round(registration.maxAttendees * 0.75)} of {registration.maxAttendees} spots remaining
-                    </p>
-                  </div>
-                )} */}
-
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Your Tickets</h3>
-                    {userRegistration.tickets && userRegistration.tickets.length > 0 ? (
-                      userRegistration.tickets.map((ticket: any, idx: number) => (
-                        <div key={ticket.id || idx} className="border rounded-lg overflow-hidden bg-white shadow-sm mb-6">
-                          <div className={`${selectedTheme.colors[0]} p-4 text-white`}>
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4 className="text-lg font-bold">{ticket.name} Ticket</h4>
-                                <p className="text-sm opacity-90">
-                                  {ticket.type === 'paid'
-                                    ? `Paid: ${ticket.currency} ${ticket.price}`
-                                    : 'Free Admission'}
-                                </p>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-xs opacity-80">Order #{ticket.id}</div>
-                                <div className="text-xs opacity-80 mt-1">
-                                  {ticket.purchaseDate ? format(parseISO(ticket.purchaseDate), 'MMM d, yyyy') : ''}
-                                </div>
-                              </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Your Ticket</h3>
+                    {ticket ? (
+                      <div className="border rounded-lg overflow-hidden bg-white shadow-sm mb-6">
+                        <div className={`${mainBgColor} p-4 text-white`}>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="text-lg font-bold">{ticket.name} Ticket</h4>
+                              <p className="text-sm opacity-90">
+                                {ticket.type === 'paid'
+                                  ? `Paid: ${ticket.currency} ${ticket.price}`
+                                  : 'Free Admission'}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm opacity-80">Order #{ticket.id}</div>
+
                             </div>
                           </div>
-                          <div className="p-4">
-                            <div className="flex items-center justify-between mb-4">
-                              <div>
-                                <p className="text-sm text-gray-500">Event</p>
-                                <p className="font-medium text-gray-700">{event.name}</p>
-                              </div>
-                              <div className="text-right">
-                                <p className="text-sm text-gray-500">Date</p>
-                                <p className='text-gray-700'>{formatDate(event.startDate)}</p>
-                              </div>
-                            </div>
-                            <div className="border-t border-gray-200 pt-4">
-                              <p className="text-sm text-gray-500 mb-2">Check-in Status</p>
-                              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${userRegistration.checkInStatus
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-yellow-100 text-yellow-800'
-                                }`}>
-                                <span className={`w-2 h-2 rounded-full mr-2 ${userRegistration.checkInStatus ? 'bg-green-500' : 'bg-yellow-500'
-                                  }`}></span>
-                                {userRegistration.checkInStatus ? 'Checked In' : 'Not Checked In'}
-                              </div>
-                            </div>
-                            <div className="flex justify-end mt-4">
-                              <button
-                                className={`${selectedTheme.colors[0]} text-white px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center cursor-pointer`}
-                                onClick={() => setTicketModalOpen(ticket.id)}
-                              >
-                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                View Ticket
-                              </button>
-                            </div>
-                          </div>
-                          <div className="border-t border-gray-200 p-4 bg-gray-50">
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-600">Need help? <a href="#" className="text-blue-600 hover:underline">Contact support</a></span>
-                            </div>
-                          </div>
-                          <TicketModal
-                            open={ticketModalOpen === ticket.id}
-                            onOpenChange={() => setTicketModalOpen(false)}
-                            event={event}
-                            ticket={ticket}
-                            user={userRegistration}
-                            colorTheme={selectedTheme}
-                            fontStyle={selectedFont}
-                            logoUrl={branding.logoUrl}
-                           bannerUrl={branding.bannerUrl}
-                          />
                         </div>
-                      ))
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-4">
+                            <div>
+                              <p className="text-sm text-gray-500">Event</p>
+                              <p className="font-medium text-gray-700">{event.name}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm text-gray-500">Date</p>
+                              <p className='text-gray-700'>{formatDate(event.startDate)}</p>
+                            </div>
+                          </div>
+                          <div className="border-t border-gray-200 pt-4">
+                            <p className="text-sm text-gray-500 mb-2">Check-in Status</p>
+                            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${userRegistration.checkInStatus
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                              }`}>
+                              <span className={`w-2 h-2 rounded-full mr-2 ${userRegistration.checkInStatus ? 'bg-green-500' : 'bg-yellow-500'
+                                }`}></span>
+                              {userRegistration.checkInStatus ? 'Checked In' : 'Not Checked In'}
+                            </div>
+                          </div>
+                          <div className="flex justify-end mt-4">
+                            <button
+                              className={`${buttonColor} text-white px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center cursor-pointer`}
+                              onClick={() => setTicketModalOpen(true)}
+                            >
+                              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                              View Ticket
+                            </button>
+                          </div>
+                        </div>
+                        <div className="border-t border-gray-200 p-4 bg-gray-50">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600">Need help? <a href="#" className="text-blue-600 hover:underline">Contact support</a></span>
+                          </div>
+                        </div>
+                        <TicketModal
+                          open={ticketModalOpen}
+                          onOpenChange={() => setTicketModalOpen(false)}
+                          event={event}
+                          ticket={ticket}
+                          user={userRegistration}
+                          colorTheme={branding.colorPalette}
+                          fontStyle={branding.fontStyle}
+                          logoUrl={branding.logoUrl}
+                          bannerUrl={branding.bannerUrl}
+                        />
+                      </div>
                     ) : (
                       <div className="text-gray-500">No tickets found.</div>
                     )}
@@ -567,8 +476,6 @@ export default function Dashboard() {
             </section>
           )}
         </main>
-
-        {/* Footer */}
 
       </div>
     </DashboardLayout>

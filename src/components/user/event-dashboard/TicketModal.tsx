@@ -81,7 +81,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={`max-w-xl w-full max-h-[calc(90vh)] p-0 rounded-lg overflow-auto shadow-2xl ${fontStyle.className} bg-white border-3 border-white`}>
+      <DialogContent className={`max-w-xl w-full max-h-[calc(90vh)] p-0 rounded-2xl overflow-auto shadow-2xl ${fontStyle.className} bg-white border-3 border-white`}>
   <div ref={ticketRef} id="ticket-modal-content" className="bg-white">
 
         {bannerUrl && (
@@ -122,7 +122,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
             )}
           </div>
         </div>
-        <DialogFooter className="bg-gray-50 p-4 flex justify-between items-center border-t">
+        <DialogFooter className="bg-gray-50 p-4 flex gap-2 justify-between items-center border-t">
           
           <DialogClose asChild>
             <button className="px-4 py-2 rounded border border-gray-200 bg-transparent text-gray-700 font-medium hover:bg-white transition-all cursor-pointer hide-for-pdf">Close</button>

@@ -166,7 +166,7 @@ export default function EventsPage() {
               // Grid View Card
               <Link
                 key={event.id}
-                href={`/user/event-dashboard`}
+                href={`/user/event-dashboard?eventId=${event.id}`}
                 className="block bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300"
               >
                 <div className="relative h-48">
