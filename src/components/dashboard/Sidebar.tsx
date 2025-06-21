@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { logoutUser } from '@/services/auth/authService';
+import { logoutOrganizer } from '@/services/auth/authService';
 import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiX, FiMail, FiAward, FiFileText } from 'react-icons/fi';
 
 const navItems = [
@@ -22,7 +22,7 @@ export default function Sidebar({ isOpen, toggleSidebarAction }: { isOpen: boole
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      await logoutOrganizer();
       router.push('/login');
     } catch (err: any) {
       alert(err.message || 'Logout failed');

@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { loginUser } from "@/services/auth/authService";
+import { loginOrganizer } from "@/services/auth/authService";
+import { Router } from "express";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,14 +18,15 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const router = useRouter();
 
   const [error, setError] = useState("");
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     try {
-      await loginUser(formData.email, formData.password);
-      // window.location.href = "/dashboard";
+      await loginOrganizer(formData.email, formData.password);
+      router.push('/dashboard');
     } catch (err: any) {
       setError(err.message);
     }

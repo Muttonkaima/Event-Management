@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { loginUser } from "@/services/auth/authService";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
@@ -14,12 +16,19 @@ export default function Login() {
         email: "",
         password: "",
     });
+    const [error, setError] = useState("");
+    const router = useRouter();
 
-    const handleSubmit = (e: React.FormEvent) => {
+     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle login logic here
-        console.log("Login submitted:", formData);
-    };
+        setError("");
+        try {
+          await loginUser(formData.email, formData.password);
+          router.push('/user/dashboard');
+        } catch (err: any) {
+          setError(err.message);
+        }
+      };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -92,14 +101,17 @@ export default function Login() {
                                     </Button>
                                 </div>
                             </div>
-                            <Link href="/user/dashboard">
-                                <Button
-                                    type="submit"
-                                    className="w-full h-12 bg-black text-white hover:bg-secondary transition-all duration-200 text-lg cursor-pointer"
-                                >
-                                    Sign In
-                                </Button>
-                            </Link>
+                            {error && (
+                                <div className="text-red-600 px-3 py-2 mb-2 text-center">
+                                    {error}
+                                </div>
+                            )}
+                            <Button
+                                type="submit"
+                                className="w-full h-12 bg-black text-white hover:bg-secondary transition-all duration-200 text-lg cursor-pointer"
+                            >
+                                Sign In
+                            </Button>
                         </form>
 
                     </CardContent>

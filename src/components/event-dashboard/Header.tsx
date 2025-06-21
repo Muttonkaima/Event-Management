@@ -2,7 +2,7 @@
 
 import { FiMenu, FiBell, FiUser } from 'react-icons/fi';
 import { useState } from 'react';
-import { logoutUser } from '@/services/auth/authService';
+import { logoutOrganizer } from '@/services/auth/authService';
 import { useRouter } from 'next/navigation';
 
 type HeaderProps = {
@@ -15,7 +15,7 @@ export default function Header({ toggleSidebarAction: toggleSidebar }: HeaderPro
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      await logoutOrganizer();
       router.push('/login');
     } catch (err: any) {
       alert(err.message || 'Logout failed');
