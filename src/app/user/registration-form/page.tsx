@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { getRegistrationFormById } from "@/services/organization/eventService";
+import { getRegistrationFormById, getEventById } from "@/services/organization/eventService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +25,14 @@ type FormData = {
   [key: string]: string | File | null;
 };
 
+type Ticket = {
+  _id: string;
+  ticket_name: string;
+  ticket_type: string;
+  price: number;
+  currency: string;
+};
+
 export default function RegistrationFormPage() {
   const searchParams = useSearchParams();
   const eventId = searchParams.get("event_id");
@@ -37,9 +45,38 @@ export default function RegistrationFormPage() {
     registration_form_description: string;
     fields: FormField[];
   } | null>(null);
+  const [event, setEvent] = useState<{
+    _id: string;
+    ticket_ids: Ticket[];
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  useEffect(() => {
+    if (formId) {
+      fetchForm();
+    }
+    if (eventId) {
+      fetchEvent();
+    }
+  }, [formId, eventId]);
+
+  const fetchEvent = async () => {
+    try {
+      const response = await getEventById(eventId!);
+      if (response?.data) {
+        setEvent(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching event:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load event information",
+        variant: "destructive",
+      });
+    }
+  };
 
   useEffect(() => {
     if (formId) {
@@ -332,6 +369,33 @@ export default function RegistrationFormPage() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {form.fields.map((field) => renderField(field))}
+              
+              {event?.ticket_ids && event.ticket_ids.length > 0 && (
+                <div key="ticket-selection" className="mb-4">
+                  <Label htmlFor="ticket" className="font-medium text-gray-700">
+                    Ticket Selection <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    onValueChange={(value) => handleChange('ticket', value)}
+                    value={formData['ticket'] as string || ""}
+                    required
+                  >
+                    <SelectTrigger className={`mt-1 ${errors['ticket'] ? 'border-red-500' : ''}`}>
+                      <SelectValue placeholder="Select a ticket" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {event.ticket_ids.map((ticket) => (
+                        <SelectItem key={ticket._id} value={ticket._id}>
+                          {ticket.ticket_name} - {ticket.price} {ticket.currency}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors['ticket'] && (
+                    <p className="text-xs text-red-500 mt-1">{errors['ticket']}</p>
+                  )}
+                </div>
+              )}
               
               <div className="pt-4">
                 <Button 
