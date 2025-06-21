@@ -5,8 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { Calendar, MapPin, Users, Tag } from "lucide-react";
 import Image from "next/image";
 import { getEventById, getGoogleOAuthUrl } from "@/services/organization/eventService";
+import { getUserRegistrationForm } from "@/services/user/userService";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import Link from "next/link"
+
 // Simple modal component
 function Modal({ open, children }: { open: boolean, children: React.ReactNode }) {
   if (!open) return null;
@@ -62,6 +64,9 @@ function getLocationText(event: any) {
 
 export default function JoinEventPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const [loadingRegistration, setLoadingRegistration] = useState(false);
+  const [registrationError, setRegistrationError] = useState("");
   const [eventId, setEventId] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [eventToken, setEventToken] = useState<string | null>(null);
@@ -184,6 +189,37 @@ export default function JoinEventPage() {
     } catch (err) {
       setVerifyError("Failed to get Google OAuth URL");
       setVerifying(false);
+    }
+  };
+
+  const handleRegistrationForm = async () => {
+    if (!event?.event_id || !event?.registration_form_id?._id || !email) {
+      setRegistrationError('Missing required information for registration');
+      return;
+    }
+  
+    setLoadingRegistration(true);
+    setRegistrationError("");
+  
+    try {
+      const data = {
+        event_id: event.event_id,
+        registration_form_id: event.registration_form_id._id,
+        email: email
+      };
+      console.log("registration data", data);
+  
+      const response = await getUserRegistrationForm(data);
+      console.log('Registration form response:', response);
+      if (response?.success && response?.token) {
+        router.push(`/user/registration-form?token=${response.token}`);
+      } else {
+        setRegistrationError('Failed to get registration token');
+      }
+    } catch (err: unknown) {
+      setRegistrationError(err instanceof Error ? err.message : 'Registration failed');
+    } finally {
+      setLoadingRegistration(false);
     }
   };
 
@@ -381,14 +417,15 @@ export default function JoinEventPage() {
               </div>
               {visibility.showRegistration && event?.registration_form_id?._id && (
                 <>
-                <Link 
-                  href={`/user/registration-form?event_id=${event.event_id}&form_id=${event.registration_form_id._id}`}
-                  className="w-full"
+                <Button 
+                  onClick={handleRegistrationForm}
+                  className={`w-full ${buttonGradient} cursor-pointer text-white font-medium py-3 px-4 rounded-lg transition-colors mb-6`}
                 >
-                  <Button className={`w-full ${buttonGradient} cursor-pointer text-white font-medium py-3 px-4 rounded-lg transition-colors mb-6`}>
-                    Register Now
-                  </Button>
-                </Link>
+                  {loadingRegistration ? 'Loading...' : 'Register Now'}
+                </Button>
+                {registrationError && (
+                  <div className="text-red-500 text-sm mt-2">{registrationError}</div>
+                )}
                 </>
               )}
             </div>

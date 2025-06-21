@@ -1,4 +1,3 @@
-
 import { get, post, upload, del, put } from '@/services/controllerServices';
 
 export async function getEventTemplates() {

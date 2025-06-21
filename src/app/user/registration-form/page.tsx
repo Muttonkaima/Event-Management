@@ -9,6 +9,15 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "@/hooks/use-toast";
+import { jwtDecode } from "jwt-decode";
+
+type RegistrationToken = {
+  event_id: string;
+  registration_form_id: string;
+  email: string;
+  iat?: number;
+  exp?: number;
+};
 
 type FormField = {
   type: string;
@@ -35,8 +44,48 @@ type Ticket = {
 
 export default function RegistrationFormPage() {
   const searchParams = useSearchParams();
-  const eventId = searchParams.get("event_id");
-  const formId = searchParams.get("form_id");
+  const token = searchParams.get("token");
+  const [decodedToken, setDecodedToken] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  
+  
+  useEffect(() => {
+    if (!token) {
+      setError('No token provided');
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode<RegistrationToken>(token);
+      console.log('Decoded token:', decoded);
+      if (decoded && typeof decoded === 'object') {
+        const tokenData = {
+          event_id: decoded.event_id,
+          registration_form_id: decoded.registration_form_id,
+          email: decoded.email
+        };
+        console.log('Token data:', tokenData);
+        setDecodedToken(tokenData);
+      } else {
+        setError('Invalid token format');
+      }
+    } catch (err) {
+      setError('Invalid token');
+      console.error('Token decoding error:', err);
+    }
+  }, [token]);
+
+  console.log('Token:', token);
+  console.log('Decoded token:', decodedToken);
+
+  // Get IDs from decoded token
+  const eventId = decodedToken?.event_id;
+  const formId = decodedToken?.registration_form_id;
+
+  console.log('event id from registration form', eventId);
+  console.log('form id from registration form', formId);
+
+ 
   
   const [formData, setFormData] = useState<FormData>({});
   const [form, setForm] = useState<{
@@ -291,7 +340,7 @@ export default function RegistrationFormPage() {
             <RadioGroup
               onValueChange={(value) => handleChange(fieldId, value)}
               value={formData[fieldId] as string || ""}
-              className="space-y-2"
+              className="space-y-2 flex mt-2"
               required={isRequired}
             >
               {field.options?.map((option) => (
